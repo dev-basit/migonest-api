@@ -1,0 +1,31 @@
+{
+  "name": "migonest-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^5",
+    "config": "^3",
+    "cors": "^2.8.4",
+    "express": "^4.16.2",
+    "express-async-errors": "^3.1.0",
+    "fawn": "^2.1.5",
+    "joi": "^17.4.0",
+    "joi-objectid": "^4.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.10",
+    "moment": "^2.20.1",
+    "mongoose": "^8",
+    "winston": "^3.14.2",
+    "winston-mongodb": "^5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
