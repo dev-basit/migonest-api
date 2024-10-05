@@ -1,11 +1,28 @@
 exports.Constants = {
   SUCCESS: "success",
   FAIL: "fail",
-  BASE_URL: "http://localhost:10000",
 
-  RESPONSE_MESSAGES: {
-    SERVER_ERROR: "INTERNAL_SERVER_ERROR",
-  },
+  FETCHING_DATA: "Fethcing data from database.",
+  SEND_ID_IN_PAYLOAD: "Please send id in payload.",
+  SEND_ID_IN_PARAMS: "Please send id in params.",
+  SUCCESSFULLY_FETCED: "Successfully fetched data.",
+  SUCCESSFULLY_ADDED: "Successfully added.",
+  SUCCESSFULLY_UPDATED: "Successfully updated data.",
+  SUCCESSFULLY_JWT_CREATED: "Successfully generated jwt token.",
+  SUCCESSFULLY_LOGGED_IN: "Successfully logged in. Send jwt token onwards in header.",
+  PAYLOAD_IS_CORRECT: "Payload is correct.",
+  EMAI_IS_UNIQUE: "User email is unique.",
+  NEW_USER_EMAIL_CLASH: "User with given email already registered.",
+  INVALID_EMAIL_PASSWORD: "Invalid email or password.",
+  DATA_NOT_FOUND: "No data found.",
+  RESOURCE_NOT_FOUND: "Data not found for given id.",
+  BAD_REQUEST: "Bad request. Your request cannot be fulfilled.",
+  UNAUTHORIZED: "you are unauthorized to perform this action.",
+  NO_TOKEN_PROVIDED: "Access denied. No token provided.",
+  INVALID_TOKEN: "Invalid token.",
+  FORBIDDEN: "You are not allowed to access this data.",
+  ERROR_UPDATING: "Error while updating details.",
+  SERVER_ERROR: "INTERNAL_SERVER_ERROR",
 
   HTTP_STATUS_CODES: {
     OK: 200,
