@@ -21,7 +21,7 @@ exports.authMiddleware = function (req, res, next) {
     if (endpointFound) return next();
 
     const token = req.header("x-auth-token");
-    if (!token) return ResponseHandler.sendUnauthorizedResponse("sdsd" + Constants.NO_TOKEN_PROVIDED, res);
+    if (!token) return ResponseHandler.sendUnauthorizedResponse(Constants.NO_TOKEN_PROVIDED, res);
 
     const decodedUser = jwt.verify(token, config.jwtPrivateKey);
     req.user = decodedUser;
