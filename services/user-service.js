@@ -97,6 +97,8 @@ const UserDetails = async (req, res) => {
     Logger.info(Constants.FETCHING_DATA);
 
     const user = await UserModel.findById(req.params.id).select("-password");
+    if (!user) return ResponseHandler.sendNotFoundResponse(Constants.DATA_NOT_FOUND, res);
+
     return ResponseHandler.sendOkResponse(user, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
