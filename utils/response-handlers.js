@@ -51,6 +51,7 @@ class ResponseHandler {
     return res.status(Constants.HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(response);
   }
 
+  // logs used internally be response handlers
   static logSuccess(response) {
     Logger.info(response.getMessage());
     Logger.info(JSON.stringify(response));
