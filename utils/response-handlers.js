@@ -33,6 +33,12 @@ class ResponseHandler {
     return res.status(Constants.HTTP_STATUS_CODES.FORBIDDEN).send(response);
   }
 
+  static sendConflictResponse(msg = Constants.CONFLICT, res) {
+    const response = new Response(null, Constants.HTTP_STATUS_CODES.CONFLICT, msg, Constants.FAIL);
+    this.logError(response);
+    return res.status(Constants.HTTP_STATUS_CODES.CONFLICT).send(response);
+  }
+
   static sendNotFoundResponse(msg = Constants.DATA_NOT_FOUND, res) {
     const response = new Response(null, Constants.HTTP_STATUS_CODES.NOT_FOUND, msg, Constants.FAIL);
     this.logError(response);

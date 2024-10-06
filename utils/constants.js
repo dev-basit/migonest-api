@@ -21,6 +21,7 @@ exports.Constants = {
   NO_TOKEN_PROVIDED: "Access denied. No token provided.",
   INVALID_TOKEN: "Invalid token.",
   FORBIDDEN: "You are not allowed to access this data.",
+  CONFLICT: "Already data exist.",
   ERROR_UPDATING: "Error while updating details.",
   SERVER_ERROR: "INTERNAL_SERVER_ERROR",
 
@@ -35,6 +36,7 @@ exports.Constants = {
     NOT_FOUND: 404,
     METHOD_NOT_ALLOWED: 405,
     REQUEST_TIMEOUT: 408,
+    CONFLICT: 409,
     TOO_MANY_REQUESTS: 429,
     INTERNAL_SERVER_ERROR: 500,
     BAD_GATEWAY: 502,
