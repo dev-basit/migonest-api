@@ -12,10 +12,11 @@ const UserLogin = async (req, res) => {
     Logger.info(Constants.FETCHING_DATA);
 
     let user = await UserModel.findOne({ email: req.body.email });
-    if (!user) return ResponseHandler.sendBadResponse(Constants.INVALID_EMAIL_PASSWORD, res);
+    if (!user) return ResponseHandler.sendUnauthorizedResponse(Constants.INVALID_EMAIL_PASSWORD, res);
 
     const validPassword = await bcrypt.compare(req.body.password, user.password);
-    if (!validPassword) return ResponseHandler.sendBadResponse(Constants.INVALID_EMAIL_PASSWORD, res);
+    if (!validPassword)
+      return ResponseHandler.sendUnauthorizedResponse(Constants.INVALID_EMAIL_PASSWORD, res);
 
     const token = user.generateAuthToken();
     Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);
