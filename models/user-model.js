@@ -3,12 +3,13 @@ const jwt = require("jsonwebtoken");
 const { config } = require("../config");
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true, minlength: 3, maxlength: 128 },
+  firstName: { type: String, required: true, minlength: 3, maxlength: 128 },
+  lastName: { type: String, required: true, minlength: 3, maxlength: 128 },
   email: { type: String, required: true, minlength: 3, maxlength: 128, unique: true },
   password: { type: String, required: true, minlength: 4, maxlength: 1024 },
-  phoneNo: { type: String, required: true, minlength: 3, maxlength: 20 },
-  type: { type: String, enum: ["admin", "user"], required: true },
-  aboutMe: { type: String, minlength: 2, maxlength: 1024 },
+  date: { type: String, required: true, minlength: 9, maxlength: 11 }, // store in unix timestamp
+  gender: { type: String, enum: ["male", "female", "other"], required: true },
+  type: { type: String, enum: ["student", "uni-expert", "super-admin"], required: true },
 });
 
 userSchema.methods.generateAuthToken = function () {

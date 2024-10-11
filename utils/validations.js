@@ -2,11 +2,13 @@ const Joi = require("joi");
 
 function userCreate(user) {
   const schema = Joi.object({
-    name: Joi.string().min(3).max(128).required(),
+    firstName: Joi.string().min(3).max(128).required(),
+    lastName: Joi.string().min(3).max(128).required(),
     email: Joi.string().min(3).max(128).required().email(),
     password: Joi.string().min(4).max(1024).required(),
-    phoneNo: Joi.string().min(3).max(20).required(),
-    type: Joi.string().valid("admin", "user").required(),
+    date: Joi.string().min(9).max(11).required(),
+    gender: Joi.string().valid("male", "female", "other").required(),
+    type: Joi.string().valid("student", "uni-expert", "super-admin").required(),
   });
 
   return schema.validate(user);

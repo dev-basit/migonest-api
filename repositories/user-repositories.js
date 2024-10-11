@@ -28,7 +28,9 @@ const findUsers = async (params = {}) => {
 
 const createUser = async (newUserData) => {
   try {
-    const user = new UserModel(_.pick(newUserData, ["name", "email", "password", "phoneNo", "type"]));
+    const user = new UserModel(
+      _.pick(newUserData, ["_id", "firstName", "lastName", "email", "password", "date", "gender", "type"])
+    );
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
     await user.save();

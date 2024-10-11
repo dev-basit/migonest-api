@@ -36,7 +36,7 @@ const userCreate = async (req, res) => {
       .status(Constants.HTTP_STATUS_CODES.CREATED)
       .send(
         new Response(
-          _.pick(user, ["_id", "name", "email", "type"]),
+          _.pick(user, ["_id", "firstName", "lastName", "email", "date", "gender", "type"]),
           Constants.HTTP_STATUS_CODES.CREATED,
           Constants.SUCCESSFULLY_ADDED,
           Constants.SUCCESS
