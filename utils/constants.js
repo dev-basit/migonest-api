@@ -10,7 +10,7 @@ exports.Constants = {
   SUCCESSFULLY_UPDATED: "Successfully updated data.",
   SUCCESSFULLY_JWT_CREATED: "Successfully generated jwt token.",
   SUCCESSFULLY_LOGGED_IN: "Successfully logged in. Send jwt token onwards in header.",
-  PAYLOAD_IS_CORRECT: "Payload is correct.",
+  PAYLOAD_IS_CORRECT: "Requested payload data is correct.",
   EMAI_IS_UNIQUE: "User email is unique.",
   NEW_USER_EMAIL_CLASH: "User with given email already registered.",
   INVALID_EMAIL_PASSWORD: "Invalid email or password.",
