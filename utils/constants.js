@@ -7,9 +7,11 @@ exports.Constants = {
   SEND_ID_IN_PARAMS: "Please send id in params.",
   SUCCESSFULLY_FETCED: "Successfully fetched data.",
   SUCCESSFULLY_ADDED: "Successfully added.",
+  SUCCESSFULLY_CREATED_USER:
+    "Successfully created account. Please check verification code in your email and enter it here.",
   SUCCESSFULLY_UPDATED: "Successfully updated data.",
   SUCCESSFULLY_JWT_CREATED: "Successfully generated jwt token.",
-  SUCCESSFULLY_LOGGED_IN: "Successfully logged in. Send jwt token onwards in header.",
+  SUCCESSFULLY_LOGGED_IN: "Successfully logged in.",
   PAYLOAD_IS_CORRECT: "Requested payload data is correct.",
   EMAI_IS_UNIQUE: "User email is unique.",
   NEW_USER_EMAIL_CLASH: "User with given email already registered.",
