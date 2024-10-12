@@ -4,6 +4,7 @@ const { ResponseHandler, Constants } = require("../utils");
 
 const jwtNotRequiredEndpoints = [
   { method: "POST", api: "/v1/auth/login" }, //login
+  { method: "POST", api: "/v1/auth/verify/email" },
   { method: "POST", api: "/v1/users" }, // signup
 ];
 

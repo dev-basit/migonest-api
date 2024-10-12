@@ -1,6 +1,7 @@
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
 const { UserModel } = require("../models");
+const { Utils } = require("../utils");
 
 const findUser = async (params = {}) => {
   try {
@@ -33,6 +34,7 @@ const createUser = async (newUserData) => {
     );
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(user.password, salt);
+    user.emailVerificationCode = Utils.generateCode(6); // generate code, used to verify email
     await user.save();
     return user;
   } catch (error) {

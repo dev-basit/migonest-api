@@ -10,6 +10,8 @@ const userSchema = new mongoose.Schema({
   date: { type: String, required: true, minlength: 9, maxlength: 11 }, // store in unix timestamp
   gender: { type: String, enum: ["male", "female", "other"], required: true },
   type: { type: String, enum: ["student", "uni-expert", "super-admin"], required: true },
+  isVerified: { type: Boolean, default: false },
+  emailVerificationCode: { type: String, minlength: 6, maxlength: 6 },
 });
 
 userSchema.methods.generateAuthToken = function () {

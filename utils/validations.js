@@ -23,4 +23,13 @@ function userLogin(req) {
   return schema.validate(req);
 }
 
-exports.validatePayload = { userCreate, userLogin };
+function emailVerification(req) {
+  const schema = Joi.object({
+    email: Joi.string().min(3).max(128).required().email(),
+    code: Joi.string().length(6).required(),
+  });
+
+  return schema.validate(req);
+}
+
+exports.validatePayload = { userCreate, userLogin, emailVerification };
