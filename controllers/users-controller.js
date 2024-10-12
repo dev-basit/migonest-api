@@ -1,5 +1,5 @@
 const _ = require("lodash");
-const { validatePayload, ResponseHandler, Response, Constants } = require("../utils");
+const { validatePayload, ResponseHandler, Response, Constants, sendEmail } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { userRepository } = require("../repositories");
 
@@ -29,6 +29,8 @@ const userCreate = async (req, res) => {
 
     Logger.info(Constants.SUCCESSFULLY_ADDED);
 
+    await sendEmail({ receiver: user.email, code: user.emailVerificationCode }); // send code for verification
+
     const token = user.generateAuthToken();
     return res
       .header("x-auth-token", token)
@@ -38,7 +40,7 @@ const userCreate = async (req, res) => {
         new Response(
           _.pick(user, ["_id", "firstName", "lastName", "email", "date", "gender", "type"]),
           Constants.HTTP_STATUS_CODES.CREATED,
-          Constants.SUCCESSFULLY_ADDED,
+          Constants.SUCCESSFULLY_CREATED_USER,
           Constants.SUCCESS
         )
       );

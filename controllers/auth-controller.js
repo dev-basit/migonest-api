@@ -36,4 +36,31 @@ const userLogin = async (req, res) => {
   }
 };
 
-exports.authControllers = { userLogin };
+const verifyEmail = async (req, res) => {
+  try {
+    const { error } = validatePayload.emailVerification(req.body);
+    if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
+
+    Logger.info(Constants.PAYLOAD_IS_CORRECT);
+
+    let user = await userRepository.findUser({ email: req.body.email });
+    if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
+
+    if (user.isVerified) return ResponseHandler.sendBadResponse(Constants.EMAIL_ALREADY_VERIFIED, res);
+
+    Logger.info("Matching token.");
+
+    if (user.emailVerificationCode !== req.body.code)
+      return ResponseHandler.sendBadResponse(Constants.INVALID_VERIFICATION_CODE, res);
+
+    const userUpdatedDetails = { isVerified: true, emailVerificationCode: "" };
+    const updatedUser = await userRepository.updateUser(user._id, userUpdatedDetails);
+    if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_VERIFIED_ACCOUNT, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.authControllers = { userLogin, verifyEmail };
