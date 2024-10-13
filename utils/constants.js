@@ -1,6 +1,15 @@
+const STUDENT = "student";
+const UNI_EXPERT = "uni-expert";
+const SUPER_ADMIN = "super-admin";
+
 exports.Constants = {
   SUCCESS: "success",
   FAIL: "fail",
+
+  STUDENT: STUDENT,
+  UNI_EXPERT: UNI_EXPERT,
+  SUPER_ADMIN: SUPER_ADMIN,
+  USER_TYPES: [STUDENT, UNI_EXPERT, SUPER_ADMIN],
 
   FETCHING_DATA: "Fethcing data from database.",
   SEND_ID_IN_PAYLOAD: "Please send id in payload.",
