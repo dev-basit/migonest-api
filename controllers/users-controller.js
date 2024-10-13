@@ -55,7 +55,10 @@ const userUpdate = async (req, res) => {
     if (!req.body.id) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PAYLOAD, res);
 
     // normal users can only update their own details and not any other user details
-    if (req.user.type === "user" && req.user._id !== req.body.id)
+    if (
+      (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
+      req.user._id !== req.body.id
+    )
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
     Logger.info(Constants.FETCHING_DATA);
@@ -94,7 +97,10 @@ const userDetails = async (req, res) => {
     if (!req.params.id) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
 
     // normal users can not see the details of other users except their own
-    if (req.user.type === "user" && req.user._id !== req.params.id)
+    if (
+      (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
+      req.user._id !== req.params.id
+    )
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
     Logger.info(Constants.FETCHING_DATA);
