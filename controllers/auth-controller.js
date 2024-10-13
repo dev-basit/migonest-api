@@ -1,4 +1,4 @@
-const { validatePayload, ResponseHandler, Response, Constants } = require("../utils");
+const { validatePayload, ResponseHandler, Response, Constants, Utils, sendEmail } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { authService } = require("../services");
 const { userRepository } = require("../repositories");
@@ -17,6 +17,15 @@ const userLogin = async (req, res) => {
     const validPassword = await authService.verifyPassword(req.body.password, user.password);
     if (!validPassword)
       return ResponseHandler.sendUnauthorizedResponse(Constants.INVALID_EMAIL_PASSWORD, res);
+
+    // generate new code, send code in email and return 403 response
+    if (!user.isVerified) {
+      user.emailVerificationCode = Utils.generateCode(6);
+      await userRepository.updateUser(user._id, user);
+      await sendEmail({ receiver: user.email, code: user.emailVerificationCode });
+
+      return ResponseHandler.sendForbiddenResponse("Your email is not verified yet.", res);
+    }
 
     const token = user.generateAuthToken();
     Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);

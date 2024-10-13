@@ -1,4 +1,5 @@
 const Joi = require("joi");
+const { Constants } = require("./constants");
 
 function userCreate(user) {
   const schema = Joi.object({
@@ -8,7 +9,7 @@ function userCreate(user) {
     password: Joi.string().min(4).max(1024).required(),
     date: Joi.string().min(9).max(11).required(),
     gender: Joi.string().valid("male", "female", "other").required(),
-    type: Joi.string().valid("student", "uni-expert", "super-admin").required(),
+    type: Joi.string().valid(Constants.STUDENT, Constants.UNI_EXPERT, Constants.SUPER_ADMIN).required(),
   });
 
   return schema.validate(user);
