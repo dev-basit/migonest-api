@@ -49,7 +49,7 @@ const userCreate = async (req, res) => {
   }
 };
 
-// TODO: dont't allow email && password update here, write separate api for it
+// TODO: dont't allow email, password, isVerified, emailVerificationCode update here, write separate api for it
 const userUpdate = async (req, res) => {
   try {
     if (!req.body.id) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PAYLOAD, res);
@@ -63,18 +63,25 @@ const userUpdate = async (req, res) => {
     const userExisitingDetails = await userRepository.findUserById(req.body.id);
     if (!userExisitingDetails) return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
 
-    // Avoid email and password update
+    // Avoid email, password, isVerified, emailVerificationCode update
     const userUpdatedDetails = {
-      name: req.body.name || userExisitingDetails.name,
+      firstName: req.body.firstName || userExisitingDetails.firstName,
+      lastName: req.body.lastName || userExisitingDetails.lastName,
       email: userExisitingDetails.email,
       password: userExisitingDetails.password,
-      phoneNo: req.body.phoneNo || userExisitingDetails.phoneNo,
+      isVerified: userExisitingDetails.isVerified,
+      emailVerificationCode: userExisitingDetails.emailVerificationCode,
+      date: req.body.date || userExisitingDetails.date,
+      gender: req.body.gender || userExisitingDetails.gender,
       type: req.body.type || userExisitingDetails.type,
-      aboutMe: req.body.aboutMe || userExisitingDetails.aboutMe,
+      preferences: req.body.preferences || userExisitingDetails.preferences,
     };
 
     const updatedUser = await userRepository.updateUser(req.body.id, userUpdatedDetails);
     if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    // dont send user password to the consumer
+    updatedUser.password = null;
 
     return ResponseHandler.sendOkResponse(updatedUser, Constants.SUCCESSFULLY_UPDATED, res);
   } catch (error) {
