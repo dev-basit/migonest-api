@@ -3,6 +3,7 @@ const { Logger } = require("../startup/logs");
 const { authService } = require("../services");
 const { userRepository } = require("../repositories");
 
+// TODO: If user is not verified, dont let him to log in
 const userLogin = async (req, res) => {
   try {
     const { error } = validatePayload.userLogin(req.body);
