@@ -2,7 +2,9 @@ const { PostModel } = require("../models");
 
 const findAllPosts = async (params = {}) => {
   try {
-    return await PostModel.find(params);
+    return await PostModel.find(params)
+      .populate("author", "userName firstName lastName profilePicture type")
+      .sort({ createdAt: -1 });
   } catch (error) {
     throw new Error(error.message);
   }
