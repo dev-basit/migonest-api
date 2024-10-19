@@ -3,6 +3,7 @@ const { Logger } = require("../startup/logs");
 const { postRepository } = require("../repositories");
 const { postService } = require("../services");
 
+// TODO: api for like and share
 // TODO: make follower relationship in user, then find post for a user posted by all his followers
 const posts = async (req, res) => {
   try {
