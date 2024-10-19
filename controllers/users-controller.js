@@ -38,7 +38,17 @@ const userCreate = async (req, res) => {
       .status(Constants.HTTP_STATUS_CODES.CREATED)
       .send(
         new Response(
-          _.pick(user, ["_id", "firstName", "lastName", "email", "date", "gender", "type"]),
+          _.pick(user, [
+            "_id",
+            "userName",
+            "firstName",
+            "lastName",
+            "email",
+            "profilePicture",
+            "date",
+            "gender",
+            "type",
+          ]),
           Constants.HTTP_STATUS_CODES.CREATED,
           Constants.SUCCESSFULLY_CREATED_USER,
           Constants.SUCCESS
@@ -68,8 +78,10 @@ const userUpdate = async (req, res) => {
 
     // Avoid email, password, isVerified, emailVerificationCode update
     const userUpdatedDetails = {
+      userName: req.body.userName || userExisitingDetails.userName,
       firstName: req.body.firstName || userExisitingDetails.firstName,
       lastName: req.body.lastName || userExisitingDetails.lastName,
+      profilePicture: req.body.profilePicture || userExisitingDetails.profilePicture,
       email: userExisitingDetails.email,
       password: userExisitingDetails.password,
       isVerified: userExisitingDetails.isVerified,

@@ -4,8 +4,10 @@ const { config } = require("../config");
 const { Constants } = require("../utils");
 
 const userSchema = new mongoose.Schema({
+  userName: { type: String, required: true, minlength: 3, maxlength: 128 },
   firstName: { type: String, required: true, minlength: 3, maxlength: 128 },
   lastName: { type: String, required: true, minlength: 3, maxlength: 128 },
+  profilePicture: { type: String, required: true, minlength: 1, maxlength: 2048 },
   email: { type: String, required: true, minlength: 3, maxlength: 128, unique: true },
   password: { type: String, required: true, minlength: 4, maxlength: 1024 },
   date: { type: String, required: true, minlength: 9, maxlength: 11 }, // store in unix timestamp
@@ -20,9 +22,11 @@ userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     {
       _id: this._id,
+      username: this.userName,
       name: this.firstName + " " + this.lastName,
       email: this.email,
       type: this.type,
+      profilePicture: this.profilePicture,
       preferences: this.preferences,
     },
     config.jwtPrivateKey
