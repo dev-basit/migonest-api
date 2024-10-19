@@ -7,6 +7,10 @@ class Utils {
     }
     return code;
   }
+
+  static getTimeInUnixTimestamp() {
+    return Math.floor(new Date().getTime() / 1000).toString();
+  }
 }
 
 exports.Utils = Utils;
