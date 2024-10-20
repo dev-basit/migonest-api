@@ -13,7 +13,9 @@ const findUser = async (params = {}) => {
 
 const findUserById = async (id) => {
   try {
-    return await UserModel.findById(id);
+    return await UserModel.findById(id)
+      .select("-password")
+      .populate("following", "_id userName firstName lastName profilePicture type");
   } catch (error) {
     throw new Error(error.message);
   }
