@@ -30,7 +30,7 @@ exports.Constants = {
   INVALID_VERIFICATION_CODE: "Please send correct verification code.",
   DATA_NOT_FOUND: "No data found.",
   RESOURCE_NOT_FOUND: "Data not found for given id.",
-  USER_NOT_FOUND: "User not found with given email.",
+  USER_NOT_FOUND: "User not found.",
   BAD_REQUEST: "Bad request. Your request cannot be fulfilled.",
   UNAUTHORIZED: "you are unauthorized to perform this action.",
   NO_TOKEN_PROVIDED: "Access denied. No token provided.",
