@@ -27,8 +27,17 @@ const createPost = async (data) => {
   }
 };
 
+const updatePost = async (postId, updatedData) => {
+  try {
+    return await PostModel.findByIdAndUpdate(postId, updatedData, { new: true });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 exports.postRepository = {
   findAllPosts,
   findPostById,
   createPost,
+  updatePost,
 };
