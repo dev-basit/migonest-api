@@ -13,7 +13,9 @@ const findUser = async (params = {}) => {
 
 const findUserById = async (id) => {
   try {
-    return await UserModel.findById(id);
+    return await UserModel.findById(id)
+      .select("-password")
+      .populate("following", "_id userName firstName lastName profilePicture type");
   } catch (error) {
     throw new Error(error.message);
   }
@@ -22,6 +24,14 @@ const findUserById = async (id) => {
 const findUsers = async (params = {}) => {
   try {
     return await UserModel.find(params).select("-password");
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const findUsersSuggestions = async (params = {}) => {
+  try {
+    return await UserModel.find(params).select("_id userName profilePicture preferences");
   } catch (error) {
     throw new Error(error.message);
   }
@@ -61,4 +71,4 @@ const updateUser = async (userId, updatedData) => {
   }
 };
 
-exports.userRepository = { findUser, findUserById, findUsers, createUser, updateUser };
+exports.userRepository = { findUser, findUserById, findUsers, findUsersSuggestions, createUser, updateUser };

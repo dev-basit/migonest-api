@@ -1,14 +1,19 @@
 const { ResponseHandler, Constants } = require("../utils");
 const { Logger } = require("../startup/logs");
-const { postRepository } = require("../repositories");
+const { postRepository, userRepository } = require("../repositories");
 const { postService } = require("../services");
 
-// TODO: api for like and share
-// TODO: make follower relationship in user, then find post for a user posted by all his followers
+// TODO: api for share
 const posts = async (req, res) => {
   try {
+    Logger.info("Fetching followers list");
+    const user = await userRepository.findUserById(req.user._id);
+    const userFollowingIds = user.following.map((followedUser) => followedUser._id);
+    userFollowingIds.push(req.user._id); // show user own post to user
+
     Logger.info(Constants.FETCHING_DATA);
-    const posts = await postRepository.findAllPosts();
+    const posts = await postRepository.findAllPosts({ author: { $in: userFollowingIds } });
+
     return ResponseHandler.sendOkResponse(posts, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
@@ -36,4 +41,27 @@ const createPost = async (req, res) => {
   }
 };
 
-exports.postsControllers = { posts, createPost };
+const likeDislikePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+    const currentUserId = req.user._id;
+
+    if (!postId) return ResponseHandler.sendBadResponse("Post ID is required.", res);
+
+    const post = await postRepository.findPostById(postId);
+    if (!post) return ResponseHandler.sendNotFoundResponse("Post not found.", res);
+
+    const isLikedAlready = post.likes.includes(currentUserId);
+    if (isLikedAlready) {
+      const updatedPost = await postRepository.updatePost(postId, { $pull: { likes: currentUserId } });
+      return ResponseHandler.sendOkResponse(updatedPost, "Successfully disliked the post.", res);
+    } else {
+      const updatedPost = await postRepository.updatePost(postId, { $addToSet: { likes: currentUserId } });
+      return ResponseHandler.sendOkResponse(updatedPost, "Successfully liked the post.", res);
+    }
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.postsControllers = { posts, createPost, likeDislikePost };
