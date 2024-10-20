@@ -3,7 +3,7 @@ const { Logger } = require("../startup/logs");
 const { postRepository, userRepository } = require("../repositories");
 const { postService } = require("../services");
 
-// TODO: api for like and share
+// TODO: api for share
 const posts = async (req, res) => {
   try {
     Logger.info("Fetching followers list");
@@ -41,4 +41,27 @@ const createPost = async (req, res) => {
   }
 };
 
-exports.postsControllers = { posts, createPost };
+const likeDislikePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+    const currentUserId = req.user._id;
+
+    if (!postId) return ResponseHandler.sendBadResponse("Post ID is required.", res);
+
+    const post = await postRepository.findPostById(postId);
+    if (!post) return ResponseHandler.sendNotFoundResponse("Post not found.", res);
+
+    const isLikedAlready = post.likes.includes(currentUserId);
+    if (isLikedAlready) {
+      const updatedPost = await postRepository.updatePost(postId, { $pull: { likes: currentUserId } });
+      return ResponseHandler.sendOkResponse(updatedPost, "Successfully disliked the post.", res);
+    } else {
+      const updatedPost = await postRepository.updatePost(postId, { $addToSet: { likes: currentUserId } });
+      return ResponseHandler.sendOkResponse(updatedPost, "Successfully liked the post.", res);
+    }
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.postsControllers = { posts, createPost, likeDislikePost };
