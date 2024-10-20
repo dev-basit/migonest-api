@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const _ = require("lodash");
 const { validatePayload, ResponseHandler, Response, Constants, sendEmail } = require("../utils");
 const { Logger } = require("../startup/logs");
@@ -128,4 +129,37 @@ const userDetails = async (req, res) => {
   }
 };
 
-exports.usersControllers = { users, userCreate, userUpdate, userDetails };
+const followUser = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { userId } = req.body;
+    if (!userId) return ResponseHandler.sendBadResponse("Please send user's id to follow.", res);
+
+    if (userId === req.user._id.toString())
+      return ResponseHandler.sendBadResponse("You cannot follow yourself.", res);
+
+    const userToFollow = await userRepository.findUserById(userId);
+    if (!userToFollow) return ResponseHandler.sendNotFoundResponse("User to follow does not exist.", res);
+
+    const isAlreadyFollowingUser = await userRepository.findUser({ _id: req.user._id, following: userId });
+    if (isAlreadyFollowingUser)
+      return ResponseHandler.sendBadResponse("You are already following this user.", res);
+
+    Logger.info("Following the user.");
+    await userRepository.updateUser(req.user._id, { $addToSet: { following: userId } }); // add user to following list of the current user
+    await userRepository.updateUser(userId, { $addToSet: { followers: req.user._id } }); // add current user to follower list of the user that is followed
+
+    await session.commitTransaction();
+    session.endSession();
+
+    return ResponseHandler.sendOkResponse(null, "Successfully followed the user.", res);
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.usersControllers = { users, userCreate, userUpdate, userDetails, followUser };
