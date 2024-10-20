@@ -29,6 +29,14 @@ const findUsers = async (params = {}) => {
   }
 };
 
+const findUsersSuggestions = async (params = {}) => {
+  try {
+    return await UserModel.find(params).select("_id userName profilePicture preferences");
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const createUser = async (newUserData) => {
   try {
     const user = new UserModel(
@@ -63,4 +71,4 @@ const updateUser = async (userId, updatedData) => {
   }
 };
 
-exports.userRepository = { findUser, findUserById, findUsers, createUser, updateUser };
+exports.userRepository = { findUser, findUserById, findUsers, findUsersSuggestions, createUser, updateUser };

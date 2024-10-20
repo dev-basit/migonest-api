@@ -162,4 +162,19 @@ const followUser = async (req, res) => {
   }
 };
 
-exports.usersControllers = { users, userCreate, userUpdate, userDetails, followUser };
+const userSuggestions = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const currentUserDetails = await userRepository.findUserById(userId);
+    if (!currentUserDetails) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
+
+    const followedUserIds = currentUserDetails.following.concat(userId); // Exclude the users the current user is already following, and the current user themselves
+    const suggestedUsers = await userRepository.findUsersSuggestions({ _id: { $nin: followedUserIds } }); // find users who are not in the following list
+
+    return ResponseHandler.sendOkResponse(suggestedUsers, Constants.SUCCESSFULLY_FETCED, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.usersControllers = { users, userCreate, userUpdate, userDetails, followUser, userSuggestions };
