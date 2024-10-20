@@ -1,14 +1,19 @@
 const { ResponseHandler, Constants } = require("../utils");
 const { Logger } = require("../startup/logs");
-const { postRepository } = require("../repositories");
+const { postRepository, userRepository } = require("../repositories");
 const { postService } = require("../services");
 
 // TODO: api for like and share
-// TODO: make follower relationship in user, then find post for a user posted by all his followers
 const posts = async (req, res) => {
   try {
+    Logger.info("Fetching followers list");
+    const user = await userRepository.findUserById(req.user._id);
+    const userFollowingIds = user.following.map((followedUser) => followedUser._id);
+    userFollowingIds.push(req.user._id); // show user own post to user
+
     Logger.info(Constants.FETCHING_DATA);
-    const posts = await postRepository.findAllPosts();
+    const posts = await postRepository.findAllPosts({ author: { $in: userFollowingIds } });
+
     return ResponseHandler.sendOkResponse(posts, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
