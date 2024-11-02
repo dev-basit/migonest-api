@@ -1,4 +1,4 @@
-const { UserModel } = require("./user-model");
+const { UserModel, ExperienceModel, EducationModel, IeltsModel } = require("./user-model");
 const { PostModel } = require("./post-model");
 
-module.exports = { UserModel, PostModel };
+module.exports = { UserModel, ExperienceModel, EducationModel, IeltsModel, PostModel };
