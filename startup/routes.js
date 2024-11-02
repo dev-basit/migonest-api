@@ -1,5 +1,5 @@
 const express = require("express");
-const { authRoutes, usersRoutes, postsRoutes } = require("../routes");
+const { authRoutes, usersRoutes, usersProfileRoutes, postsRoutes } = require("../routes");
 const { authMiddleware, errorMiddleware, logMiddleware } = require("../middleware");
 
 exports.initRoutes = function (app) {
@@ -8,6 +8,7 @@ exports.initRoutes = function (app) {
   app.use(logMiddleware);
   app.use("/v1/auth", authRoutes);
   app.use("/v1/users", usersRoutes);
+  app.use("/v1/users/profile", usersProfileRoutes);
   app.use("/v1/posts", postsRoutes);
   app.use(errorMiddleware);
 };
