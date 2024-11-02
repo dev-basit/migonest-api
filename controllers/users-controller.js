@@ -110,16 +110,9 @@ const userDetails = async (req, res) => {
   try {
     if (!req.params.id) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
 
-    // normal users can not see the details of other users except their own
-    if (
-      (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
-      req.user._id !== req.params.id
-    )
-      return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
-
     Logger.info(Constants.FETCHING_DATA);
 
-    const user = await userRepository.findUserById(req.params.id);
+    const user = await userRepository.findUserDetailsById(req.params.id);
     if (!user) return ResponseHandler.sendNotFoundResponse(Constants.DATA_NOT_FOUND, res);
 
     user["password"] = null;
