@@ -91,6 +91,7 @@ const userUpdate = async (req, res) => {
       gender: req.body.gender || userExisitingDetails.gender,
       type: req.body.type || userExisitingDetails.type,
       preferences: req.body.preferences || userExisitingDetails.preferences,
+      about: req.body.about || userExisitingDetails.about,
     };
 
     const updatedUser = await userRepository.updateUser(req.body.id, userUpdatedDetails);
@@ -124,6 +125,16 @@ const userDetails = async (req, res) => {
     user["password"] = null;
 
     return ResponseHandler.sendOkResponse(user, Constants.SUCCESSFULLY_FETCED, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+const currentUserDetails = async (req, res) => {
+  try {
+    Logger.info(Constants.FETCHING_DATA);
+    const currentUser = await userRepository.findUserDetails({ _id: req.user._id });
+    return ResponseHandler.sendOkResponse(currentUser, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
@@ -177,4 +188,12 @@ const userSuggestions = async (req, res) => {
   }
 };
 
-exports.usersControllers = { users, userCreate, userUpdate, userDetails, followUser, userSuggestions };
+exports.usersControllers = {
+  users,
+  userCreate,
+  userUpdate,
+  userDetails,
+  currentUserDetails,
+  followUser,
+  userSuggestions,
+};

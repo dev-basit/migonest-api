@@ -11,7 +11,7 @@ const userLogin = async (req, res) => {
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
     Logger.info(Constants.FETCHING_DATA);
 
-    let user = await userRepository.findUser({ email: req.body.email });
+    let user = await userRepository.findUserWithPassword({ email: req.body.email });
     if (!user) return ResponseHandler.sendUnauthorizedResponse(Constants.INVALID_EMAIL_PASSWORD, res);
 
     const validPassword = await authService.verifyPassword(req.body.password, user.password);

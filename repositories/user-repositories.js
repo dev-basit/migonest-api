@@ -3,9 +3,31 @@ const _ = require("lodash");
 const { UserModel } = require("../models");
 const { Utils } = require("../utils");
 
+// dont fetch password
 const findUser = async (params = {}) => {
   try {
+    return await UserModel.findOne(params).select("-password");
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+// fetch password as well
+const findUserWithPassword = async (params = {}) => {
+  try {
     return await UserModel.findOne(params);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const findUserDetails = async (params = {}) => {
+  try {
+    return await UserModel.findOne(params)
+      .select("-password")
+      .populate("experiences")
+      .populate("education")
+      .populate("ielts");
   } catch (error) {
     throw new Error(error.message);
   }
@@ -63,12 +85,21 @@ const createUser = async (newUserData) => {
   }
 };
 
-const updateUser = async (userId, updatedData) => {
+const updateUser = async (userId, updatedData, options = { new: true }) => {
   try {
-    return await UserModel.findByIdAndUpdate(userId, updatedData, { new: true });
+    return await UserModel.findByIdAndUpdate(userId, updatedData, options);
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-exports.userRepository = { findUser, findUserById, findUsers, findUsersSuggestions, createUser, updateUser };
+exports.userRepository = {
+  findUser,
+  findUserById,
+  findUserWithPassword,
+  findUserDetails,
+  findUsers,
+  findUsersSuggestions,
+  createUser,
+  updateUser,
+};
