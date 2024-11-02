@@ -8,6 +8,9 @@ const jwtNotRequiredEndpoints = [
   { method: "POST", api: "/v1/users" }, // signup
 ];
 
+// TODO: verify token using secret
+// OR
+// TDOD: add user token in db, verify at login time, on login delete prev record if exist, add new one
 exports.authMiddleware = function (req, res, next) {
   try {
     let endpointFound = false;
