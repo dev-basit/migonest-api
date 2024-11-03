@@ -43,6 +43,18 @@ const findUserById = async (id) => {
   }
 };
 
+const findUserDetailsById = async (id) => {
+  try {
+    return await UserModel.findById(id)
+      .select("-password -email -date -gender")
+      .populate("experiences")
+      .populate("education")
+      .populate("ielts");
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const findUsers = async (params = {}) => {
   try {
     return await UserModel.find(params).select("-password");
@@ -98,6 +110,7 @@ exports.userRepository = {
   findUserById,
   findUserWithPassword,
   findUserDetails,
+  findUserDetailsById, // public info
   findUsers,
   findUsersSuggestions,
   createUser,
