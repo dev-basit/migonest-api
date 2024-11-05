@@ -65,7 +65,9 @@ const findUsers = async (params = {}) => {
 
 const findUsersSuggestions = async (params = {}) => {
   try {
-    return await UserModel.find(params).select("_id userName profilePicture preferences");
+    return await UserModel.find(params)
+      .select("_id userName profilePicture preferences")
+      .sort({ createdAt: -1 });
   } catch (error) {
     throw new Error(error.message);
   }
