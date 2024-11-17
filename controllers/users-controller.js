@@ -181,6 +181,58 @@ const userSuggestions = async (req, res) => {
   }
 };
 
+const updatePreferences = async (req, res) => {
+  try {
+    if (!req.body.id) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PAYLOAD, res);
+
+    // normal users can only update their own preferences and not any other user preferences
+    if (
+      (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
+      req.user._id !== req.body.id
+    )
+      return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
+
+    Logger.info(Constants.FETCHING_DATA);
+
+    const userExisitingDetails = await userRepository.findUserById(req.body.id);
+    if (!userExisitingDetails) return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
+
+    const updatedUser = await userRepository.updateUser(req.body.id, {
+      preferences: req.body.preferences || userExisitingDetails.preferences,
+    });
+    if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    // dont send user password to the consumer
+    updatedUser.password = null;
+
+    const token = updatedUser.generateAuthToken();
+    return res
+      .header("x-auth-token", token)
+      .header("access-control-expose-headers", "x-auth-token")
+      .status(Constants.HTTP_STATUS_CODES.OK)
+      .send(
+        new Response(
+          _.pick(updatedUser, [
+            "_id",
+            "userName",
+            "firstName",
+            "lastName",
+            "email",
+            "profilePicture",
+            "date",
+            "gender",
+            "type",
+          ]),
+          Constants.HTTP_STATUS_CODES.OK,
+          Constants.SUCCESSFULLY_CREATED_USER,
+          Constants.SUCCESS
+        )
+      );
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
 exports.usersControllers = {
   users,
   userCreate,
@@ -189,4 +241,5 @@ exports.usersControllers = {
   currentUserDetails,
   followUser,
   userSuggestions,
+  updatePreferences,
 };
