@@ -64,4 +64,36 @@ const likeDislikePost = async (req, res) => {
   }
 };
 
-exports.postsControllers = { posts, createPost, likeDislikePost };
+// TODO: dont allow shared post to be updated
+// TODO: when deleting, delete from both, originol post share array, and author post record
+const sharePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+    if (!postId) return ResponseHandler.sendBadResponse("Post ID is required.", res);
+
+    const post = await postRepository.findPostById(postId);
+    if (!post) return ResponseHandler.sendNotFoundResponse("Post not found.", res);
+
+    const newPost = {};
+    newPost.author = req.user._id;
+    newPost.content = post.content;
+    newPost.picture = post.picture;
+    newPost.isShared = true;
+    newPost.likes = [];
+    newPost.shares = [];
+
+    console.log("newpost ", newPost);
+
+    Logger.info("Post being shared: " + JSON.stringify(post));
+    Logger.info("New Post: " + JSON.stringify(newPost));
+
+    // TODO: apply transaction here
+    let sharedPostCreated = await postRepository.createPost(newPost);
+    await postRepository.updatePost(postId, { $push: { shares: sharedPostCreated._id } });
+    return ResponseHandler.sendOkResponse(sharedPostCreated, "Successfully shared the post.", res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.postsControllers = { posts, createPost, likeDislikePost, sharePost };
