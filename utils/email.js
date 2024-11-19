@@ -13,8 +13,8 @@ const emailer = nodemailer.createTransport({
     from: process.env.EMAIL_USER,
     to: process.env.TO_EMAIL,
 
-    user: process.env.EMAIL_SENDER || "dev.basit2020@gmail.com",
-    pass: process.env.EMAIL_PASS || "ozib rgqz rwji gozk",
+    user: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
+    pass: process.env.EMAIL_PASS || "wqiq ccsr zckp enyx",
   },
 });
 
@@ -23,7 +23,7 @@ async function sendEmail(data) {
     Logger.info(`Sending email to ${data.receiver}`);
 
     await emailer.sendMail({
-      from: process.env.EMAIL_SENDER || "dev.basit2020@gmail.com",
+      from: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
       to: data.receiver,
       subject: "Email Verification Code",
       text: `Code: ${data.code}`,
