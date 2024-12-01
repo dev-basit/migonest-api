@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema(
     firstName: { type: String, required: true, minlength: 3, maxlength: 128 },
     lastName: { type: String, required: true, minlength: 3, maxlength: 128 },
     profilePicture: { type: String, required: true, minlength: 1, maxlength: 2048 },
+    coverPicture: { type: String, minlength: 1, maxlength: 2048 },
     email: { type: String, required: true, minlength: 3, maxlength: 128, unique: true },
     password: { type: String, required: true, minlength: 4, maxlength: 1024 },
     date: { type: String, required: true, minlength: 9, maxlength: 11 }, // store in unix timestamp

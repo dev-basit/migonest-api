@@ -83,6 +83,7 @@ const userUpdate = async (req, res) => {
       firstName: req.body.firstName || userExisitingDetails.firstName,
       lastName: req.body.lastName || userExisitingDetails.lastName,
       profilePicture: req.body.profilePicture || userExisitingDetails.profilePicture,
+      coverPicture: req.body.coverPicture || userExisitingDetails.coverPicture,
       email: userExisitingDetails.email,
       password: userExisitingDetails.password,
       isVerified: userExisitingDetails.isVerified,
