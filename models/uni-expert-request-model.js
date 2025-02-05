@@ -5,7 +5,7 @@ const uniExpertRequestSchema = new mongoose.Schema({
   uniExpertId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   studentId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   universityId: { type: mongoose.Schema.Types.ObjectId, ref: "University", required: true },
-  acceptStatus: { type: Boolean, default: false },
+  acceptStatus: { type: String, enum: ["open", "accepted", "rejected"], default: "open" },
   paymentStatus: { type: Boolean, default: false },
   createdAt: {
     type: String,

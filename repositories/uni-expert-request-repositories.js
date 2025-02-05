@@ -3,7 +3,7 @@ const { UniExpertRequestModel } = require("../models");
 const findUniExpertRequests = async (params = {}) => {
   try {
     return await UniExpertRequestModel.find(params)
-      .populate("studentId", "userName firstName lastName profilePicture")
+      .populate("studentId", "userName firstName lastName profilePicture preferences following")
       .populate("universityId")
       .sort({ createdAt: -1 });
   } catch (error) {

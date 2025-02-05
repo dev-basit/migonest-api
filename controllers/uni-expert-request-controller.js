@@ -6,7 +6,9 @@ const { uniExpertRequestService } = require("../services");
 const uniExpertRequestsFind = async (req, res) => {
   try {
     Logger.info(Constants.FETCHING_DATA);
-    const requests = await uniExpertRequestRepository.findUniExpertRequests();
+    const filters = {};
+    if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
+    const requests = await uniExpertRequestRepository.findUniExpertRequests(filters);
 
     return ResponseHandler.sendOkResponse(requests, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
