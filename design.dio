@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="B4E4h9o1zCYyK0xTzl8D" name="Page-1">
-        <mxGraphModel dx="1960" dy="706" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1920" dy="706" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -40,7 +40,7 @@
                     <mxGeometry y="160" width="140" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="29" value="&lt;span style=&quot;font-size: 14px;&quot;&gt;university&lt;/span&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;align=center;" parent="1" vertex="1">
-                    <mxGeometry x="260" y="240" width="120" height="240" as="geometry"/>
+                    <mxGeometry x="260" y="240" width="120" height="290" as="geometry"/>
                 </mxCell>
                 <mxCell id="36" value="requirements" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="29" vertex="1">
                     <mxGeometry y="40" width="120" height="30" as="geometry"/>
@@ -57,8 +57,8 @@
                 <mxCell id="33" value="application_fee" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="29" vertex="1">
                     <mxGeometry y="160" width="120" height="30" as="geometry"/>
                 </mxCell>
-                <mxCell id="37" value="documents&lt;br&gt;&lt;br&gt;uni_expert_id&lt;br&gt;" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="29" vertex="1">
-                    <mxGeometry y="190" width="120" height="50" as="geometry"/>
+                <mxCell id="37" value="documents&lt;br&gt;&lt;br&gt;uni_expert_id&lt;br&gt;&lt;br&gt;name" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="29" vertex="1">
+                    <mxGeometry y="190" width="120" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="34" style="edgeStyle=none;sketch=1;fillStyle=solid;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;shadow=1;strokeWidth=2;fontFamily=Comic Sans MS;fontSize=14;fillColor=default;gradientColor=none;entryX=1.033;entryY=0.1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="26" target="29" edge="1">
                     <mxGeometry relative="1" as="geometry">
@@ -122,7 +122,7 @@
                         </Array>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="60" style="edgeStyle=none;sketch=1;fillStyle=solid;html=1;exitX=1.015;exitY=0.652;exitDx=0;exitDy=0;shadow=1;strokeWidth=2;fontFamily=Comic Sans MS;fontSize=14;fillColor=default;gradientColor=none;exitPerimeter=0;" edge="1" parent="1" source="37">
+                <mxCell id="60" style="edgeStyle=none;sketch=1;fillStyle=solid;html=1;exitX=1.015;exitY=0.652;exitDx=0;exitDy=0;shadow=1;strokeWidth=2;fontFamily=Comic Sans MS;fontSize=14;fillColor=default;gradientColor=none;exitPerimeter=0;" parent="1" source="37" edge="1">
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint x="620" y="170" as="targetPoint"/>
                         <Array as="points">
