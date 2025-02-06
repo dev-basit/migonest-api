@@ -19,6 +19,7 @@ exports.Constants = {
   SUCCESSFULLY_CREATED_USER:
     "Successfully created account. Please check verification code in your email and enter it here.",
   SUCCESSFULLY_UPDATED: "Successfully updated data.",
+  SUCCESSFULLY_UPDATED_: "Successfully updated.",
   SUCCESSFULLY_JWT_CREATED: "Successfully generated jwt token.",
   SUCCESSFULLY_LOGGED_IN: "Successfully logged in.",
   SUCCESSFULLY_VERIFIED_ACCOUNT: "Successfully verified account.",
