@@ -10,7 +10,6 @@ const universitiesFind = async (req, res) => {
     const filters = {};
     if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
     const universities = await universityRepository.findUniversities(filters);
-    universities.forEach((uni) => (uni.deadline = Utils.convertFromUnixTimeSeconds(uni.deadline)));
 
     return ResponseHandler.sendOkResponse(universities, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
