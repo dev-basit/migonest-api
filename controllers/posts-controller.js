@@ -34,7 +34,6 @@ const createPost = async (req, res) => {
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
     let post = await postRepository.createPost(requestedPayload);
-
     return ResponseHandler.sendCreatedResponse(post, Constants.SUCCESSFULLY_ADDED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
