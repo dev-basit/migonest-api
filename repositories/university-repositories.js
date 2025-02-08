@@ -2,12 +2,12 @@ const { UniversityModel } = require("../models");
 
 const findUniversities = async (params = {}) => {
   try {
-    return await UniversityModel.find(params);
-    // .populate(
-    // "uniExpertId",
-    // "userName firstName lastName profilePicture type"
-    // );
-    // .sort({ createdAt: -1 });
+    return await UniversityModel.find(params)
+      // .populate(
+      // "uniExpertId",
+      // "userName firstName lastName profilePicture type"
+      // );
+      .sort({ createdAt: -1 });
   } catch (error) {
     throw new Error(error.message);
   }
