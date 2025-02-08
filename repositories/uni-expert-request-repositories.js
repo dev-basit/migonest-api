@@ -4,6 +4,7 @@ const findUniExpertRequests = async (params = {}) => {
   try {
     return await UniExpertRequestModel.find(params)
       .populate("studentId", "userName firstName lastName profilePicture preferences following")
+      .populate("uniExpertId", "userName firstName lastName profilePicture preferences following")
       .populate("universityId")
       .sort({ createdAt: -1 });
   } catch (error) {
@@ -28,8 +29,17 @@ const createUniExpertRequest = async (data) => {
   }
 };
 
+const updateUniExpertRequest = async (id, updatedData, options = { new: true }) => {
+  try {
+    return await UniExpertRequestModel.findByIdAndUpdate(id, updatedData, options);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 exports.uniExpertRequestRepository = {
   findUniExpertRequests,
   findUniExpertRequestById,
   createUniExpertRequest,
+  updateUniExpertRequest,
 };
