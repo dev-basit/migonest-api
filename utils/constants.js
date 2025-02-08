@@ -19,6 +19,7 @@ exports.Constants = {
   SUCCESSFULLY_CREATED_USER:
     "Successfully created account. Please check verification code in your email and enter it here.",
   SUCCESSFULLY_UPDATED: "Successfully updated data.",
+  SUCCESSFULLY_UPDATED_: "Successfully updated.",
   SUCCESSFULLY_JWT_CREATED: "Successfully generated jwt token.",
   SUCCESSFULLY_LOGGED_IN: "Successfully logged in.",
   SUCCESSFULLY_VERIFIED_ACCOUNT: "Successfully verified account.",
@@ -31,6 +32,10 @@ exports.Constants = {
   DATA_NOT_FOUND: "No data found.",
   RESOURCE_NOT_FOUND: "Data not found for given id.",
   USER_NOT_FOUND: "User not found.",
+  UNI_EXPERT_NOT_FOUND: "Uni expert not found.",
+  STUDENT_NOT_FOUND: "Student not found.",
+  UNIVERSITY_NOT_FOUND: "University not found.",
+  UNI_EXPERT_REQUEST_NOT_FOUND: "Uni expert request not found.",
   BAD_REQUEST: "Bad request. Your request cannot be fulfilled.",
   UNAUTHORIZED: "you are unauthorized to perform this action.",
   NO_TOKEN_PROVIDED: "Access denied. No token provided.",

@@ -44,33 +44,42 @@ userSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-const experienceSchema = new mongoose.Schema({
-  jobTitle: { type: String, required: true, minlength: 3, maxlength: 128 },
-  company: { type: String, required: true, minlength: 3, maxlength: 128 },
-  address: { type: String, required: true, minlength: 3, maxlength: 128 },
-  startDate: { type: String, required: true, minlength: 9, maxlength: 11 },
-  endDate: { type: String },
-});
+const experienceSchema = new mongoose.Schema(
+  {
+    jobTitle: { type: String, required: true, minlength: 3, maxlength: 128 },
+    company: { type: String, required: true, minlength: 3, maxlength: 128 },
+    address: { type: String, required: true, minlength: 3, maxlength: 128 },
+    startDate: { type: String, required: true, minlength: 9, maxlength: 11 },
+    endDate: { type: String },
+  },
+  { timestamps: true }
+);
 
-const educationSchema = new mongoose.Schema({
-  institutionName: { type: String, required: true, minlength: 3, maxlength: 128 },
-  address: { type: String, required: true, minlength: 3, maxlength: 128 },
-  degree: { type: String, required: true, minlength: 3, maxlength: 128 },
-  startDate: { type: String, required: true, minlength: 9, maxlength: 11 },
-  endDate: { type: String, minlength: 9, maxlength: 11 },
-  totalScore: { type: Number },
-  scoreGained: { type: Number },
-});
+const educationSchema = new mongoose.Schema(
+  {
+    institutionName: { type: String, required: true, minlength: 3, maxlength: 128 },
+    address: { type: String, required: true, minlength: 3, maxlength: 128 },
+    degree: { type: String, required: true, minlength: 3, maxlength: 128 },
+    startDate: { type: String, required: true, minlength: 9, maxlength: 11 },
+    endDate: { type: String, minlength: 9, maxlength: 11 },
+    totalScore: { type: Number },
+    scoreGained: { type: Number },
+  },
+  { timestamps: true }
+);
 
-const ieltsSchema = new mongoose.Schema({
-  name: { type: String, required: true, minlength: 3, maxlength: 128 },
-  overallScore: { type: Number, min: 1 },
-  listening: { type: Number, min: 1 },
-  reading: { type: Number, min: 1 },
-  writing: { type: Number, min: 1 },
-  speaking: { type: Number, min: 1 },
-  givenDate: { type: String, required: true, minlength: 9, maxlength: 11 },
-});
+const ieltsSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, minlength: 3, maxlength: 128 },
+    overallScore: { type: Number, min: 1 },
+    listening: { type: Number, min: 1 },
+    reading: { type: Number, min: 1 },
+    writing: { type: Number, min: 1 },
+    speaking: { type: Number, min: 1 },
+    givenDate: { type: String, required: true, minlength: 9, maxlength: 11 },
+  },
+  { timestamps: true }
+);
 
 const UserModel = mongoose.model("User", userSchema);
 const ExperienceModel = mongoose.model("Experience", experienceSchema);
