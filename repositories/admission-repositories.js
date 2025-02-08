@@ -34,8 +34,17 @@ const createAdmission = async (data) => {
   }
 };
 
+const updateAdmission = async (id, updatedData, options = { new: true }) => {
+  try {
+    return await AdmissionModel.findByIdAndUpdate(id, updatedData, options);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 exports.admissionRepository = {
   findAdmissions,
   findAdmissionById,
   createAdmission,
+  updateAdmission,
 };
