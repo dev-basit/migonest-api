@@ -47,4 +47,42 @@ const universityCreate = async (req, res) => {
   }
 };
 
-exports.universitiesControllers = { universitiesFind, universityCreate };
+const universityUpdate = async (req, res) => {
+  try {
+    const universityId = req.params.id;
+    if (!universityId) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
+
+    const universityExisitngDetails = await universityRepository.findUniversityById(universityId);
+    if (!universityExisitngDetails)
+      return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
+
+    const requestedPayload = {
+      name: req.body.name,
+      requirements: req.body.requirements,
+      deadline: req.body.deadline,
+      tuitionFee: req.body.tuitionFee,
+      applicationFee: req.body.applicationFee,
+      documents: req.body.documents,
+      uniExpertId: req.body.uniExpertId,
+    };
+
+    const { error } = universityService.validateUniversityCreatePayload(requestedPayload);
+    if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
+
+    const uniExpertDetails = await userRepository.findUserById(requestedPayload.uniExpertId);
+    if (!uniExpertDetails) return ResponseHandler.sendNotFoundResponse(Constants.UNI_EXPERT_NOT_FOUND, res);
+    if (uniExpertDetails.type !== Constants.UNI_EXPERT)
+      return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
+
+    Logger.info(Constants.PAYLOAD_IS_CORRECT);
+
+    const updatedUniversity = await universityRepository.updateUniversity(universityId, requestedPayload);
+    if (!updatedUniversity) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    return ResponseHandler.sendOkResponse(updatedUniversity, Constants.SUCCESSFULLY_UPDATED_, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.universitiesControllers = { universitiesFind, universityCreate, universityUpdate };

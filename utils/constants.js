@@ -11,6 +11,9 @@ exports.Constants = {
   SUPER_ADMIN: SUPER_ADMIN,
   USER_TYPES: [STUDENT, UNI_EXPERT, SUPER_ADMIN],
 
+  ACCEPT_STATUS: "accepted",
+  OPEN_STATUS: "open",
+
   FETCHING_DATA: "Fethcing data from database.",
   SEND_ID_IN_PAYLOAD: "Please send id in payload.",
   SEND_ID_IN_PARAMS: "Please send id in params.",

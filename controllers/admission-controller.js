@@ -53,4 +53,28 @@ const admissionCreate = async (req, res) => {
   }
 };
 
-exports.admissionsControllers = { admissionsFind, admissionCreate };
+const admissionUpdate = async (req, res) => {
+  try {
+    const admissionId = req.params.id;
+
+    if (!admissionId) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
+
+    const admissionExisitngDetails = await admissionRepository.findAdmissionById(admissionId);
+    if (!admissionExisitngDetails)
+      return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
+
+    const { step } = req.body;
+
+    const payload = {};
+    if (step) payload.step = step;
+
+    const updatedAdmission = await admissionRepository.updateAdmission(admissionId, payload);
+    if (!updatedAdmission) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    return ResponseHandler.sendOkResponse(updatedAdmission, Constants.SUCCESSFULLY_UPDATED_, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.admissionsControllers = { admissionsFind, admissionCreate, admissionUpdate };

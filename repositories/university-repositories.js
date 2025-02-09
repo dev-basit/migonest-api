@@ -30,8 +30,17 @@ const createUniversity = async (data) => {
   }
 };
 
+const updateUniversity = async (id, updatedData, options = { new: true }) => {
+  try {
+    return await UniversityModel.findByIdAndUpdate(id, updatedData, options);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 exports.universityRepository = {
   findUniversities,
   findUniversityById,
   createUniversity,
+  updateUniversity,
 };

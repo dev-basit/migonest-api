@@ -3,7 +3,7 @@ const { Utils } = require("../utils");
 
 const admissionSchema = new mongoose.Schema(
   {
-    step: { type: Number, min: 1, max: 8, default: 1 },
+    step: { type: Number, min: 0, max: 8, default: 0 },
     uniExpertRequestId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "UniExpertRequest",
