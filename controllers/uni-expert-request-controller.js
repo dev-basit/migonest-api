@@ -49,14 +49,22 @@ const uniExpertRequestCreate = async (req, res) => {
     const universityDetails = await universityRepository.findUniversityById(requestedPayload.universityId);
     if (!universityDetails) return ResponseHandler.sendNotFoundResponse(Constants.UNIVERSITY_NOT_FOUND, res);
 
-    if (universityDetails.uniExpertId.toString() !== uniExpertDetails._id.toString())
+    if (universityDetails.uniExpertId.toString() !== uniExpertDetails._id.toString()) {
       return ResponseHandler.sendForbiddenResponse(
         "This uni expert cannot provide services for this university.",
         res
       );
+    }
+
+    const isAcceptRequestAlreadyExists = await uniExpertRequestService.isAcceptRequestAlreadyExists(
+      requestedPayload.studentId,
+      requestedPayload.universityId
+    );
+    if (isAcceptRequestAlreadyExists) {
+      return ResponseHandler.sendForbiddenResponse("You have already requested for this university.", res);
+    }
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
-    Logger.info(Constants.FETCHING_DATA);
 
     const newRequest = await uniExpertRequestRepository.createUniExpertRequest(requestedPayload);
     return ResponseHandler.sendCreatedResponse(newRequest, "Successfull.", res);

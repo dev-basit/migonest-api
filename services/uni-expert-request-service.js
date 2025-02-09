@@ -1,4 +1,6 @@
 const Joi = require("joi");
+const { uniExpertRequestRepository } = require("../repositories");
+const { Constants } = require("../utils");
 
 function validateCreateUniExpertRequestPayload(data) {
   const schema = Joi.object({
@@ -14,4 +16,28 @@ function validateCreateUniExpertRequestPayload(data) {
   return schema.validate(data);
 }
 
-exports.uniExpertRequestService = { validateCreateUniExpertRequestPayload };
+async function isAcceptRequestAlreadyExists(studentId, universityId) {
+  try {
+    const existingRequests = await uniExpertRequestRepository.findUniExpertRequests({
+      studentId: studentId,
+      universityId: universityId,
+    });
+
+    let isAcceptRequestAlreadyExists = false;
+
+    if (existingRequests.length > 0) {
+      for (let item of existingRequests) {
+        if (item.acceptStatus === Constants.ACCEPT_STATUS || item.acceptStatus === Constants.OPEN_STATUS) {
+          isAcceptRequestAlreadyExists = true;
+          break;
+        }
+      }
+    }
+
+    return isAcceptRequestAlreadyExists;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+exports.uniExpertRequestService = { validateCreateUniExpertRequestPayload, isAcceptRequestAlreadyExists };
