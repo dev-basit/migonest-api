@@ -5,8 +5,8 @@ function validateUniversityCreatePayload(data) {
     name: Joi.string().max(255).required(),
     requirements: Joi.array().items(Joi.string()).default([]),
     deadline: Joi.string().min(9).max(11).required(),
-    tuitionFee: Joi.string().min(1).max(10).required(),
-    applicationFee: Joi.string().min(1).max(10).required(),
+    tuitionFee: Joi.string().min(1).max(15).required(),
+    applicationFee: Joi.string().min(1).max(15).required(),
     documents: Joi.array()
       .items(
         Joi.object({
