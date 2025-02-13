@@ -1,5 +1,6 @@
 const STUDENT = "student";
 const UNI_EXPERT = "uni-expert";
+const ADMIN = "admin";
 const SUPER_ADMIN = "super-admin";
 
 exports.Constants = {
@@ -8,8 +9,9 @@ exports.Constants = {
 
   STUDENT: STUDENT,
   UNI_EXPERT: UNI_EXPERT,
+  ADMIN: ADMIN,
   SUPER_ADMIN: SUPER_ADMIN,
-  USER_TYPES: [STUDENT, UNI_EXPERT, SUPER_ADMIN],
+  USER_TYPES: [STUDENT, UNI_EXPERT, ADMIN, SUPER_ADMIN],
 
   ACCEPT_STATUS: "accepted",
   OPEN_STATUS: "open",
