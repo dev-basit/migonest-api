@@ -3,6 +3,7 @@ const { PostModel } = require("./post-model");
 const { UniversityModel } = require("./university-model");
 const { UniExpertRequestModel } = require("./uni-expert-request-model");
 const { AdmissionModel } = require("./admission-model");
+const { BecomeUniExpertModel } = require("./become-uni-expert-model");
 
 module.exports = {
   UserModel,
@@ -13,4 +14,5 @@ module.exports = {
   UniversityModel,
   UniExpertRequestModel,
   AdmissionModel,
+  BecomeUniExpertModel,
 };
