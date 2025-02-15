@@ -5,6 +5,7 @@ const { postsRoutes } = require("./posts-routes");
 const { universitiesRoutes } = require("./university-routes");
 const { uniExpertRequestRoutes } = require("./uni-expert-request-routes");
 const { admissionRoutes } = require("./admission-routes");
+const { becomeUniExpertRoutes } = require("./become-uni-expert-routes");
 
 module.exports = {
   authRoutes,
@@ -14,4 +15,5 @@ module.exports = {
   universitiesRoutes,
   uniExpertRequestRoutes,
   admissionRoutes,
+  becomeUniExpertRoutes,
 };

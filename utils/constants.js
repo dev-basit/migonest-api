@@ -1,5 +1,6 @@
 const STUDENT = "student";
 const UNI_EXPERT = "uni-expert";
+const ADMIN = "admin";
 const SUPER_ADMIN = "super-admin";
 
 exports.Constants = {
@@ -8,8 +9,9 @@ exports.Constants = {
 
   STUDENT: STUDENT,
   UNI_EXPERT: UNI_EXPERT,
+  ADMIN: ADMIN,
   SUPER_ADMIN: SUPER_ADMIN,
-  USER_TYPES: [STUDENT, UNI_EXPERT, SUPER_ADMIN],
+  USER_TYPES: [STUDENT, UNI_EXPERT, ADMIN, SUPER_ADMIN],
 
   ACCEPT_STATUS: "accepted",
   OPEN_STATUS: "open",
@@ -44,6 +46,7 @@ exports.Constants = {
   NO_TOKEN_PROVIDED: "Access denied. No token provided.",
   INVALID_TOKEN: "Invalid token.",
   FORBIDDEN: "You are not allowed to access this data.",
+  FORBIDDEN_: "You are not allowed to perform this operation.",
   CONFLICT: "Already data exist.",
   ERROR_UPDATING: "Error while updating details.",
   SERVER_ERROR: "INTERNAL_SERVER_ERROR",

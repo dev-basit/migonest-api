@@ -5,6 +5,7 @@ const { postsControllers } = require("./posts-controller");
 const { universitiesControllers } = require("./university-controller");
 const { uniExpertRequestsControllers } = require("./uni-expert-request-controller");
 const { admissionsControllers } = require("./admission-controller");
+const { becomeUniExpertControllers } = require("./become-uni-expert-controller");
 
 module.exports = {
   authControllers,
@@ -14,4 +15,5 @@ module.exports = {
   universitiesControllers,
   uniExpertRequestsControllers,
   admissionsControllers,
+  becomeUniExpertControllers,
 };
