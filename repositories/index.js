@@ -4,6 +4,7 @@ const { postRepository } = require("./post-repositories");
 const { universityRepository } = require("./university-repositories");
 const { uniExpertRequestRepository } = require("./uni-expert-request-repositories");
 const { admissionRepository } = require("./admission-repositories");
+const { becomeUniExpertsRepository } = require("./become-uni-expert-repositories");
 
 module.exports = {
   userRepository,
@@ -12,4 +13,5 @@ module.exports = {
   universityRepository,
   uniExpertRequestRepository,
   admissionRepository,
+  becomeUniExpertsRepository,
 };
