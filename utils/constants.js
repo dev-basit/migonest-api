@@ -46,6 +46,7 @@ exports.Constants = {
   NO_TOKEN_PROVIDED: "Access denied. No token provided.",
   INVALID_TOKEN: "Invalid token.",
   FORBIDDEN: "You are not allowed to access this data.",
+  FORBIDDEN_: "You are not allowed to perform this operation.",
   CONFLICT: "Already data exist.",
   ERROR_UPDATING: "Error while updating details.",
   SERVER_ERROR: "INTERNAL_SERVER_ERROR",
