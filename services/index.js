@@ -4,6 +4,7 @@ const { postService } = require("./post-service");
 const { universityService } = require("./university-service");
 const { uniExpertRequestService } = require("./uni-expert-request-service");
 const { admissionService } = require("./admission-service");
+const { becomeUniExpertService } = require("./become-uni-expert-service");
 
 module.exports = {
   authService,
@@ -12,4 +13,5 @@ module.exports = {
   universityService,
   uniExpertRequestService,
   admissionService,
+  becomeUniExpertService,
 };
