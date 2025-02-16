@@ -63,10 +63,11 @@ const admissionUpdate = async (req, res) => {
     if (!admissionExisitngDetails)
       return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
 
-    const { step } = req.body;
+    const { step, documents } = req.body;
 
     const payload = {};
     if (step) payload.step = step;
+    if (documents) payload.documents = documents;
 
     const updatedAdmission = await admissionRepository.updateAdmission(admissionId, payload);
     if (!updatedAdmission) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
