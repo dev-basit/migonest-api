@@ -21,7 +21,7 @@ function validateEducationPayload(data) {
     address: Joi.string().min(3).max(128).required(),
     degree: Joi.string().min(3).max(128).required(),
     startDate: Joi.string().min(9).max(11).required(),
-    endDate: Joi.string().min(9).max(11).optional().allow(""),
+    endDate: Joi.alternatives().try(Joi.string().min(9).max(11), Joi.valid(null, "")).optional(),
     totalScore: Joi.number().optional().allow(""),
     scoreGained: Joi.number().optional().allow(""),
   });
