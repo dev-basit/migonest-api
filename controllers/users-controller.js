@@ -3,6 +3,7 @@ const _ = require("lodash");
 const { validatePayload, ResponseHandler, Response, Constants, sendEmail } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { userRepository } = require("../repositories");
+const { userService } = require("../services");
 
 const users = async (req, res) => {
   try {
@@ -170,14 +171,10 @@ const followUser = async (req, res) => {
 const userSuggestions = async (req, res) => {
   try {
     const userId = req.user._id;
-    const currentUserDetails = await userRepository.findUserById(userId);
-    if (!currentUserDetails) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
+    const type = req.query.type;
+    const linkedUsers = req.query.linkedUsers === "true";
 
-    const followedUserIds = currentUserDetails.following.concat(userId); // Exclude the users the current user is already following, and the current user themselves
-    const filters = { _id: { $nin: followedUserIds } }; // find users who are not in the following list
-    if (req.query.type) filters.type = req.query.type;
-
-    const suggestedUsers = await userRepository.findUsersSuggestions(filters);
+    const suggestedUsers = await userService.userSuggestions(userId, type, linkedUsers);
     return ResponseHandler.sendOkResponse(suggestedUsers, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);

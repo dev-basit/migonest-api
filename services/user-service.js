@@ -1,7 +1,7 @@
 const Joi = require("joi");
 const { Response, Constants } = require("../utils");
 const { Logger } = require("../startup/logs");
-const { userProfileRepository } = require("../repositories");
+const { userProfileRepository, userRepository, uniExpertRequestRepository } = require("../repositories");
 
 function validateExperiencePayload(data) {
   const schema = Joi.object({
@@ -103,6 +103,43 @@ const ieltsCreate = async (data) => {
   }
 };
 
+const userSuggestions = async (userId, type, linkedUsers) => {
+  try {
+    const currentUser = await userRepository.findUserById(userId);
+    if (!currentUser) throw new Error(Constants.USER_NOT_FOUND);
+
+    const excludeUserIds = currentUser.following.concat(userId);
+    let filters = { _id: { $nin: excludeUserIds } };
+    if (type) filters.type = type;
+
+    if (linkedUsers) {
+      if (currentUser.type === Constants.STUDENT) {
+        const paymentDoneToUniExperts = (
+          await uniExpertRequestRepository.findUniExpertRequests({ studentId: userId })
+        )
+          .filter((request) => request.paymentStatus === true)
+          .map((request) => request.uniExpertId._id);
+
+        filters._id = { $in: paymentDoneToUniExperts };
+      } else if (currentUser.type === Constants.UNI_EXPERT) {
+        const paymentDoneByStudents = (
+          await uniExpertRequestRepository.findUniExpertRequests({ uniExpertId: userId })
+        )
+          .filter((request) => request.paymentStatus === true)
+          .map((request) => request.studentId._id);
+
+        filters._id = { $in: paymentDoneByStudents };
+      }
+    }
+
+    Logger.info(Constants.FETCHING_DATA);
+
+    return await userRepository.findUsersSuggestions(filters);
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 exports.userService = {
   experienceCreate,
   educationCreate,
@@ -110,4 +147,5 @@ exports.userService = {
   validateExperiencePayload,
   validateEducationPayload,
   validateIeltsPayload,
+  userSuggestions,
 };
