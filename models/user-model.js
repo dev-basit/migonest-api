@@ -61,7 +61,7 @@ const educationSchema = new mongoose.Schema(
     address: { type: String, required: true, minlength: 3, maxlength: 128 },
     degree: { type: String, required: true, minlength: 3, maxlength: 128 },
     startDate: { type: String, required: true, minlength: 9, maxlength: 11 },
-    endDate: { type: String, minlength: 9, maxlength: 11 },
+    endDate: { type: String, maxlength: 11, default: "" },
     totalScore: { type: Number },
     scoreGained: { type: Number },
   },
