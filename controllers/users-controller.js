@@ -181,6 +181,32 @@ const userSuggestions = async (req, res) => {
   }
 };
 
+const network = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    const showFollowers = req.query.showFollowers === "true";
+
+    const currentUser = await userRepository.findUserById(userId);
+    if (!currentUser) throw new Error(Constants.USER_NOT_FOUND);
+
+    const filters = {};
+
+    if (!showFollowers) {
+      const excludeUserIds = currentUser.following.concat(userId);
+      filters._id = { $nin: excludeUserIds };
+    } else {
+      filters._id = { $in: currentUser.following };
+    }
+
+    Logger.info(Constants.FETCHING_DATA);
+
+    const network = await userRepository.findUsersSuggestions(filters);
+    return ResponseHandler.sendOkResponse(network, Constants.SUCCESSFULLY_FETCED, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
 const updatePreferences = async (req, res) => {
   try {
     if (!req.body.id) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PAYLOAD, res);
@@ -241,5 +267,6 @@ exports.usersControllers = {
   currentUserDetails,
   followUser,
   userSuggestions,
+  network,
   updatePreferences,
 };
