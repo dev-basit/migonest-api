@@ -7,6 +7,7 @@ const { adminMiddleware } = require("../middleware");
 router.get("/", adminMiddleware, usersControllers.users);
 router.get("/my/details", usersControllers.currentUserDetails);
 router.get("/suggests/to/follow", usersControllers.userSuggestions);
+router.get("/network", usersControllers.network);
 router.get("/:id", usersControllers.userDetails); // check for only admin can get any user details, and normal users can only get their own details is written inside service function. For complex logic, separate the endpoint.
 router.post("/", usersControllers.userCreate);
 router.post("/follow/", usersControllers.followUser);
