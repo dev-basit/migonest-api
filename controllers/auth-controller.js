@@ -1,3 +1,4 @@
+const bcrypt = require("bcrypt");
 const { validatePayload, ResponseHandler, Response, Constants, Utils, sendEmail } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { authService } = require("../services");
@@ -72,4 +73,37 @@ const verifyEmail = async (req, res) => {
   }
 };
 
-exports.authControllers = { userLogin, verifyEmail };
+// TODO: Improvements
+// Send password reset link via email
+// Add 2FA for password change confirmation
+// Log user out from all devices after a password change
+const passwordUpdate = async (req, res) => {
+  try {
+    const { error } = validatePayload.passwordUpdate(req.body);
+    if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
+
+    Logger.info(Constants.PAYLOAD_IS_CORRECT);
+
+    let user = await userRepository.findUserWithPassword({ email: req.user.email });
+    if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
+
+    const isCurrentPasswordValid = await authService.verifyPassword(req.body.currentPassword, user.password);
+    if (!isCurrentPasswordValid)
+      return ResponseHandler.sendUnauthorizedResponse(Constants.INVALID_CURRENT_PASSWORD, res);
+
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(req.body.newPassword, salt);
+
+    const updatedUser = await userRepository.updateUser(req.user._id, user);
+    if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    // dont send user password to the consumer
+    updatedUser.password = null;
+
+    return ResponseHandler.sendOkResponse(updatedUser, Constants.SUCCESSFULLY_UPDATED_, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.authControllers = { userLogin, verifyEmail, passwordUpdate };
