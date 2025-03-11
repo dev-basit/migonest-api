@@ -12,6 +12,9 @@ function userCreate(user) {
     date: Joi.string().min(9).max(11).required(),
     gender: Joi.string().valid("male", "female", "other").required(),
     type: Joi.string().valid(Constants.STUDENT, Constants.UNI_EXPERT, Constants.SUPER_ADMIN).required(),
+    documents: Joi.array()
+      .items(Joi.object({ label: Joi.string().required(), url: Joi.string().uri().required() }))
+      .default([]),
   });
 
   return schema.validate(user);
@@ -35,4 +38,13 @@ function emailVerification(req) {
   return schema.validate(req);
 }
 
-exports.validatePayload = { userCreate, userLogin, emailVerification };
+function passwordUpdate(user) {
+  const schema = Joi.object({
+    currentPassword: Joi.string().min(4).max(1024).required(),
+    newPassword: Joi.string().min(4).max(1024).required(),
+  });
+
+  return schema.validate(user);
+}
+
+exports.validatePayload = { userCreate, userLogin, emailVerification, passwordUpdate };

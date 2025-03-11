@@ -50,6 +50,7 @@ exports.Constants = {
   CONFLICT: "Already data exist.",
   ERROR_UPDATING: "Error while updating details.",
   SERVER_ERROR: "INTERNAL_SERVER_ERROR",
+  INVALID_CURRENT_PASSWORD: "Please provide correct current password.",
 
   HTTP_STATUS_CODES: {
     OK: 200,
