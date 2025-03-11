@@ -13,6 +13,7 @@ const uniExpertRequestsFind = async (req, res) => {
     const filters = {};
     if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
     if (req.query.studentId) filters.studentId = req.query.studentId;
+    if (req.query.paymentStatus) filters.paymentStatus = req.query.paymentStatus;
 
     Logger.info(Constants.FETCHING_DATA);
 
