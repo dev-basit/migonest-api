@@ -3,7 +3,7 @@ const { ResponseHandler } = require("./response-handlers");
 const { Constants } = require("./constants");
 const { validatePayload } = require("./validations");
 const { Utils } = require("./utils");
-const { sendEmail } = require("./email");
+const { sendEmail, sendContactUsMail } = require("./email");
 
 module.exports = {
   Response,
@@ -12,4 +12,5 @@ module.exports = {
   validatePayload,
   Utils,
   sendEmail,
+  sendContactUsMail,
 };

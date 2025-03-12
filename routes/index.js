@@ -6,6 +6,7 @@ const { universitiesRoutes } = require("./university-routes");
 const { uniExpertRequestRoutes } = require("./uni-expert-request-routes");
 const { admissionRoutes } = require("./admission-routes");
 const { becomeUniExpertRoutes } = require("./become-uni-expert-routes");
+const { contactUsRoutes } = require("./contact-us-routes");
 
 module.exports = {
   authRoutes,
@@ -16,4 +17,5 @@ module.exports = {
   uniExpertRequestRoutes,
   admissionRoutes,
   becomeUniExpertRoutes,
+  contactUsRoutes,
 };

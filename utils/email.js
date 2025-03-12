@@ -35,4 +35,28 @@ async function sendEmail(data) {
   }
 }
 
+async function sendContactUsMail(data) {
+  try {
+    Logger.info(`Sending email to ${data.email}`);
+
+    await emailer.sendMail({
+      from: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
+      to: data.email,
+      subject: "Migonest Contact Us",
+      text: `
+      
+      ${data.message}
+      
+      Regards: ${data.firstName} ${data.lastName}
+      Phone No: ${data.phone} 
+      `,
+    });
+
+    Logger.info(`Successfully sent email to ${data.email}`);
+  } catch (e) {
+    throw new Error(e);
+  }
+}
+
 exports.sendEmail = sendEmail;
+exports.sendContactUsMail = sendContactUsMail;

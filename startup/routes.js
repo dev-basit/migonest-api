@@ -8,6 +8,7 @@ const {
   uniExpertRequestRoutes,
   admissionRoutes,
   becomeUniExpertRoutes,
+  contactUsRoutes,
 } = require("../routes");
 const { authMiddleware, errorMiddleware, logMiddleware } = require("../middleware");
 
@@ -23,5 +24,6 @@ exports.initRoutes = function (app) {
   app.use("/v1/uni/expert/requests", uniExpertRequestRoutes);
   app.use("/v1/admissions", admissionRoutes);
   app.use("/v1/become/uni/experts", becomeUniExpertRoutes);
+  app.use("/v1/contact/us", contactUsRoutes);
   app.use(errorMiddleware);
 };
