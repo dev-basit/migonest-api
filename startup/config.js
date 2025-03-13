@@ -21,6 +21,21 @@ exports.initConfiguration = function () {
     Logger.error("ERROR STARTING SERVER: jwtPrivateKey is not defined in environment variables.");
     process.exit(1);
   }
+
+  if (!config.cloudinaryCloudName) {
+    Logger.error("ERROR STARTING SERVER: cloudinary cloud name is not defined in environment variables.");
+    process.exit(1);
+  }
+
+  if (!config.cloudinaryApiKey) {
+    Logger.error("ERROR STARTING SERVER: cloudinary api key is not defined in environment variables.");
+    process.exit(1);
+  }
+
+  if (!config.cloudinaryApiSecret) {
+    Logger.error("ERROR STARTING SERVER: cloudinary api secret is not defined in environment variables.");
+    process.exit(1);
+  }
 };
 
 ////////////
