@@ -7,6 +7,7 @@ const { uniExpertRequestsControllers } = require("./uni-expert-request-controlle
 const { admissionsControllers } = require("./admission-controller");
 const { becomeUniExpertControllers } = require("./become-uni-expert-controller");
 const { contactUsControllers } = require("./contact-us-controller");
+const { uploadControllers } = require("./upload-controller");
 
 module.exports = {
   authControllers,
@@ -18,4 +19,5 @@ module.exports = {
   admissionsControllers,
   becomeUniExpertControllers,
   contactUsControllers,
+  uploadControllers,
 };
