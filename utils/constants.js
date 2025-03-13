@@ -21,6 +21,7 @@ exports.Constants = {
   SEND_ID_IN_PARAMS: "Please send id in params.",
   SUCCESSFULLY_FETCED: "Successfully fetched data.",
   SUCCESSFULLY_ADDED: "Successfully added.",
+  SUCCESSFULLY_UPLOADED: "Successfully upload.",
   SUCCESSFULLY_CREATED_USER:
     "Successfully created account. Please check verification code in your email and enter it here.",
   SUCCESSFULLY_UPDATED: "Successfully updated data.",
