@@ -94,6 +94,7 @@ const userUpdate = async (req, res) => {
       type: req.body.type || userExisitingDetails.type,
       preferences: req.body.preferences || userExisitingDetails.preferences,
       about: req.body.about || userExisitingDetails.about,
+      documents: req.body.documents || userExisitingDetails.documents || [],
     };
 
     const updatedUser = await userRepository.updateUser(req.body.id, userUpdatedDetails);

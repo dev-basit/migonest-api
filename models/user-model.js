@@ -24,6 +24,10 @@ const userSchema = new mongoose.Schema(
     experiences: [{ type: mongoose.Schema.Types.ObjectId, ref: "Experience" }],
     education: [{ type: mongoose.Schema.Types.ObjectId, ref: "Education" }],
     ielts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ielts" }],
+    documents: {
+      type: [{ label: { type: String, required: true }, url: { type: String, required: true } }],
+      default: [],
+    },
   },
   { timestamps: true }
 );
