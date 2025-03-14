@@ -4,7 +4,7 @@ const { Logger } = require("../startup/logs");
 // TODO:change hardcoded details
 // TODO: apply rate limiting to email verification code
 
-const emailer = nodemailer.createTransport({
+const verifyEmailer = nodemailer.createTransport({
   host: "smtp.gmail.com",
   service: "gmail",
   port: 465,
@@ -18,11 +18,25 @@ const emailer = nodemailer.createTransport({
   },
 });
 
+const contactEmailer = nodemailer.createTransport({
+  host: "smtp.gmail.com",
+  service: "gmail",
+  port: 465,
+  secure: true,
+  auth: {
+    // from: process.env.EMAIL_USER,
+    // to: process.env.TO_EMAIL,
+
+    user: process.env.EMAIL_SENDER || "migonest.contact@gmail.com",
+    pass: process.env.EMAIL_PASS || "oeht ekke ttuk naai",
+  },
+});
+
 async function sendEmail(data) {
   try {
     Logger.info(`Sending email to ${data.receiver}`);
 
-    await emailer.sendMail({
+    await verifyEmailer.sendMail({
       from: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
       to: data.receiver,
       subject: "Email Verification Code",
@@ -39,8 +53,8 @@ async function sendContactUsMail(data) {
   try {
     Logger.info(`Sending email to ${data.email}`);
 
-    await emailer.sendMail({
-      from: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
+    await contactEmailer.sendMail({
+      from: process.env.EMAIL_SENDER || "migonest.contact@gmail.com",
       to: data.email,
       subject: "Migonest Contact Us",
       text: `
