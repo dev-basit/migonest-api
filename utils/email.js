@@ -51,11 +51,11 @@ async function sendEmail(data) {
 
 async function sendContactUsMail(data) {
   try {
-    Logger.info(`Sending email to ${data.email}`);
+    Logger.info(`Email receiving from ${data.email}`);
 
     await contactEmailer.sendMail({
-      from: process.env.EMAIL_SENDER || "migonest.contact@gmail.com",
-      to: data.email,
+      from: process.env.EMAIL_SENDER || data.email,
+      to: "migonest.contact@gmail.com",
       subject: "Migonest Contact Us",
       text: `
       
@@ -66,7 +66,7 @@ async function sendContactUsMail(data) {
       `,
     });
 
-    Logger.info(`Successfully sent email to ${data.email}`);
+    Logger.info(`Successfully sent email to migonest.contact@gmail.com`);
   } catch (e) {
     throw new Error(e);
   }
