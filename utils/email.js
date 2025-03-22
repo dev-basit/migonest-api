@@ -54,15 +54,18 @@ async function sendContactUsMail(data) {
     Logger.info(`Email receiving from ${data.email}`);
 
     await contactEmailer.sendMail({
-      from: process.env.EMAIL_SENDER || data.email,
+      from: data.email,
+      replyTo: data.email,
       to: "migonest.contact@gmail.com",
       subject: "Migonest Contact Us",
       text: `
       
       ${data.message}
       
+      Sender Details:
       Regards: ${data.firstName} ${data.lastName}
       Phone No: ${data.phone} 
+      Email: ${data.email} 
       `,
     });
 
