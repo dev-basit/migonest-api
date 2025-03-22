@@ -18,12 +18,13 @@ function getCloudinaryStorage() {
         const timestamp = Date.now();
         const originalName = file.originalname.split(".").slice(0, -1).join(".");
         // const extension = file.originalname.split(".").pop();
+        const fileExt = file.mimetype === "application/pdf" ? ".pdf" : "";
 
         return {
           folder: "migonest",
           allowed_formats: ["jpeg", "png", "jpg", "pdf"],
           resource_type: file.mimetype === "application/pdf" ? "raw" : "auto",
-          public_id: `${originalName}_${timestamp}`,
+          public_id: `${originalName.replace(/\s+/g, "_")}_${timestamp}${fileExt}`,
         };
       },
     });
