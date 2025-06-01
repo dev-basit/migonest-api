@@ -42,6 +42,7 @@ exports.Constants = {
   STUDENT_NOT_FOUND: "Student not found.",
   UNIVERSITY_NOT_FOUND: "University not found.",
   UNI_EXPERT_REQUEST_NOT_FOUND: "Uni expert request not found.",
+  CONVERSATION_NOT_FOUND: "Conversation not found.",
   BAD_REQUEST: "Bad request. Your request cannot be fulfilled.",
   UNAUTHORIZED: "you are unauthorized to perform this action.",
   NO_TOKEN_PROVIDED: "Access denied. No token provided.",
