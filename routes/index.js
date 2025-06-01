@@ -8,6 +8,9 @@ const { admissionRoutes } = require("./admission-routes");
 const { becomeUniExpertRoutes } = require("./become-uni-expert-routes");
 const { contactUsRoutes } = require("./contact-us-routes");
 const { uploadRoutes } = require("./upload-routes");
+const { conversationRoutes } = require("./conversation-routes");
+const { messageRoutes } = require("./message-routes");
+const { notificationRoutes } = require("./notification-routes");
 
 module.exports = {
   authRoutes,
@@ -20,4 +23,7 @@ module.exports = {
   becomeUniExpertRoutes,
   contactUsRoutes,
   uploadRoutes,
+  conversationRoutes,
+  messageRoutes,
+  notificationRoutes,
 };

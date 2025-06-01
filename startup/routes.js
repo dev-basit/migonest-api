@@ -10,6 +10,9 @@ const {
   becomeUniExpertRoutes,
   contactUsRoutes,
   uploadRoutes,
+  conversationRoutes,
+  messageRoutes,
+  notificationRoutes,
 } = require("../routes");
 const { authMiddleware, errorMiddleware, logMiddleware } = require("../middleware");
 
@@ -27,5 +30,8 @@ exports.initRoutes = function (app) {
   app.use("/v1/become/uni/experts", becomeUniExpertRoutes);
   app.use("/v1/contact/us", contactUsRoutes);
   app.use("/v1/upload", uploadRoutes);
+  app.use("/v1/conversations", conversationRoutes);
+  app.use("/v1/messages", messageRoutes);
+  app.use("/v1/notifications", notificationRoutes);
   app.use(errorMiddleware);
 };
