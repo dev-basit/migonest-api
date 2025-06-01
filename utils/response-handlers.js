@@ -57,6 +57,17 @@ class ResponseHandler {
     return res.status(Constants.HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(response);
   }
 
+  static sendErrorResponse(
+    msg = Constants.SERVER_ERROR,
+    status = Constants.HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR,
+    res
+  ) {
+    const response = new Response(null, status, msg, Constants.FAIL);
+
+    this.logError(response);
+    return res.status(Constants.HTTP_STATUS_CODES.INTERNAL_SERVER_ERROR).send(response);
+  }
+
   // logs used internally be response handlers
   static logSuccess(response) {
     Logger.info(response.getMessage());
