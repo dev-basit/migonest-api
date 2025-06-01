@@ -63,6 +63,15 @@ const findUsers = async (params = {}) => {
   }
 };
 
+// gets minimum info to be used by public
+const findUsersPublic = async (params = {}) => {
+  try {
+    return await UserModel.find(params).select("_id userName firstName lastName profilePicture");
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const findUsersSuggestions = async (params = {}) => {
   try {
     return await UserModel.find(params)
@@ -111,6 +120,7 @@ exports.userRepository = {
   findUser,
   findUserById,
   findUserWithPassword,
+  findUsersPublic,
   findUserDetails,
   findUserDetailsById, // public info
   findUsers,

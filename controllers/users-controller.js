@@ -7,8 +7,17 @@ const { userService } = require("../services");
 
 const users = async (req, res) => {
   try {
+    const filters = {};
+    if (req.query.name) {
+      const name = req.query.name;
+      filters.$or = [
+        { firstName: { $regex: name, $options: "i" } },
+        { lastName: { $regex: name, $options: "i" } },
+      ];
+    }
+
     Logger.info(Constants.FETCHING_DATA);
-    const users = await userRepository.findUsers();
+    const users = await userRepository.findUsersPublic(filters);
     return ResponseHandler.sendOkResponse(users, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
