@@ -8,6 +8,7 @@ const universitiesFind = async (req, res) => {
     Logger.info(Constants.FETCHING_DATA);
 
     const filters = {};
+    if (req.query.name) filters.name = { $regex: req.query.name, $options: "i" };
     if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
     const universities = await universityRepository.findUniversities(filters);
 
