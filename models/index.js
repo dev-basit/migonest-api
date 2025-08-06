@@ -7,6 +7,8 @@ const { BecomeUniExpertModel } = require("./become-uni-expert-model");
 const { ConversationModel } = require("./conversation-model");
 const { MessageModel } = require("./message-model");
 const { NotificationModel } = require("./notification-model");
+const { SubscriptionModel } = require("./subscription-model");
+const { PurchaseModel } = require("./purchase-model");
 
 module.exports = {
   UserModel,
@@ -21,4 +23,6 @@ module.exports = {
   ConversationModel,
   MessageModel,
   NotificationModel,
+  SubscriptionModel,
+  PurchaseModel,
 };

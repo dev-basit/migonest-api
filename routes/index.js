@@ -11,6 +11,10 @@ const { uploadRoutes } = require("./upload-routes");
 const { conversationRoutes } = require("./conversation-routes");
 const { messageRoutes } = require("./message-routes");
 const { notificationRoutes } = require("./notification-routes");
+const { purchaseRoutes } = require("./purchase-routes");
+const { subscriptionRoutes } = require("./subscription-routes");
+const { checkoutRoutes } = require("./checkout-routes");
+const { stripeWebhooksRoutes } = require("./stripe-webhooks-routes");
 
 module.exports = {
   authRoutes,
@@ -26,4 +30,8 @@ module.exports = {
   conversationRoutes,
   messageRoutes,
   notificationRoutes,
+  purchaseRoutes,
+  subscriptionRoutes,
+  checkoutRoutes,
+  stripeWebhooksRoutes,
 };

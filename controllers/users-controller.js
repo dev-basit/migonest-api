@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const _ = require("lodash");
-const { validatePayload, ResponseHandler, Response, Constants, sendEmail } = require("../utils");
+const { validatePayload, ResponseHandler, Response, Constants, sendEmail, stripe } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { userRepository } = require("../repositories");
 const { userService } = require("../services");
@@ -36,11 +36,22 @@ const userCreate = async (req, res) => {
 
     Logger.info(Constants.EMAI_IS_UNIQUE);
 
-    user = await userRepository.createUser(req.body);
+    const stripeCustomer = await stripe.customers.create({
+      name: req.body.firstName + " " + req.body.lastName,
+      email: req.body.email,
+    });
+
+    if (!stripeCustomer.id)
+      return ResponseHandler.sendInternalServerErrorResponse("Error while generating stripe id.", res);
+
+    user = await userRepository.createUser({
+      ...req.body,
+      stripeCustomerId: stripeCustomer.id,
+    });
 
     Logger.info(Constants.SUCCESSFULLY_ADDED);
 
-    await sendEmail({ receiver: user.email, code: user.emailVerificationCode }); // send code for verification
+    await sendEmail({ receiver: user.email, text: user.emailVerificationCode }); // send code for verification
 
     const token = user.generateAuthToken();
     return res
@@ -59,6 +70,7 @@ const userCreate = async (req, res) => {
             "date",
             "gender",
             "type",
+            // "stripeCustomerId",
           ]),
           Constants.HTTP_STATUS_CODES.CREATED,
           Constants.SUCCESSFULLY_CREATED_USER,
@@ -104,6 +116,7 @@ const userUpdate = async (req, res) => {
       preferences: req.body.preferences || userExisitingDetails.preferences,
       about: req.body.about || userExisitingDetails.about,
       documents: req.body.documents || userExisitingDetails.documents || [],
+      stripeCustomerId: userExisitingDetails.stripeCustomerId,
     };
 
     const updatedUser = await userRepository.updateUser(req.body.id, userUpdatedDetails);
@@ -258,6 +271,7 @@ const updatePreferences = async (req, res) => {
             "date",
             "gender",
             "type",
+            // "stripeCustomerId",
           ]),
           Constants.HTTP_STATUS_CODES.OK,
           Constants.SUCCESSFULLY_CREATED_USER,

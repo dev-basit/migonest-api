@@ -39,8 +39,8 @@ async function sendEmail(data) {
     await verifyEmailer.sendMail({
       from: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
       to: data.receiver,
-      subject: "Email Verification Code",
-      text: `Code: ${data.code}`,
+      subject: data.subject || "Email Verification Code",
+      text: data.text || `Code: ${data.code}`,
     });
 
     Logger.info(`Successfully sent email to ${data.receiver}`);

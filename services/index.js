@@ -9,6 +9,9 @@ const { contactUsService } = require("./contact-us-service");
 const { conversationService } = require("./conversation-service");
 const { messageService } = require("./message-service");
 const { notificationService } = require("./notification-service");
+const { purchaseService } = require("./purchase-service");
+const { subscriptionService } = require("./subscription-service");
+const { checkoutService } = require("./checkout-service");
 
 module.exports = {
   authService,
@@ -22,4 +25,7 @@ module.exports = {
   conversationService,
   messageService,
   notificationService,
+  purchaseService,
+  subscriptionService,
+  checkoutService,
 };

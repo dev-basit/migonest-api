@@ -23,7 +23,7 @@ const userLogin = async (req, res) => {
     if (!user.isVerified) {
       user.emailVerificationCode = Utils.generateCode(6);
       await userRepository.updateUser(user._id, user);
-      await sendEmail({ receiver: user.email, code: user.emailVerificationCode });
+      await sendEmail({ receiver: user.email, text: user.emailVerificationCode });
 
       return ResponseHandler.sendForbiddenResponse("Your email is not verified yet.", res);
     }

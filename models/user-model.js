@@ -28,6 +28,8 @@ const userSchema = new mongoose.Schema(
       type: [{ label: { type: String, required: true }, url: { type: String, required: true } }],
       default: [],
     },
+    stripeCustomerId: { type: String, required: true, unique: true },
+    currentSubscriptionId: { type: mongoose.Schema.Types.ObjectId, ref: "Subscription" },
   },
   { timestamps: true }
 );
@@ -42,6 +44,7 @@ userSchema.methods.generateAuthToken = function () {
       type: this.type,
       profilePicture: this.profilePicture,
       preferences: this.preferences,
+      stripeCustomerId: this.stripeCustomerId,
     },
     config.jwtPrivateKey
   );
