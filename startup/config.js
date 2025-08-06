@@ -7,6 +7,11 @@ const { Logger } = require("./logs");
 
 // Method 1: Explicitly terminating the process
 exports.initConfiguration = function () {
+  if (!config.clientUrl) {
+    Logger.error("ERROR STARTING SERVER: client url is not defined in environment variables.");
+    process.exit(1);
+  }
+
   if (!config.db) {
     Logger.error("ERROR STARTING SERVER: database connection is not defined in environment variables.");
     process.exit(1); // terminate the app process
@@ -34,6 +39,26 @@ exports.initConfiguration = function () {
 
   if (!config.cloudinaryApiSecret) {
     Logger.error("ERROR STARTING SERVER: cloudinary api secret is not defined in environment variables.");
+    process.exit(1);
+  }
+
+  if (!config.stripeSecretKey) {
+    Logger.error("ERROR STARTING SERVER: stripe secret key is not defined in environment variables.");
+    process.exit(1);
+  }
+
+  if (!config.stripeMonthlyPriceId) {
+    Logger.error("ERROR STARTING SERVER: stripe monthly price id is not defined in environment variables.");
+    process.exit(1);
+  }
+
+  // if (!config.stripeYearlyPriceId) {
+  //   Logger.error("ERROR STARTING SERVER: stripe yearly price id is not defined in environment variables.");
+  //   process.exit(1);
+  // }
+
+  if (!config.stripeWebhookSecret) {
+    Logger.error("ERROR STARTING SERVER: stripe webhook secret is not defined in environment variables.");
     process.exit(1);
   }
 };
