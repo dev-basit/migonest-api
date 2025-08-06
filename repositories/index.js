@@ -8,6 +8,8 @@ const { becomeUniExpertsRepository } = require("./become-uni-expert-repositories
 const { conversationRepository } = require("./conversation-repositories");
 const { messageRepository } = require("./message-repositories");
 const { notificationRepository } = require("./notification-repositories");
+const { purchaseRepository } = require("./purchase-repositories");
+const { subscriptionRepository } = require("./subscription-repositories");
 
 module.exports = {
   userRepository,
@@ -20,4 +22,6 @@ module.exports = {
   conversationRepository,
   messageRepository,
   notificationRepository,
+  purchaseRepository,
+  subscriptionRepository,
 };
