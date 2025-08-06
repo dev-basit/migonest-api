@@ -1,4 +1,4 @@
-const { userRepository, subscriptionRepository } = require("../repositories");
+const { userRepository, subscriptionRepository, purchaseRepository } = require("../repositories");
 const { sendEmail } = require("../utils");
 const { config } = require("../config");
 
@@ -31,6 +31,18 @@ const subscriptionCreated = async (subscription) => {
   const newSubscription = await subscriptionRepository.createSubscription(subscriptionData);
 
   await userRepository.updateUser(user._id, { currentSubscriptionId: newSubscription._id });
+
+  Logger.info(`Payment received for user ${user._id.toString()} with plan ${plan}`);
+
+  await purchaseRepository.createPurchase({
+    userId: user._id.toString(),
+    subscriptionId: newSubscription._id,
+    type: "subscription",
+    amount: subscription.items.data[0].plan.amount / 100,
+    stripePurchaseId: subscription.id,
+  });
+
+  Logger.info(`Subscription purchase created for user ${user._id.toString()} with plan ${plan}`);
 
   if (subscription.status === "active") {
     await sendEmail({
