@@ -1,4 +1,5 @@
 const { userRepository, uniExpertRequestRepository, purchaseRepository } = require("../repositories");
+const { Logger } = require("../startup/logs");
 const { sendEmail } = require("../utils");
 
 const purchaseUniExpertRequest = async (session) => {
