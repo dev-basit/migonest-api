@@ -1,6 +1,7 @@
 const { userRepository, subscriptionRepository, purchaseRepository } = require("../repositories");
 const { sendEmail } = require("../utils");
 const { config } = require("../config");
+const { Logger } = require("../startup/logs");
 
 const getSubscription = async (userId) => {
   // const user = await userRepository.findUserById(userId);
