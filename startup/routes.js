@@ -13,10 +13,17 @@ const {
   conversationRoutes,
   messageRoutes,
   notificationRoutes,
+  purchaseRoutes,
+  subscriptionRoutes,
+  checkoutRoutes,
+  stripeWebhooksRoutes,
 } = require("../routes");
 const { authMiddleware, errorMiddleware, logMiddleware } = require("../middleware");
 
 exports.initRoutes = function (app) {
+  // Stripe webhooks need raw body for signature verification
+  app.use("/v1/stripe/webhooks", express.raw({ type: "application/json" }), stripeWebhooksRoutes);
+
   app.use(express.json());
   app.use(authMiddleware); // Check if user send jwt token or not. It will also decode it to extract cosnumer details and it to req object, so all middlware below can access it via req.user
   app.use(logMiddleware);
@@ -33,5 +40,8 @@ exports.initRoutes = function (app) {
   app.use("/v1/conversations", conversationRoutes);
   app.use("/v1/messages", messageRoutes);
   app.use("/v1/notifications", notificationRoutes);
+  app.use("/v1/purchases", purchaseRoutes);
+  app.use("/v1/subscriptions", subscriptionRoutes);
+  app.use("/v1/checkout", checkoutRoutes);
   app.use(errorMiddleware);
 };
