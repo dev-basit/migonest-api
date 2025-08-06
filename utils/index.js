@@ -4,6 +4,7 @@ const { Constants } = require("./constants");
 const { validatePayload } = require("./validations");
 const { Utils } = require("./utils");
 const { sendEmail, sendContactUsMail } = require("./email");
+const { stripe } = require("./stripe");
 
 module.exports = {
   Response,
@@ -13,4 +14,5 @@ module.exports = {
   Utils,
   sendEmail,
   sendContactUsMail,
+  stripe,
 };
