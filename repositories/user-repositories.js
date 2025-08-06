@@ -96,6 +96,7 @@ const createUser = async (newUserData) => {
         "date",
         "gender",
         "type",
+        "stripeCustomerId",
       ])
     );
     const salt = await bcrypt.genSalt(10);
