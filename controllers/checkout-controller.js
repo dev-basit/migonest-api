@@ -52,7 +52,8 @@ const createUniExpertServiceSession = async (req, res) => {
 
 const createSubscriptionSession = async (req, res) => {
   try {
-    // const { planDuration } = req.body;
+    const { callbackPath } = req.body;
+
     const planDuration = "month";
     if (!planDuration) {
       return ResponseHandler.sendBadResponse("Plan duration is required", res);
@@ -65,7 +66,7 @@ const createSubscriptionSession = async (req, res) => {
       return ResponseHandler.sendNotFoundResponse("User not found", res);
     }
 
-    const session = await checkoutService.createSubscriptionSession(user, planDuration);
+    const session = await checkoutService.createSubscriptionSession(user, planDuration, callbackPath);
 
     return ResponseHandler.sendOkResponse(
       { checkoutUrl: session.url },

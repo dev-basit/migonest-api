@@ -46,7 +46,7 @@ const createUniExpertServiceSession = async (student, uniExpertRequestId) => {
   }
 };
 
-const createSubscriptionSession = async (user, planDuration) => {
+const createSubscriptionSession = async (user, planDuration, callbackPath) => {
   try {
     let priceIdForSubscriptionPlan;
     if (planDuration === "month") {
@@ -64,8 +64,8 @@ const createSubscriptionSession = async (user, planDuration) => {
       line_items: [{ price: priceIdForSubscriptionPlan, quantity: 1 }],
       mode: "subscription",
       // success_url: `${config.clientUrl}/subscription/success?session_id={CHECKOUT_SESSION_ID}`,
-      success_url: `${config.clientUrl}/dashboard/profile`,
-      cancel_url: `${config.clientUrl}/dashboard/profile`,
+      success_url: `${config.clientUrl}/${callbackPath}`,
+      cancel_url: `${config.clientUrl}/${callbackPath}`,
       metadata: {
         userId: user._id.toString(),
         email: user.email,
