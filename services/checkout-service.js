@@ -5,11 +5,11 @@ const createBillingPortalSession = async (stripeCustomerId) => {
   try {
     const session = await stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
-      return_url: `${config.clientUrl}/billing`,
+      return_url: `${config.clientUrl}/dashboard/payment`,
     });
     return session;
   } catch (error) {
-    throw new Error(`Error creating billing portal session: ${error.message}`);
+    throw new Error(`Error creating billing portal: ${error.message}`);
   }
 };
 
