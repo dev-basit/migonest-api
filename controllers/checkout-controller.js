@@ -7,18 +7,17 @@ const createBillingPortalSession = async (req, res) => {
   try {
     Logger.info(Constants.FETCHING_DATA);
 
-    const user = await checkoutService.getUserById(req.user._id);
+    const user = await userRepository.findUserById(req.user._id);
     if (!user || !user.stripeCustomerId) {
       return ResponseHandler.sendNotFoundResponse("User not found or no Stripe customer ID found", res);
     }
 
+    if (user.type !== Constants.STUDENT)
+      return ResponseHandler.sendBadResponse("Billing portal can be created for students only.", res);
+
     const session = await checkoutService.createBillingPortalSession(user.stripeCustomerId);
 
-    return ResponseHandler.sendOkResponse(
-      { url: session.url },
-      "Billing portal session created successfully",
-      res
-    );
+    return ResponseHandler.sendOkResponse({ url: session.url }, "Billing portal created successfully", res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
