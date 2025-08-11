@@ -42,13 +42,13 @@ async function findPurchasesAll(query) {
     return PurchaseModel.find({ userId: studentId })
       .populate({
         path: "userId",
-        select: "name email profilePicture",
+        select: "name email profilePicture preferences",
       })
       .populate({
         path: "uniExpertRequestId",
         populate: [
-          { path: "uniExpertId", select: "name email profilePicture" },
-          { path: "studentId", select: "name email profilePicture" },
+          { path: "uniExpertId", select: "name email profilePicture preferences" },
+          { path: "studentId", select: "name email profilePicture preferences" },
         ],
       })
       .sort({ createdAt: -1 });
@@ -175,13 +175,13 @@ async function findPurchasesAll(query) {
   return PurchaseModel.find({})
     .populate({
       path: "userId",
-      select: "name email profilePicture",
+      select: "name email profilePicture preferences",
     })
     .populate({
       path: "uniExpertRequestId",
       populate: [
-        { path: "uniExpertId", select: "name email profilePicture" },
-        { path: "studentId", select: "name email profilePicture" },
+        { path: "uniExpertId", select: "name email profilePicture preferences" },
+        { path: "studentId", select: "name email profilePicture preferences" },
       ],
     })
     .sort({ createdAt: -1 });
