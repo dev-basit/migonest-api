@@ -21,7 +21,7 @@ const createUniExpertServiceSession = async (student, uniExpertRequestId) => {
       line_items: [
         {
           price_data: {
-            currency: "usd",
+            currency: "eur",
             product_data: {
               name: "Consultation Fee",
               // images: [course.imageUrl],
