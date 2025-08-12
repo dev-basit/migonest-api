@@ -63,6 +63,9 @@ const admissionUpdate = async (req, res) => {
     if (!admissionExisitngDetails)
       return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
 
+    // TODO
+    // if payment is not done for uniexpertrequest from which this admission is created, give error and return
+
     const { step, documents } = req.body;
 
     const payload = {};
