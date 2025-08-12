@@ -42,13 +42,13 @@ async function findPurchasesAll(query) {
     return PurchaseModel.find({ userId: studentId })
       .populate({
         path: "userId",
-        select: "name email profilePicture preferences",
+        select: "userName email profilePicture preferences",
       })
       .populate({
         path: "uniExpertRequestId",
         populate: [
-          { path: "uniExpertId", select: "name email profilePicture preferences" },
-          { path: "studentId", select: "name email profilePicture preferences" },
+          { path: "uniExpertId", select: "userName email profilePicture preferences" },
+          { path: "studentId", select: "userName email profilePicture preferences" },
         ],
       })
       .sort({ createdAt: -1 });
@@ -93,7 +93,7 @@ async function findPurchasesAll(query) {
             {
               $project: {
                 _id: 1,
-                name: 1,
+                userName: 1,
                 email: 1,
                 profilePicture: 1,
                 preferences: 1,
@@ -115,7 +115,7 @@ async function findPurchasesAll(query) {
             {
               $project: {
                 _id: 1,
-                name: 1,
+                userName: 1,
                 email: 1,
                 profilePicture: 1,
                 preferences: 1,
@@ -137,7 +137,7 @@ async function findPurchasesAll(query) {
             {
               $project: {
                 _id: 1,
-                name: 1,
+                userName: 1,
                 email: 1,
                 profilePicture: 1,
                 preferences: 1,
@@ -175,13 +175,13 @@ async function findPurchasesAll(query) {
   return PurchaseModel.find({})
     .populate({
       path: "userId",
-      select: "name email profilePicture preferences",
+      select: "userName email profilePicture preferences",
     })
     .populate({
       path: "uniExpertRequestId",
       populate: [
-        { path: "uniExpertId", select: "name email profilePicture preferences" },
-        { path: "studentId", select: "name email profilePicture preferences" },
+        { path: "uniExpertId", select: "userName email profilePicture preferences" },
+        { path: "studentId", select: "userName email profilePicture preferences" },
       ],
     })
     .sort({ createdAt: -1 });
