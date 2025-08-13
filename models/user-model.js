@@ -46,7 +46,8 @@ userSchema.methods.generateAuthToken = function () {
       preferences: this.preferences,
       stripeCustomerId: this.stripeCustomerId,
     },
-    config.jwtPrivateKey
+    config.jwtPrivateKey,
+    { expiresIn: "1d" }
   );
   return token;
 };
