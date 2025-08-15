@@ -3,7 +3,7 @@ const { Utils } = require("../utils");
 
 const universitySchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, unique: true, maxlength: 255 },
+    name: { type: String, required: true, maxlength: 255 },
     requirements: { type: [String], default: [] },
     deadline: { type: String, minlength: 9, maxlength: 11, required: true },
     tuitionFee: { type: String, required: true, min: 1, max: 10 },
