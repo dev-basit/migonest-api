@@ -8,7 +8,7 @@ const uniExpertRequestSchema = new mongoose.Schema(
     universityId: { type: mongoose.Schema.Types.ObjectId, ref: "University", required: true },
     acceptStatus: { type: String, enum: ["open", "accepted", "rejected"], default: "open" },
     paymentStatus: { type: Boolean, default: false },
-    stripePurchaseId: { type: String, unique: true },
+    stripePurchaseId: { type: String, unique: true, sparse: true },
     createdAt: {
       type: String,
       minlength: 9,
