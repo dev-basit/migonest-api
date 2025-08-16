@@ -63,29 +63,32 @@ const subscriptionUpdated = async (subscription) => {
   const currentPeriodEnd = item.current_period_end;
   const plan = item.plan.id === config.stripeMonthlyPriceId ? "month" : "year";
 
-  const subscriptionData = {
-    userId: user._id.toString(),
-    planType: plan,
-    stripeSubscriptionId: subscription.id,
-    status: subscription.status,
-    currentPeriodStart: new Date(currentPeriodStart * 1000),
-    currentPeriodEnd: new Date(currentPeriodEnd * 1000),
-    cancelAtPeriodEnd: subscription.cancel_at_period_end,
-  };
+  const isSubscriptionCancelled = subscription.cancellation_details.reason === "cancellation_requested";
+  if (isSubscriptionCancelled) {
+    const subscriptionData = {
+      userId: user._id.toString(),
+      planType: plan,
+      stripeSubscriptionId: subscription.id,
+      status: "cancelled",
+      currentPeriodStart: new Date(currentPeriodStart * 1000),
+      currentPeriodEnd: new Date(currentPeriodEnd * 1000),
+      cancelAtPeriodEnd: subscription.cancel_at_period_end,
+    };
 
-  const updatedSubscription = await subscriptionRepository.updateSubscription(
-    subscription.id,
-    subscriptionData,
-    { new: true, upsert: true }
-  );
+    const updatedSubscription = await subscriptionRepository.updateSubscription(
+      { stripeSubscriptionId: subscription.id },
+      subscriptionData,
+      { new: true, upsert: true }
+    );
 
-  await userRepository.updateUser(user._id, { currentSubscriptionId: updatedSubscription._id });
+    await userRepository.updateUser(user._id, { currentSubscriptionId: updatedSubscription._id });
 
-  await sendEmail({
-    receiver: user.email,
-    subject: "Subscription Updated",
-    text: `Your Migonest subscription has been updated.`,
-  });
+    await sendEmail({
+      receiver: user.email,
+      subject: "Subscription Deactivated",
+      text: `Your Migonest subscription has been deactivated. You can use pro service till the end of the current subscription period.`,
+    });
+  }
 };
 
 const subscriptionDeleted = async (subscription) => {
