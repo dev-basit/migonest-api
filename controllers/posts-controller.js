@@ -12,7 +12,7 @@ const posts = async (req, res) => {
     userFollowingIds.push(req.user._id); // show user own post to user
 
     Logger.info(Constants.FETCHING_DATA);
-    const posts = await postRepository.findAllPosts({ author: { $in: userFollowingIds } });
+    const posts = await postRepository.findAllPosts({ author: { $in: userFollowingIds }, isVisible: true });
 
     return ResponseHandler.sendOkResponse(posts, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
@@ -95,4 +95,33 @@ const sharePost = async (req, res) => {
   }
 };
 
-exports.postsControllers = { posts, createPost, likeDislikePost, sharePost };
+const updatePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    if (!postId) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
+
+    const postExisitngDetails = await postRepository.findPostById(postId);
+    if (!postExisitngDetails) return ResponseHandler.sendNotFoundResponse(Constants.DATA_NOT_FOUND, res);
+
+    if (postExisitngDetails.author.toString() !== req.user._id.toString())
+      return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
+
+    const { content, picture, isVisible } = req.body;
+    const payload = {
+      content: content || postExisitngDetails.content,
+      picture: picture || postExisitngDetails.picture,
+    };
+
+    if (req.body.isVisible !== undefined) payload.isVisible = isVisible;
+    else payload.isVisible = postExisitngDetails.isVisible;
+
+    const updatedPost = await postRepository.updatePost(postId, payload);
+    if (!updatedPost) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    return ResponseHandler.sendOkResponse(updatedPost, Constants.SUCCESSFULLY_UPDATED_, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.postsControllers = { posts, createPost, likeDislikePost, sharePost, updatePost };
