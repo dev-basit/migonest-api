@@ -31,6 +31,6 @@ exports.authMiddleware = function (req, res, next) {
     req.user = decodedUser;
     next();
   } catch (ex) {
-    return ResponseHandler.sendBadResponse(Constants.INVALID_TOKEN, res);
+    return ResponseHandler.sendUnauthorizedResponse(Constants.INVALID_TOKEN, res);
   }
 };

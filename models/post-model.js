@@ -9,6 +9,7 @@ const postSchema = new mongoose.Schema(
     likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     shares: [{ type: mongoose.Schema.Types.ObjectId, ref: "Post" }],
     isShared: { type: Boolean, default: false },
+    isVisible: { type: Boolean, default: true },
     //   comments: [
     //     {
     //       user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
