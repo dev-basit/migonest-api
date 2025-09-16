@@ -95,9 +95,9 @@ const subscriptionDeleted = async (subscription) => {
   const user = await userRepository.findUser({ stripeCustomerId: subscription.customer });
   if (!user) throw new Error(`User not found for stripe customer id: ${subscription.customer}`);
 
-  await subscriptionRepository.updateSubscription(subscription.id, { status: "canceled" });
+  await subscriptionRepository.updateSubscription(subscription.id, { status: "deleted" });
 
-  // await userRepository.updateUser(user._id, { $unset: { currentSubscriptionId: 1 } });
+  await userRepository.updateUser(user._id, { $unset: { currentSubscriptionId: 1 } });
 
   await sendEmail({
     receiver: user.email,
