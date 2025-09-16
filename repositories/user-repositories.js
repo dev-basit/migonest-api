@@ -75,7 +75,7 @@ const findUsersPublic = async (params = {}) => {
 const findUsersSuggestions = async (params = {}) => {
   try {
     return await UserModel.find(params)
-      .select("_id userName profilePicture preferences")
+      .select("_id userName profilePicture preferences type")
       .sort({ createdAt: -1 });
   } catch (error) {
     throw new Error(error.message);
