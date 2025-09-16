@@ -97,7 +97,7 @@ const subscriptionDeleted = async (subscription) => {
 
   await subscriptionRepository.updateSubscription(subscription.id, { status: "canceled" });
 
-  await userRepository.updateUser(user._id, { $unset: { currentSubscriptionId: 1 } });
+  // await userRepository.updateUser(user._id, { $unset: { currentSubscriptionId: 1 } });
 
   await sendEmail({
     receiver: user.email,
