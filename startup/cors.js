@@ -1,5 +1,10 @@
 const cors = require("cors");
+const { config } = require("../config");
 
 exports.initCors = function (app) {
-  app.use(cors());
+  app.use(
+    cors({
+      origin: config.clientUrl,
+    })
+  );
 };
