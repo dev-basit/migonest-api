@@ -60,7 +60,7 @@ jobs:
             echo "--- Starting new container with new image ---"
             docker run -d \
               --name migonest-api \
-              -p 80:3000 \
+              -p 1180:3000 \
               --restart unless-stopped \
               $NEW_TAG
 
