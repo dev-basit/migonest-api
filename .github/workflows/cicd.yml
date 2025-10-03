@@ -43,7 +43,7 @@ jobs:
                 docker rm migonest-api || true
                 docker run -d \
                   --name migonest-api \
-                  -p 4000:4000 \
+                  -p 127.0.0.1:4000:4000 \
                   --restart unless-stopped \
                   -e clientUrl="${{ secrets.CLIENTURL }}" \
                   -e db="${{ secrets.DB }}" \
@@ -71,7 +71,7 @@ jobs:
             echo "--- Starting new container with new image ---"
             docker run -d \
               --name migonest-api \
-              -p 4000:4000 \
+              -p 127.0.0.1:4000:4000 \
               --restart unless-stopped \
               -e clientUrl="${{ secrets.CLIENTURL }}" \
               -e db="${{ secrets.DB }}" \
