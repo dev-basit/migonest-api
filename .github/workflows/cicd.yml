@@ -45,10 +45,10 @@ jobs:
                   --name migonest-api \
                   -p 80:3000 \
                   --restart unless-stopped \
-                  -e clientUrl="${{ secrets.CLIENT_URL }}" \
+                  -e clientUrl="${{ secrets.CLIENTURL }}" \
                   -e db="${{ secrets.DB }}" \
                   -e port="${{ secrets.PORT }}" \
-                  -e jwtPrivateKey="${{ secrets.JWT_PRIVATE_KEY }}" \
+                  -e jwtPrivateKey="${{ secrets.JWTPRIVATEKEY }}" \
                   -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
                   -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
                   -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
@@ -73,10 +73,10 @@ jobs:
               --name migonest-api \
               -p 1180:3000 \
               --restart unless-stopped \
-              -e clientUrl="${{ secrets.CLIENT_URL }}" \
+              -e clientUrl="${{ secrets.CLIENTURL }}" \
               -e db="${{ secrets.DB }}" \
               -e port="${{ secrets.PORT }}" \
-              -e jwtPrivateKey="${{ secrets.JWT_PRIVATE_KEY }}" \
+              -e jwtPrivateKey="${{ secrets.JWTPRIVATEKEY }}" \
               -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
               -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
               -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
