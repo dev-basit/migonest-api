@@ -23,8 +23,8 @@ jobs:
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             set -e
             export GH_PAT=${{ secrets.GH_PAT }}
-            
-            
+
+
             echo "--- Removing old code ---"
             cd ~/app
             rm -rf migonest-api
@@ -45,6 +45,17 @@ jobs:
                   --name migonest-api \
                   -p 80:3000 \
                   --restart unless-stopped \
+                  -e clientUrl="${{ secrets.CLIENT_URL }}" \
+                  -e db="${{ secrets.DB }}" \
+                  -e port="${{ secrets.PORT }}" \
+                  -e jwtPrivateKey="${{ secrets.JWT_PRIVATE_KEY }}" \
+                  -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
+                  -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
+                  -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
+                  -e STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
+                  -e STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
+                  -e STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
+                  -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.STRIPE_MONTHLY_PRICE_ID }}" \
                   $PREV_TAG
                 echo "✅ Rolled back to $PREV_TAG"
               else
@@ -62,6 +73,17 @@ jobs:
               --name migonest-api \
               -p 1180:3000 \
               --restart unless-stopped \
+              -e clientUrl="${{ secrets.CLIENT_URL }}" \
+              -e db="${{ secrets.DB }}" \
+              -e port="${{ secrets.PORT }}" \
+              -e jwtPrivateKey="${{ secrets.JWT_PRIVATE_KEY }}" \
+              -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
+              -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
+              -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
+              -e STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
+              -e STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
+              -e STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
+              -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.STRIPE_MONTHLY_PRICE_ID }}" \
               $NEW_TAG
 
             echo "--- Cleaning up old migonest-api images (keeping last 2) ---"
