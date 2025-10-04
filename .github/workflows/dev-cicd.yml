@@ -34,7 +34,7 @@ jobs:
             cd dev-migonest-api
 
             echo "--- Building new Docker image ---"
-            NEW_TAG="dev-migonest-api:$(date +%Y%m%d%H%M%S)"
+            NEW_TAG="dev-migonest-api:\$(date +%Y%m%d%H%M%S)"
             if ! docker build -t $NEW_TAG .; then
               echo "❌ Build failed. Rolling back..."
               PREV_TAG=$(docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" | head -n 1)
