@@ -38,6 +38,8 @@ jobs:
         run: |
           ssh $SSH_USER@$SSH_HOST bash -s << 'EOF'
             set -e
+            export GH_PAT=${{ secrets.GH_PAT }}
+
 
             echo "--- Removing old code ---"
             cd ~/app
