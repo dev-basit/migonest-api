@@ -22,22 +22,10 @@ jobs:
 
       - name: Deploy to VPS
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             set -e
             export GH_PAT=${{ secrets.GH_PAT }}
-            export DEV_CLIENTURL=${{ secrets.DEV_CLIENTURL }}
-            export DEV_DB=${{ secrets.DEV_DB }}
-            export DEV_PORT=${{ secrets.DEV_PORT }}
-            export DEV_JWTPRIVATEKEY=${{ secrets.DEV_JWTPRIVATEKEY }}
 
-            export CLOUDINARY_CLOUD_NAME=${{ secrets.CLOUDINARY_CLOUD_NAME }}
-            export CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}
-            export CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}
-
-            export DEV_STRIPE_SECRET_KEY=${{ secrets.DEV_STRIPE_SECRET_KEY }}
-            export DEV_STRIPE_PUBLISHABLE_KEY=${{ secrets.DEV_STRIPE_PUBLISHABLE_KEY }}
-            export DEV_STRIPE_WEBHOOK_SECRET=${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}
-            export DEV_STRIPE_MONTHLY_PRICE_ID=${{ secrets.DEV_STRIPE_MONTHLY_PRICE_ID }}
 
             echo "--- Removing old code ---"
             cd ~/app
@@ -59,17 +47,17 @@ jobs:
                   --name dev-migonest-api \
                   -p 127.0.0.1:4001:4001 \
                   --restart unless-stopped \
-                  -e clientUrl="$DEV_CLIENTURL" \
-                  -e db="$DEV_DB" \
-                  -e port="$DEV_PORT" \
-                  -e jwtPrivateKey="$DEV_JWTPRIVATEKEY" \
-                  -e cloudinary_cloud_name="$CLOUDINARY_CLOUD_NAME" \
-                  -e cloudinary_api_key="$CLOUDINARY_API_KEY" \
-                  -e cloudinary_api_secret="$CLOUDINARY_API_SECRET" \
-                  -e STRIPE_SECRET_KEY="$DEV_STRIPE_SECRET_KEY" \
-                  -e STRIPE_PUBLISHABLE_KEY="$DEV_STRIPE_PUBLISHABLE_KEY" \
-                  -e STRIPE_WEBHOOK_SECRET="$DEV_STRIPE_WEBHOOK_SECRET" \
-                  -e STRIPE_MONTHLY_PRICE_ID="$DEV_STRIPE_MONTHLY_PRICE_ID" \
+                  -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
+                  -e db="${{ secrets.DEV_DB }}" \
+                  -e port="${{ secrets.DEV_PORT }}" \
+                  -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
+                  -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
+                  -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
+                  -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
+                  -e STRIPE_SECRET_KEY="${{ secrets.DEV_STRIPE_SECRET_KEY }}" \
+                  -e STRIPE_PUBLISHABLE_KEY="${{ secrets.DEV_STRIPE_PUBLISHABLE_KEY }}" \
+                  -e STRIPE_WEBHOOK_SECRET="${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}" \
+                  -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.DEV_STRIPE_MONTHLY_PRICE_ID }}" \
                   $PREV_TAG
                 echo "✅ Rolled back to $PREV_TAG"
               else
@@ -87,17 +75,17 @@ jobs:
               --name dev-migonest-api \
               -p 127.0.0.1:4001:4001 \
               --restart unless-stopped \
-              -e clientUrl="$DEV_CLIENTURL" \
-              -e db="$DEV_DB" \
-              -e port="$DEV_PORT" \
-              -e jwtPrivateKey="$DEV_JWTPRIVATEKEY" \
-              -e cloudinary_cloud_name=$CLOUDINARY_CLOUD_NAME \
-              -e cloudinary_api_key="$CLOUDINARY_API_KEY" \
-              -e cloudinary_api_secret="$CLOUDINARY_API_SECRET" \
-              -e STRIPE_SECRET_KEY="$DEV_STRIPE_SECRET_KEY" \
-              -e STRIPE_PUBLISHABLE_KEY="$DEV_STRIPE_PUBLISHABLE_KEY" \
-              -e STRIPE_WEBHOOK_SECRET="$DEV_STRIPE_WEBHOOK_SECRET" \
-              -e STRIPE_MONTHLY_PRICE_ID="$DEV_STRIPE_MONTHLY_PRICE_ID" \
+              -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
+              -e db="${{ secrets.DEV_DB }}" \
+              -e port="${{ secrets.DEV_PORT }}" \
+              -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
+              -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
+              -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
+              -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
+              -e STRIPE_SECRET_KEY="${{ secrets.DEV_STRIPE_SECRET_KEY }}" \
+              -e STRIPE_PUBLISHABLE_KEY="${{ secrets.DEV_STRIPE_PUBLISHABLE_KEY }}" \
+              -e STRIPE_WEBHOOK_SECRET="${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}" \
+              -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.DEV_STRIPE_MONTHLY_PRICE_ID }}" \
               $NEW_TAG
 
             echo "--- Cleaning up old dev-migonest-api images (keeping last 2) ---"
