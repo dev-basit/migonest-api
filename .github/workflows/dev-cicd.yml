@@ -44,7 +44,7 @@ jobs:
             rm -rf dev-migonest-api
 
             echo "--- Pulling latest code ---"
-            git clone --branch dev https://dev-basit:${GH_PAT}@github.com/dev-basit/migonest-api.git dev-migonest-api
+            git clone --branch dev https://dev-basit:$GH_PAT@github.com/dev-basit/migonest-api.git dev-migonest-api
             cd dev-migonest-api
 
             echo "--- Building new Docker image ---"
