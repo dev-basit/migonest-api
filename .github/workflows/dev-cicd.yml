@@ -27,28 +27,28 @@ jobs:
 
             echo "--- Removing old code ---"
             cd ~/app
-            rm -rf devmigonest-apiii
+            rm -rf dev-migonest-api
 
             echo "--- Pulling latest code ---"
-            git clone --branch dev https://dev-basit:$GH_PAT@github.com/dev-basit/migonest-api.git devmigonest-apiii
-            cd devmigonest-apiii
+            git clone --branch dev https://dev-basit:$GH_PAT@github.com/dev-basit/migonest-api.git dev-migonest-api
+            cd dev-migonest-api
 
             echo "--- Building new Docker image ---"
-            NEW_TAG="devmigonest-apiii:$(date +%Y%m%d%H%M%S)"
+            NEW_TAG="dev-migonest-api:$(date +%Y%m%d%H%M%S)"
             if ! docker build -t $NEW_TAG .; then
               echo "❌ Build failed. Rolling back..."
-              PREV_TAG=$(docker images devmigonest-apiii --format "{{.Repository}}:{{.Tag}}" | head -n 1)
+              PREV_TAG=$(docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" | head -n 1)
               if [ -n "$PREV_TAG" ]; then
-                docker stop devmigonest-apiii || true
-                docker rm devmigonest-apiii || true
+                docker stop dev-migonest-api || true
+                docker rm dev-migonest-api || true
                 docker run -d \
-                  --name devmigonest-apiii \
+                  --name dev-migonest-api \
                   -p 127.0.0.1:4001:4001 \
                   --restart unless-stopped \
                   -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
                   -e db="${{ secrets.DEV_DB }}" \
                   -e port="${{ secrets.DEV_PORT }}" \
-                  -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
+                  -e jwtPrivateKey="${{ secrets.JWTPRIVATEKEY }}" \
                   -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
                   -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
                   -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
@@ -65,18 +65,18 @@ jobs:
             fi
 
             echo "--- Stopping old container ---"
-            docker stop devmigonest-apiii || true
-            docker rm devmigonest-apiii || true
+            docker stop dev-migonest-api || true
+            docker rm dev-migonest-api || true
 
             echo "--- Starting new container with new image ---"
             docker run -d \
-              --name devmigonest-apiii \
+              --name dev-migonest-api \
               -p 127.0.0.1:4001:4001 \
               --restart unless-stopped \
               -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
               -e db="${{ secrets.DEV_DB }}" \
               -e port="${{ secrets.DEV_PORT }}" \
-              -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
+              -e jwtPrivateKey="${{ secrets.JWTPRIVATEKEY }}" \
               -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
               -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
               -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
@@ -86,8 +86,8 @@ jobs:
               -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.DEV_STRIPE_MONTHLY_PRICE_ID }}" \
               $NEW_TAG
 
-            echo "--- Cleaning up old devmigonest-apiii images (keeping last 2) ---"
-            docker images devmigonest-apiii --format "{{.Repository}}:{{.Tag}}" \
+            echo "--- Cleaning up old dev-migonest-api images (keeping last 2) ---"
+            docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" \
               | grep -v none \
               | sort -r \
               | tail -n +3 \
