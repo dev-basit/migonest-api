@@ -1,0 +1,99 @@
+name: Deploy Backend to dev
+
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - dev
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.9.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add VPS to known hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to VPS
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+            export GH_PAT=${{ secrets.GH_PAT }}
+
+
+            echo "--- Removing old code ---"
+            cd ~/app
+            rm -rf dev-migonest-api
+
+            echo "--- Pulling latest code ---"
+            git clone --branch dev https://dev-basit:$GH_PAT@github.com/dev-basit/migonest-api.git dev-migonest-api
+            cd dev-migonest-api
+
+            echo "--- Building new Docker image ---"
+            NEW_TAG="dev-migonest-api:$(date +%Y%m%d%H%M%S)"
+            if ! docker build -t $NEW_TAG .; then
+              echo "❌ Build failed. Rolling back..."
+              PREV_TAG=$(docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" | head -n 1)
+              if [ -n "$PREV_TAG" ]; then
+                docker stop dev-migonest-api || true
+                docker rm dev-migonest-api || true
+                docker run -d \
+                  --name dev-migonest-api \
+                  -p 127.0.0.1:4001:4001 \
+                  --restart unless-stopped \
+                  -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
+                  -e db="${{ secrets.DEV_DB }}" \
+                  -e port="${{ secrets.DEV_PORT }}" \
+                  -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
+                  -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
+                  -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
+                  -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
+                  -e STRIPE_SECRET_KEY="${{ secrets.DEV_STRIPE_SECRET_KEY }}" \
+                  -e STRIPE_PUBLISHABLE_KEY="${{ secrets.DEV_STRIPE_PUBLISHABLE_KEY }}" \
+                  -e STRIPE_WEBHOOK_SECRET="${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}" \
+                  -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.DEV_STRIPE_MONTHLY_PRICE_ID }}" \
+                  $PREV_TAG
+                echo "✅ Rolled back to $PREV_TAG"
+              else
+                echo "❌ No previous image found to roll back to!"
+              fi
+              exit 1
+            fi
+
+            echo "--- Stopping old container ---"
+            docker stop dev-migonest-api || true
+            docker rm dev-migonest-api || true
+
+            echo "--- Starting new container with new image ---"
+            docker run -d \
+              --name dev-migonest-api \
+              -p 127.0.0.1:4001:4001 \
+              --restart unless-stopped \
+              -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
+              -e db="${{ secrets.DEV_DB }}" \
+              -e port="${{ secrets.DEV_PORT }}" \
+              -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
+              -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
+              -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
+              -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
+              -e STRIPE_SECRET_KEY="${{ secrets.DEV_STRIPE_SECRET_KEY }}" \
+              -e STRIPE_PUBLISHABLE_KEY="${{ secrets.DEV_STRIPE_PUBLISHABLE_KEY }}" \
+              -e STRIPE_WEBHOOK_SECRET="${{ secrets.DEV_STRIPE_WEBHOOK_SECRET }}" \
+              -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.DEV_STRIPE_MONTHLY_PRICE_ID }}" \
+              $NEW_TAG
+
+            echo "--- Cleaning up old dev-migonest-api images (keeping last 2) ---"
+            docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" \
+              | grep -v none \
+              | sort -r \
+              | tail -n +3 \
+              | xargs -r docker rmi || true
+
+            echo "--- Cleaning up dangling images (intermediate build stages) ---"
+            docker image prune -f || true
+
+          EOF
