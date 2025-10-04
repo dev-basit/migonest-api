@@ -2,6 +2,12 @@ name: Deploy Backend to dev
 
 on: push
 
+# on:
+#   pull_request:
+#     types: [closed]
+#     branches:
+#       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -38,34 +44,34 @@ jobs:
             rm -rf dev-migonest-api
 
             echo "--- Pulling latest code ---"
-            git clone --branch dev https://dev-basit:${GH_PAT}@github.com/dev-basit/migonest-api.git dev-migonest-api
+            git clone --branch dev https://dev-basit:$GH_PAT@github.com/dev-basit/migonest-api.git dev-migonest-api
             cd dev-migonest-api
 
             echo "--- Building new Docker image ---"
-            NEW_TAG="dev-migonest-api:\$(date +%Y%m%d%H%M%S)"
-            if ! docker build -t \$NEW_TAG .; then
+            NEW_TAG="dev-migonest-api:$(date +%Y%m%d%H%M%S)"
+            if ! docker build -t $NEW_TAG .; then
               echo "❌ Build failed. Rolling back..."
-              PREV_TAG=\$(docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" | head -n 1)
-              if [ -n "\$PREV_TAG" ]; then
+              PREV_TAG=$(docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" | head -n 1)
+              if [ -n "$PREV_TAG" ]; then
                 docker stop dev-migonest-api || true
                 docker rm dev-migonest-api || true
                 docker run -d \
                   --name dev-migonest-api \
                   -p 127.0.0.1:4001:4001 \
                   --restart unless-stopped \
-                  -e clientUrl="\$DEV_CLIENTURL" \
-                  -e db="\$DEV_DB" \
-                  -e port="\$DEV_PORT" \
-                  -e jwtPrivateKey="\$DEV_JWTPRIVATEKEY" \
-                  -e cloudinary_cloud_name="\$CLOUDINARY_CLOUD_NAME" \
-                  -e cloudinary_api_key="\$CLOUDINARY_API_KEY" \
-                  -e cloudinary_api_secret="\$CLOUDINARY_API_SECRET" \
-                  -e STRIPE_SECRET_KEY="\$DEV_STRIPE_SECRET_KEY" \
-                  -e STRIPE_PUBLISHABLE_KEY="\$DEV_STRIPE_PUBLISHABLE_KEY" \
-                  -e STRIPE_WEBHOOK_SECRET="\$DEV_STRIPE_WEBHOOK_SECRET" \
-                  -e STRIPE_MONTHLY_PRICE_ID="\$DEV_STRIPE_MONTHLY_PRICE_ID" \
-                  \$PREV_TAG
-                echo "✅ Rolled back to \$PREV_TAG"
+                  -e clientUrl="$DEV_CLIENTURL" \
+                  -e db="$DEV_DB" \
+                  -e port="$DEV_PORT" \
+                  -e jwtPrivateKey="$DEV_JWTPRIVATEKEY" \
+                  -e cloudinary_cloud_name="$CLOUDINARY_CLOUD_NAME" \
+                  -e cloudinary_api_key="$CLOUDINARY_API_KEY" \
+                  -e cloudinary_api_secret="$CLOUDINARY_API_SECRET" \
+                  -e STRIPE_SECRET_KEY="$DEV_STRIPE_SECRET_KEY" \
+                  -e STRIPE_PUBLISHABLE_KEY="$DEV_STRIPE_PUBLISHABLE_KEY" \
+                  -e STRIPE_WEBHOOK_SECRET="$DEV_STRIPE_WEBHOOK_SECRET" \
+                  -e STRIPE_MONTHLY_PRICE_ID="$DEV_STRIPE_MONTHLY_PRICE_ID" \
+                  $PREV_TAG
+                echo "✅ Rolled back to $PREV_TAG"
               else
                 echo "❌ No previous image found to roll back to!"
               fi
@@ -76,31 +82,32 @@ jobs:
             docker stop dev-migonest-api || true
             docker rm dev-migonest-api || true
 
-            echo "--- Starting new container ---"
+            echo "--- Starting new container with new image ---"
             docker run -d \
               --name dev-migonest-api \
               -p 127.0.0.1:4001:4001 \
               --restart unless-stopped \
-              -e clientUrl="\$DEV_CLIENTURL" \
-              -e db="\$DEV_DB" \
-              -e port="\$DEV_PORT" \
-              -e jwtPrivateKey="\$DEV_JWTPRIVATEKEY" \
-              -e cloudinary_cloud_name="\$CLOUDINARY_CLOUD_NAME" \
-              -e cloudinary_api_key="\$CLOUDINARY_API_KEY" \
-              -e cloudinary_api_secret="\$CLOUDINARY_API_SECRET" \
-              -e STRIPE_SECRET_KEY="\$DEV_STRIPE_SECRET_KEY" \
-              -e STRIPE_PUBLISHABLE_KEY="\$DEV_STRIPE_PUBLISHABLE_KEY" \
-              -e STRIPE_WEBHOOK_SECRET="\$DEV_STRIPE_WEBHOOK_SECRET" \
-              -e STRIPE_MONTHLY_PRICE_ID="\$DEV_STRIPE_MONTHLY_PRICE_ID" \
-              \$NEW_TAG
+              -e clientUrl="$DEV_CLIENTURL" \
+              -e db="$DEV_DB" \
+              -e port="$DEV_PORT" \
+              -e jwtPrivateKey="$DEV_JWTPRIVATEKEY" \
+              -e cloudinary_cloud_name=$CLOUDINARY_CLOUD_NAME \
+              -e cloudinary_api_key="$CLOUDINARY_API_KEY" \
+              -e cloudinary_api_secret="$CLOUDINARY_API_SECRET" \
+              -e STRIPE_SECRET_KEY="$DEV_STRIPE_SECRET_KEY" \
+              -e STRIPE_PUBLISHABLE_KEY="$DEV_STRIPE_PUBLISHABLE_KEY" \
+              -e STRIPE_WEBHOOK_SECRET="$DEV_STRIPE_WEBHOOK_SECRET" \
+              -e STRIPE_MONTHLY_PRICE_ID="$DEV_STRIPE_MONTHLY_PRICE_ID" \
+              $NEW_TAG
 
-            echo "--- Cleaning up old images ---"
+            echo "--- Cleaning up old dev-migonest-api images (keeping last 2) ---"
             docker images dev-migonest-api --format "{{.Repository}}:{{.Tag}}" \
               | grep -v none \
               | sort -r \
               | tail -n +3 \
               | xargs -r docker rmi || true
 
-            echo "--- Cleaning up dangling images ---"
+            echo "--- Cleaning up dangling images (intermediate build stages) ---"
             docker image prune -f || true
+
           EOF
