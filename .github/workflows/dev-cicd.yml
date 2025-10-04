@@ -63,17 +63,17 @@ jobs:
                   --name dev-migonest-api \
                   -p 127.0.0.1:4001:4001 \
                   --restart unless-stopped \
-                  -e clientUrl=$DEV_CLIENTURL \
-                  -e db=$DEV_DB \
-                  -e port=$DEV_PORT \
-                  -e jwtPrivateKey=$DEV_JWTPRIVATEKEY \
-                  -e cloudinary_cloud_name=$CLOUDINARY_CLOUD_NAME \
-                  -e cloudinary_api_key=$CLOUDINARY_API_KEY \
-                  -e cloudinary_api_secret=$CLOUDINARY_API_SECRET \
-                  -e STRIPE_SECRET_KEY=$DEV_STRIPE_SECRET_KEY \
-                  -e STRIPE_PUBLISHABLE_KEY=$DEV_STRIPE_PUBLISHABLE_KEY \
-                  -e STRIPE_WEBHOOK_SECRET=$DEV_STRIPE_WEBHOOK_SECRET \
-                  -e STRIPE_MONTHLY_PRICE_ID=$DEV_STRIPE_MONTHLY_PRICE_ID \
+                  -e clientUrl="$DEV_CLIENTURL" \
+                  -e db="$DEV_DB" \
+                  -e port="$DEV_PORT" \
+                  -e jwtPrivateKey="$DEV_JWTPRIVATEKEY" \
+                  -e cloudinary_cloud_name="$CLOUDINARY_CLOUD_NAME" \
+                  -e cloudinary_api_key="$CLOUDINARY_API_KEY" \
+                  -e cloudinary_api_secret="$CLOUDINARY_API_SECRET" \
+                  -e STRIPE_SECRET_KEY="$DEV_STRIPE_SECRET_KEY" \
+                  -e STRIPE_PUBLISHABLE_KEY="$DEV_STRIPE_PUBLISHABLE_KEY" \
+                  -e STRIPE_WEBHOOK_SECRET="$DEV_STRIPE_WEBHOOK_SECRET" \
+                  -e STRIPE_MONTHLY_PRICE_ID="$DEV_STRIPE_MONTHLY_PRICE_ID" \
                   $PREV_TAG
                 echo "✅ Rolled back to $PREV_TAG"
               else
@@ -91,17 +91,17 @@ jobs:
               --name dev-migonest-api \
               -p 127.0.0.1:4001:4001 \
               --restart unless-stopped \
-              -e clientUrl=$DEV_CLIENTURL \
-              -e db=$DEV_DB \
-              -e port=$DEV_PORT \
-              -e jwtPrivateKey=$DEV_JWTPRIVATEKEY \
-              -e cloudinary_cloud_name=$CLOUDINARY_CLOUD_NAME \
-              -e cloudinary_api_key=$CLOUDINARY_API_KEY \
-              -e cloudinary_api_secret=$CLOUDINARY_API_SECRET \
-              -e STRIPE_SECRET_KEY=$DEV_STRIPE_SECRET_KEY \
-              -e STRIPE_PUBLISHABLE_KEY=$DEV_STRIPE_PUBLISHABLE_KEY \
-              -e STRIPE_WEBHOOK_SECRET=$DEV_STRIPE_WEBHOOK_SECRET \
-              -e STRIPE_MONTHLY_PRICE_ID=$DEV_STRIPE_MONTHLY_PRICE_ID \
+              -e clientUrl="$DEV_CLIENTURL" \
+              -e db="$DEV_DB" \
+              -e port="$DEV_PORT" \
+              -e jwtPrivateKey="$DEV_JWTPRIVATEKEY" \
+              -e cloudinary_cloud_name="$CLOUDINARY_CLOUD_NAME" \
+              -e cloudinary_api_key="$CLOUDINARY_API_KEY" \
+              -e cloudinary_api_secret="$CLOUDINARY_API_SECRET" \
+              -e STRIPE_SECRET_KEY="$DEV_STRIPE_SECRET_KEY" \
+              -e STRIPE_PUBLISHABLE_KEY="$DEV_STRIPE_PUBLISHABLE_KEY" \
+              -e STRIPE_WEBHOOK_SECRET="$DEV_STRIPE_WEBHOOK_SECRET" \
+              -e STRIPE_MONTHLY_PRICE_ID="$DEV_STRIPE_MONTHLY_PRICE_ID" \
               $NEW_TAG
 
             echo "--- Cleaning up old dev-migonest-api images (keeping last 2) ---"
