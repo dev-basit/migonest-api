@@ -50,11 +50,11 @@ jobs:
                   -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
                   -e db="${{ secrets.DEV_DB }}" \
                   -e port="${{ secrets.DEV_PORT }}" \
-                  -e jwtPrivateKey="${{ secrets.JWTPRIVATEKEY }}" \
+                  -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
                   -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
                   -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
                   -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
-                  -e STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
+                  -e STRIPE_SECRET_KEY="${{ secrets.DEV_STRIPE_SECRET_KEY }}" \
                   -e STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
                   -e STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
                   -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.STRIPE_MONTHLY_PRICE_ID }}" \
@@ -78,11 +78,11 @@ jobs:
               -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
               -e db="${{ secrets.DEV_DB }}" \
               -e port="${{ secrets.DEV_PORT }}" \
-              -e jwtPrivateKey="${{ secrets.JWTPRIVATEKEY }}" \
+              -e jwtPrivateKey="${{ secrets.DEV_JWTPRIVATEKEY }}" \
               -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
               -e cloudinary_api_key="${{ secrets.CLOUDINARY_API_KEY }}" \
               -e cloudinary_api_secret="${{ secrets.CLOUDINARY_API_SECRET }}" \
-              -e STRIPE_SECRET_KEY="${{ secrets.STRIPE_SECRET_KEY }}" \
+              -e STRIPE_SECRET_KEY="${{ secrets.DEV_STRIPE_SECRET_KEY }}" \
               -e STRIPE_PUBLISHABLE_KEY="${{ secrets.STRIPE_PUBLISHABLE_KEY }}" \
               -e STRIPE_WEBHOOK_SECRET="${{ secrets.STRIPE_WEBHOOK_SECRET }}" \
               -e STRIPE_MONTHLY_PRICE_ID="${{ secrets.STRIPE_MONTHLY_PRICE_ID }}" \
