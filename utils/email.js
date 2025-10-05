@@ -8,7 +8,7 @@ const verifyEmailer = nodemailer.createTransport({
   // host: "smtp.gmail.com",
   service: "gmail",
   // port: 465,
-  secure: true,
+  secure: false,
   auth: {
     from: process.env.EMAIL_USER,
     to: process.env.TO_EMAIL,
