@@ -5,9 +5,10 @@ const { Logger } = require("../startup/logs");
 // TODO: apply rate limiting to email verification code
 
 const verifyEmailer = nodemailer.createTransport({
-  // host: "smtp.gmail.com",
-  service: "gmail",
+  host: "smtp.gmail.com",
+  // service: "gmail",
   // port: 465,
+  port: 587,
   secure: false,
   auth: {
     from: process.env.EMAIL_USER,
