@@ -14,9 +14,12 @@ const verifyEmailer = nodemailer.createTransport({
     to: process.env.TO_EMAIL,
 
     user: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
-    pass: process.env.EMAIL_PASS || "wqiq ccsr zckp enyx",
+    pass: process.env.EMAIL_PASS || "xnan baji otau nijs",
   },
 });
+
+// xnan baji otau nijs
+// "wqiq ccsr zckp enyx"
 
 const contactEmailer = nodemailer.createTransport({
   host: "smtp.gmail.com",
