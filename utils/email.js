@@ -11,8 +11,8 @@ const verifyEmailer = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    from: process.env.EMAIL_USER,
-    to: process.env.TO_EMAIL,
+    // from: process.env.EMAIL_USER,
+    // to: process.env.TO_EMAIL,
 
     user: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
     pass: process.env.EMAIL_PASS || "xnan baji otau nijs",
