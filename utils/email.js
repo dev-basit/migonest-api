@@ -6,10 +6,9 @@ const { Logger } = require("../startup/logs");
 
 const verifyEmailer = nodemailer.createTransport({
   host: "smtp.gmail.com",
-  // service: "gmail",
-  // port: 465,
-  port: 587,
-  secure: false,
+  service: "gmail",
+  port: 465,
+  secure: true,
   auth: {
     // from: process.env.EMAIL_USER,
     // to: process.env.TO_EMAIL,
