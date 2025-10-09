@@ -61,6 +61,11 @@ exports.initConfiguration = function () {
     Logger.error("ERROR STARTING SERVER: stripe webhook secret is not defined in environment variables.");
     process.exit(1);
   }
+
+  if (!config.RESEND_API_KEY) {
+    Logger.error("ERROR STARTING SERVER: resend api key is not defined in environment variables.");
+    process.exit(1);
+  }
 };
 
 ////////////

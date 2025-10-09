@@ -1,6 +1,8 @@
 require("dotenv").config();
 
 exports.config = {
+  APP_NAME: process.env.APP_NAME || "Migonest",
+
   clientUrl: process.env.clientUrl,
   db: process.env.db,
   port: process.env.port,
@@ -12,4 +14,5 @@ exports.config = {
   stripeMonthlyPriceId: process.env.STRIPE_MONTHLY_PRICE_ID,
   // stripeYearlyPriceId: process.env.STRIPE_YEARLY_PRICE_ID,
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+  RESEND_API_KEY: process.env.RESEND_API_KEY,
 };
