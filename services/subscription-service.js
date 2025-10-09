@@ -49,7 +49,7 @@ const subscriptionCreated = async (subscription) => {
     await sendEmail({
       receiver: user.email,
       subject: "Subscription Activated",
-      text: `Your Migonest subscription has been activated.`,
+      text: `Your ${config.APP_NAME} subscription has been activated.`,
     });
   }
 };
@@ -86,7 +86,7 @@ const subscriptionUpdated = async (subscription) => {
     await sendEmail({
       receiver: user.email,
       subject: "Subscription Deactivated",
-      text: `Your Migonest subscription has been deactivated. You can use pro service till the end of the current subscription period.`,
+      text: `Your ${config.APP_NAME} subscription has been deactivated. You can use pro service till the end of the current subscription period.`,
     });
   }
 };
@@ -102,7 +102,7 @@ const subscriptionDeleted = async (subscription) => {
   await sendEmail({
     receiver: user.email,
     subject: "Subscription Deactivated",
-    text: `Your Migonest subscription has been deactivated. You can use pro service till the end of the current subscription period.`,
+    text: `Your ${config.APP_NAME} subscription has been deactivated. You can use pro service till the end of the current subscription period.`,
   });
 };
 

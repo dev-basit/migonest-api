@@ -1,3 +1,4 @@
+const { config } = require("../config");
 const { userRepository, uniExpertRequestRepository, purchaseRepository } = require("../repositories");
 const { Logger } = require("../startup/logs");
 const { sendEmail } = require("../utils");
@@ -33,8 +34,8 @@ const purchaseUniExpertRequest = async (session) => {
 
   await sendEmail({
     receiver: user.email,
-    subject: "Migonest Purchase Confirmation",
-    text: `Thank you for purchasing Migonest Uni Expert Service. Your purchase has been confirmed.`,
+    subject: `${config.APP_NAME} Purchase Confirmation`,
+    text: `Thank you for purchasing ${config.APP_NAME} Uni Expert Service. Your purchase has been confirmed.`,
   });
 };
 
