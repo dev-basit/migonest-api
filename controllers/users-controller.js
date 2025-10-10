@@ -1,6 +1,14 @@
 const mongoose = require("mongoose");
 const _ = require("lodash");
-const { validatePayload, ResponseHandler, Response, Constants, sendEmail, stripe } = require("../utils");
+const {
+  validatePayload,
+  ResponseHandler,
+  Response,
+  Constants,
+  sendEmail,
+  stripe,
+  html,
+} = require("../utils");
 const { Logger } = require("../startup/logs");
 const { userRepository } = require("../repositories");
 const { userService } = require("../services");
@@ -51,7 +59,7 @@ const userCreate = async (req, res) => {
 
     Logger.info(Constants.SUCCESSFULLY_ADDED);
 
-    await sendEmail({ receiver: user.email, text: user.emailVerificationCode }); // send code for verification
+    await sendEmail({ receiver: user.email, text: html.verificationEmail(user.emailVerificationCode) });
 
     const token = user.generateAuthToken();
     return res
