@@ -89,9 +89,34 @@ function subscriptionDeactivated({ name, periodEnd }) {
     .replace(/Migonest/g, config.APP_NAME);
 }
 
+function contactUs({ firstName, lastName, email, phone, message }) {
+  let html = readTemplate("contact-us.html");
+  if (!html) {
+    return `
+      <div>
+        <div><strong>${config.APP_NAME}</strong> New Contact Message</div>
+        <div>${message}</div>
+        <div>Name: ${firstName} ${lastName}</div>
+        <div>Email: ${email}</div>
+        <div>Phone: ${phone}</div>
+      </div>
+    `;
+  }
+
+  return html
+    .replace(/\{\{MESSAGE\}\}/g, String(message || ""))
+    .replace(/\{\{FIRST_NAME\}\}/g, String(firstName || ""))
+    .replace(/\{\{LAST_NAME\}\}/g, String(lastName || ""))
+    .replace(/\{\{EMAIL\}\}/g, String(email || ""))
+    .replace(/\{\{PHONE\}\}/g, String(phone || ""))
+    .replace("<!--YEAR-->", String(YEAR))
+    .replace(/Migonest/g, config.APP_NAME);
+}
+
 exports.html = {
   verificationEmail,
   purchaseUniExpertService,
   subscriptionActivated,
   subscriptionDeactivated,
+  contactUs,
 };

@@ -1,6 +1,7 @@
 const { Logger } = require("../startup/logs");
 const { config } = require("../config");
 const { Resend } = require("resend");
+const { html } = require("./html");
 
 // TODO: apply rate limiting to email verification code
 
@@ -49,21 +50,17 @@ async function sendContactUsMail(data) {
   try {
     Logger.info(`Email receiving from ${data.email}`);
 
-    const message = `<p>  
-    ${data.message}
-    
-    Sender Details:
-    Regards: ${data.firstName} ${data.lastName}
-    Phone No: ${data.phone}
-    Email: ${data.email}
-    </p>
-    `;
-
     await sendViaResend({
       from: INFO_EMAIL,
       to: "migonest.contact@gmail.com",
       subject: "Migonest Contact Us",
-      text: message,
+      text: html.contactUs({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
+      }),
     });
 
     Logger.info(`Successfully sent email to migonest.contact@gmail.com`);
