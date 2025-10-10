@@ -1,7 +1,7 @@
 const { config } = require("../config");
 const { userRepository, uniExpertRequestRepository, purchaseRepository } = require("../repositories");
 const { Logger } = require("../startup/logs");
-const { sendEmail } = require("../utils");
+const { sendEmail, html } = require("../utils");
 
 const purchaseUniExpertRequest = async (session) => {
   const { userId, uniExpertRequestId } = session.metadata;
@@ -35,7 +35,11 @@ const purchaseUniExpertRequest = async (session) => {
   await sendEmail({
     receiver: user.email,
     subject: `${config.APP_NAME} Purchase Confirmation`,
-    text: `Thank you for purchasing ${config.APP_NAME} Uni Expert Service. Your purchase has been confirmed.`,
+    text: html.purchaseUniExpertService({
+      name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+      amount: session.amount_total / 100,
+      reference: session.id,
+    }),
   });
 };
 

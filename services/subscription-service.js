@@ -1,5 +1,5 @@
 const { userRepository, subscriptionRepository, purchaseRepository } = require("../repositories");
-const { sendEmail } = require("../utils");
+const { sendEmail, html } = require("../utils");
 const { config } = require("../config");
 const { Logger } = require("../startup/logs");
 
@@ -49,7 +49,12 @@ const subscriptionCreated = async (subscription) => {
     await sendEmail({
       receiver: user.email,
       subject: "Subscription Activated",
-      text: `Your ${config.APP_NAME} subscription has been activated.`,
+      text: html.subscriptionActivated({
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+        plan,
+        periodStart: new Date(currentPeriodStart * 1000).toDateString(),
+        periodEnd: new Date(currentPeriodEnd * 1000).toDateString(),
+      }),
     });
   }
 };
@@ -86,7 +91,10 @@ const subscriptionUpdated = async (subscription) => {
     await sendEmail({
       receiver: user.email,
       subject: "Subscription Deactivated",
-      text: `Your ${config.APP_NAME} subscription has been deactivated. You can use pro service till the end of the current subscription period.`,
+      text: html.subscriptionDeactivated({
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+        periodEnd: new Date(currentPeriodEnd * 1000).toDateString(),
+      }),
     });
   }
 };
@@ -102,7 +110,10 @@ const subscriptionDeleted = async (subscription) => {
   await sendEmail({
     receiver: user.email,
     subject: "Subscription Deactivated",
-    text: `Your ${config.APP_NAME} subscription has been deactivated. You can use pro service till the end of the current subscription period.`,
+    text: html.subscriptionDeactivated({
+      name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+      periodEnd: new Date(subscription.current_period_end * 1000).toDateString(),
+    }),
   });
 };
 
