@@ -1,45 +1,42 @@
-const nodemailer = require("nodemailer");
 const { Logger } = require("../startup/logs");
+const { config } = require("../config");
+const { Resend } = require("resend");
+const { html } = require("./html");
 
-// TODO:change hardcoded details
 // TODO: apply rate limiting to email verification code
 
-const verifyEmailer = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  service: "gmail",
-  port: 465,
-  secure: true,
-  auth: {
-    from: process.env.EMAIL_USER,
-    to: process.env.TO_EMAIL,
+const resend = new Resend(config.RESEND_API_KEY);
 
-    user: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
-    pass: process.env.EMAIL_PASS || "wqiq ccsr zckp enyx",
-  },
-});
+const VERIFY_EMAIL = "verify@migonest.com";
+const INFO_EMAIL = "info@migonest.com";
 
-const contactEmailer = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  service: "gmail",
-  port: 465,
-  secure: true,
-  auth: {
-    // from: process.env.EMAIL_USER,
-    // to: process.env.TO_EMAIL,
+async function sendViaResend({ from, to, subject, text }) {
+  try {
+    const response = await resend.emails.send({
+      from: from,
+      to: to,
+      subject: subject,
+      html: text,
+    });
 
-    user: process.env.EMAIL_SENDER || "migonest.contact@gmail.com",
-    pass: process.env.EMAIL_PASS || "oeht ekke ttuk naai",
-  },
-});
+    if (response.error) {
+      Logger.error(`Error: ${response.error.message}`);
+      throw new Error(response.error.message);
+    }
+  } catch (error) {
+    Logger.error(`Resend API error: ${error.response?.data || error.message}`);
+    throw new Error(error.message);
+  }
+}
 
 async function sendEmail(data) {
   try {
     Logger.info(`Sending email to ${data.receiver}`);
 
-    await verifyEmailer.sendMail({
-      from: process.env.EMAIL_SENDER || "migonest.verify@gmail.com",
+    await sendViaResend({
+      from: VERIFY_EMAIL,
       to: data.receiver,
-      subject: data.subject || "Email Verification Code",
+      subject: data.subject || `${config.APP_NAME} - Email Verification Code`,
       text: data.text || `Code: ${data.code}`,
     });
 
@@ -53,20 +50,17 @@ async function sendContactUsMail(data) {
   try {
     Logger.info(`Email receiving from ${data.email}`);
 
-    await contactEmailer.sendMail({
-      from: data.email,
-      replyTo: data.email,
+    await sendViaResend({
+      from: INFO_EMAIL,
       to: "migonest.contact@gmail.com",
       subject: "Migonest Contact Us",
-      text: `
-      
-      ${data.message}
-      
-      Sender Details:
-      Regards: ${data.firstName} ${data.lastName}
-      Phone No: ${data.phone} 
-      Email: ${data.email} 
-      `,
+      text: html.contactUs({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email,
+        phone: data.phone,
+        message: data.message,
+      }),
     });
 
     Logger.info(`Successfully sent email to migonest.contact@gmail.com`);

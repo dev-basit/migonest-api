@@ -5,6 +5,7 @@ const { validatePayload } = require("./validations");
 const { Utils } = require("./utils");
 const { sendEmail, sendContactUsMail } = require("./email");
 const { stripe } = require("./stripe");
+const { html } = require("./html");
 
 module.exports = {
   Response,
@@ -15,4 +16,5 @@ module.exports = {
   sendEmail,
   sendContactUsMail,
   stripe,
+  html,
 };

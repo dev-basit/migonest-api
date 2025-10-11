@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verify your email</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f5f7fb;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
+          Helvetica Neue, Arial, sans-serif;
+        color: #02547d;
+      }
+      a {
+        color: #02547d;
+        text-decoration: none;
+      }
+      .container {
+        width: 100%;
+        background: #f5f7fb;
+        padding: 24px 0;
+      }
+      .card {
+        max-width: 640px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      }
+      .header {
+        background: linear-gradient(135deg, #02547d 0%, #0ea5e9 100%);
+        padding: 28px 32px;
+        color: #ffffff;
+      }
+      .brand {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+      .title {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 4px 0 0;
+      }
+      .content {
+        padding: 28px 32px;
+        line-height: 1.6;
+      }
+      .code-wrap {
+        text-align: center;
+        margin: 28px 0;
+      }
+      .code-label {
+        font-size: 12px;
+        letter-spacing: 1.2px;
+        color: #6b7280;
+        text-transform: uppercase;
+      }
+      .code {
+        display: inline-block;
+        margin-top: 10px;
+        font-weight: 800;
+        font-size: 28px;
+        letter-spacing: 6px;
+        color: #111827;
+        background: #f3f4f6;
+        padding: 14px 18px;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+      }
+      .note {
+        font-size: 14px;
+        color: #6b7280;
+        margin-top: 18px;
+      }
+      .footer {
+        padding: 20px 32px 28px;
+        color: #6b7280;
+        font-size: 12px;
+        text-align: center;
+      }
+      .divider {
+        height: 1px;
+        background: #eef2f7;
+        margin: 8px 0 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <div class="brand">Migonest</div>
+          <div class="title">Verify your email address</div>
+        </div>
+        <div class="content">
+          <p>Welcome to Migonest! Use the verification code below to confirm your email address.</p>
+          <div class="code-wrap">
+            <div class="code-label">Your verification code</div>
+            <div class="code">{{CODE}}</div>
+          </div>
+          <!-- <p class="note">
+            This code will expire shortly. If you didn't request this, you can safely ignore this email.
+          </p>
+          <p class="note">Need help? Reply to this email and our team will assist you.</p> -->
+        </div>
+        <div class="footer">
+          <div class="divider"></div>
+          <div>
+            &copy;
+            <!--YEAR-->
+            Migonest. All rights reserved
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

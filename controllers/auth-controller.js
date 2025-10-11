@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const { validatePayload, ResponseHandler, Response, Constants, Utils, sendEmail } = require("../utils");
+const { validatePayload, ResponseHandler, Response, Constants, Utils, sendEmail, html } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { authService } = require("../services");
 const { userRepository } = require("../repositories");
@@ -23,7 +23,7 @@ const userLogin = async (req, res) => {
     if (!user.isVerified) {
       user.emailVerificationCode = Utils.generateCode(6);
       await userRepository.updateUser(user._id, user);
-      await sendEmail({ receiver: user.email, text: user.emailVerificationCode });
+      await sendEmail({ receiver: user.email, text: html.verificationEmail(user.emailVerificationCode) });
 
       return ResponseHandler.sendForbiddenResponse("Your email is not verified yet.", res);
     }
@@ -67,7 +67,20 @@ const verifyEmail = async (req, res) => {
     const updatedUser = await userRepository.updateUser(user._id, userUpdatedDetails);
     if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
 
-    return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_VERIFIED_ACCOUNT, res);
+    // return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_VERIFIED_ACCOUNT, res);
+    const token = user.generateAuthToken();
+    Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);
+
+    return res
+      .status(Constants.HTTP_STATUS_CODES.OK)
+      .send(
+        new Response(
+          { jwt: token },
+          Constants.HTTP_STATUS_CODES.OK,
+          Constants.SUCCESSFULLY_LOGGED_IN,
+          Constants.SUCCESS
+        )
+      );
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }

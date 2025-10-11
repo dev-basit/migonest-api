@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Subscription Activated</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        background: #f5f7fb;
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell,
+          Helvetica Neue, Arial, sans-serif;
+        color: #02547d;
+      }
+      a {
+        color: #02547d;
+        text-decoration: none;
+      }
+      .container {
+        width: 100%;
+        background: #f5f7fb;
+        padding: 24px 0;
+      }
+      .card {
+        max-width: 640px;
+        margin: 0 auto;
+        background: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+      }
+      .header {
+        background: linear-gradient(135deg, #02547d 0%, #0ea5e9 100%);
+        padding: 28px 32px;
+        color: #ffffff;
+      }
+      .brand {
+        font-size: 18px;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+      }
+      .title {
+        font-size: 22px;
+        font-weight: 700;
+        margin: 4px 0 0;
+      }
+      .content {
+        padding: 28px 32px;
+        line-height: 1.6;
+      }
+      .footer {
+        padding: 20px 32px 28px;
+        color: #6b7280;
+        font-size: 12px;
+        text-align: center;
+      }
+      .divider {
+        height: 1px;
+        background: #eef2f7;
+        margin: 8px 0 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card">
+        <div class="header">
+          <div class="brand">Migonest</div>
+          <div class="title">Subscription Activated</div>
+        </div>
+        <div class="content">
+          <p>Hi {{NAME}},</p>
+          <p>Your {{APP_NAME}} subscription has been <strong>activated</strong>.</p>
+          <p><strong>Plan:</strong> {{PLAN}}</p>
+          <p><strong>Current Period:</strong> {{PERIOD_START}} - {{PERIOD_END}}</p>
+          <p>Enjoy the Pro features!</p>
+        </div>
+        <div class="footer">
+          <div class="divider"></div>
+          <div>
+            &copy;
+            <!--YEAR-->
+            Migonest. All rights reserved.
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
