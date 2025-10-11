@@ -120,3 +120,99 @@ const passwordUpdate = async (req, res) => {
 };
 
 exports.authControllers = { userLogin, verifyEmail, passwordUpdate };
+
+// TODO: logout of users after password change success
+const requestForgotPasswordOTP = async (req, res) => {
+  try {
+    const email = req.params.email;
+    if (!email) return ResponseHandler.sendBadResponse(Constants.EMAIL_REQUIRED, res);
+
+    let user = await userRepository.findUserWithPassword({ email });
+    if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
+
+    const now = new Date();
+    const isOtpExpired =
+      user.fotgotPasswordOtp && user.fotgotPasswordOtpExpiry && new Date(user.fotgotPasswordOtpExpiry) > now;
+
+    if (!isOtpExpired) {
+      Logger.info("Generating new OTP.");
+
+      const otp = Utils.generateCode(6);
+      const salt = await bcrypt.genSalt(10);
+      const hashedOtp = await bcrypt.hash(String(otp), salt);
+
+      user = await userRepository.updateUser(user._id, {
+        fotgotPasswordOtp: hashedOtp,
+        fotgotPasswordOtpExpiry: new Date(now.getTime() + 10 * 60 * 1000),
+      });
+
+      await sendEmail({
+        receiver: email,
+        subject: "Reset Password OTP",
+        text: html.forgotPasswordOtp(otp),
+      });
+
+      return ResponseHandler.sendOkResponse(null, "OTP sent to your email.", res);
+    } else {
+      return ResponseHandler.sendOkResponse(null, "OTP already sent to your email.", res);
+    }
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+const forgotPasswordVerify = async (req, res) => {
+  try {
+    const { error } = validatePayload.forgotPasswordVerify(req.body);
+    if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
+
+    const { email, otp, newPassword } = req.body;
+    let user = await userRepository.findUser({ email });
+    if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
+
+    if (!user.fotgotPasswordOtp || !user.fotgotPasswordOtpExpiry)
+      return ResponseHandler.sendBadResponse("OTP not requested.", res);
+
+    const now = new Date();
+    if (now > new Date(user.fotgotPasswordOtpExpiry))
+      return ResponseHandler.sendBadResponse("OTP expired.", res);
+
+    const isOtpValid = await authService.verifyPassword(String(otp), user.fotgotPasswordOtp);
+    if (!isOtpValid) return ResponseHandler.sendBadResponse("Invalid OTP.", res);
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    const updated = await userRepository.updateUser(user._id, {
+      password: hashedPassword,
+      fotgotPasswordOtp: null,
+      fotgotPasswordOtpExpiry: null,
+    });
+    if (!updated) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    // return ResponseHandler.sendOkResponse(null, "Password reset successful.", res);
+    const token = user.generateAuthToken();
+    Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);
+
+    return res
+      .status(Constants.HTTP_STATUS_CODES.OK)
+      .send(
+        new Response(
+          { jwt: token },
+          Constants.HTTP_STATUS_CODES.OK,
+          Constants.SUCCESSFULLY_LOGGED_IN,
+          Constants.SUCCESS
+        )
+      );
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
+
+exports.authControllers = {
+  userLogin,
+  verifyEmail,
+  passwordUpdate,
+  requestForgotPasswordOTP,
+  forgotPasswordVerify,
+};

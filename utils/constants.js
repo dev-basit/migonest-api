@@ -34,6 +34,7 @@ exports.Constants = {
   NEW_USER_EMAIL_CLASH: "User with given email already registered.",
   EMAIL_ALREADY_VERIFIED: "User is already verified.",
   INVALID_EMAIL_PASSWORD: "Invalid email or password.",
+  EMAIL_REQUIRED: "Email is required.",
   INVALID_VERIFICATION_CODE: "Please send correct verification code.",
   DATA_NOT_FOUND: "No data found.",
   RESOURCE_NOT_FOUND: "Data not found for given id.",

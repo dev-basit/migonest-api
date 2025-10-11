@@ -17,6 +17,8 @@ const userSchema = new mongoose.Schema(
     type: { type: String, enum: Constants.USER_TYPES, required: true },
     isVerified: { type: Boolean, default: false },
     emailVerificationCode: { type: String, minlength: 6, maxlength: 6 },
+    fotgotPasswordOtp: { type: String, minlength: 6, maxlength: 1024 },
+    fotgotPasswordOtpExpiry: { type: Date },
     preferences: { type: String, minlength: 0, maxlength: 3072, default: "{}" },
     followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // List of followers
     following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
