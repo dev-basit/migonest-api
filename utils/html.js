@@ -25,6 +25,16 @@ function verificationEmail(code) {
     .replace(/Migonest/g, config.APP_NAME);
 }
 
+function forgotPasswordOtp(otp) {
+  let html = readTemplate("forgot-password.html");
+  if (!html) return `<div>OTP: <strong>${otp}</strong></div>`;
+
+  return html
+    .replace(/\{\{OTP\}\}/g, String(otp))
+    .replace("<!--YEAR-->", String(YEAR))
+    .replace(/Migonest/g, config.APP_NAME);
+}
+
 function purchaseUniExpertService({ name, amount, reference }) {
   let html = readTemplate("purchase-uni-expert-service.html");
   if (!html) {
@@ -115,6 +125,7 @@ function contactUs({ firstName, lastName, email, phone, message }) {
 
 exports.html = {
   verificationEmail,
+  forgotPasswordOtp,
   purchaseUniExpertService,
   subscriptionActivated,
   subscriptionDeactivated,

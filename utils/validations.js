@@ -47,4 +47,20 @@ function passwordUpdate(user) {
   return schema.validate(user);
 }
 
-exports.validatePayload = { userCreate, userLogin, emailVerification, passwordUpdate };
+function forgotPasswordVerify(body) {
+  const schema = Joi.object({
+    email: Joi.string().min(3).max(128).required().email(),
+    otp: Joi.string().length(6).required(),
+    newPassword: Joi.string().min(4).max(1024).required(),
+  });
+
+  return schema.validate(body);
+}
+
+exports.validatePayload = {
+  userCreate,
+  userLogin,
+  emailVerification,
+  passwordUpdate,
+  forgotPasswordVerify,
+};
