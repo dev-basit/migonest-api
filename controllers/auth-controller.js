@@ -67,7 +67,20 @@ const verifyEmail = async (req, res) => {
     const updatedUser = await userRepository.updateUser(user._id, userUpdatedDetails);
     if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
 
-    return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_VERIFIED_ACCOUNT, res);
+    // return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_VERIFIED_ACCOUNT, res);
+    const token = user.generateAuthToken();
+    Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);
+
+    return res
+      .status(Constants.HTTP_STATUS_CODES.OK)
+      .send(
+        new Response(
+          { jwt: token },
+          Constants.HTTP_STATUS_CODES.OK,
+          Constants.SUCCESSFULLY_LOGGED_IN,
+          Constants.SUCCESS
+        )
+      );
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
