@@ -47,7 +47,7 @@ exports.Constants = {
   BAD_REQUEST: "Bad request. Your request cannot be fulfilled.",
   UNAUTHORIZED: "you are unauthorized to perform this action.",
   NO_TOKEN_PROVIDED: "Access denied. No token provided.",
-  INVALID_TOKEN: "Invalid token.",
+  INVALID_TOKEN: "Session Expired. Please login again.",
   FORBIDDEN: "You are not allowed to access this data.",
   FORBIDDEN_: "You are not allowed to perform this operation.",
   CONFLICT: "Already data exist.",
