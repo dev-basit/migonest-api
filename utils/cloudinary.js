@@ -22,7 +22,7 @@ function getCloudinaryStorage() {
 
         return {
           folder: "migonest",
-          allowed_formats: ["jpeg", "png", "jpg", "pdf"],
+          allowed_formats: ["jpeg", "png", "jpg", "webp", "svg", "pdf"],
           resource_type: file.mimetype === "application/pdf" ? "raw" : "auto",
           public_id: `${originalName.replace(/\s+/g, "_")}_${timestamp}${fileExt}`,
         };
