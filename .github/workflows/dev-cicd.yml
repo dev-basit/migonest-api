@@ -1,12 +1,10 @@
 name: Deploy Backend to dev
 
-# on:
-#   pull_request:
-#     types: [closed]
-#     branches:
-#       - dev
-
-on: push
+on:
+  pull_request:
+    types: [closed]
+    branches:
+      - dev
 
 jobs:
   deploy:
