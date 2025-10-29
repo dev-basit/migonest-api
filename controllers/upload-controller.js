@@ -1,11 +1,11 @@
-const multer = require("multer");
-const express = require("express");
-const router = express.Router();
-const { uploadControllers } = require("../controllers");
-const { getCloudinaryStorage } = require("../utils/cloudinary");
+const { ResponseHandler, Constants } = require("../utils");
 
-const upload = multer({ storage: getCloudinaryStorage() });
+const upload = async (req, res) => {
+  try {
+    return ResponseHandler.sendOkResponse(req.file.path, Constants.SUCCESSFULLY_UPLOADED, res);
+  } catch (error) {
+    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+  }
+};
 
-router.post("/", upload.single("file"), uploadControllers.upload);
-
-exports.uploadRoutes = router;
+exports.uploadControllers = { upload };
