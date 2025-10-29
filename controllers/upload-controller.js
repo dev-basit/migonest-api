@@ -1,19 +1,11 @@
-const { ResponseHandler, Constants } = require("../utils");
-const { uploadStreamToCloudinary } = require("../utils/cloudinary");
+const multer = require("multer");
+const express = require("express");
+const router = express.Router();
+const { uploadControllers } = require("../controllers");
+const { getCloudinaryStorage } = require("../utils/cloudinary");
 
-const upload = async (req, res) => {
-  try {
-    const file = req.file;
-    if (!file) {
-      return ResponseHandler.sendBadResponse("NO_FILE_PROVIDED", res);
-    }
+const upload = multer({ storage: getCloudinaryStorage() });
 
-    const isPDF = file.mimetype === "application/pdf";
-    const result = await uploadStreamToCloudinary(file.buffer, file.originalname, isPDF);
-    return ResponseHandler.sendOkResponse(result.secure_url, Constants.SUCCESSFULLY_UPLOADED, res);
-  } catch (error) {
-    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
-  }
-};
+router.post("/", upload.single("file"), uploadControllers.upload);
 
-exports.uploadControllers = { upload };
+exports.uploadRoutes = router;
