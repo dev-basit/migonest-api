@@ -1,5 +1,5 @@
-const cloudinary = require("cloudinary").v2;
-const { CloudinaryStorage } = require("multer-storage-cloudinary");
+const { v2: cloudinary } = require("cloudinary");
+const streamifier = require("streamifier");
 const { config } = require("../config");
 
 cloudinary.config({
@@ -8,29 +8,25 @@ cloudinary.config({
   api_secret: config.cloudinaryApiSecret,
 });
 
-let storage = null;
+const uploadStreamToCloudinary = (buffer, originalName, isPDF = false) => {
+  return new Promise((resolve, reject) => {
+    const timestamp = Date.now();
+    const baseName = originalName.split(".").slice(0, -1).join("_");
 
-function getCloudinaryStorage() {
-  if (!storage) {
-    storage = new CloudinaryStorage({
-      cloudinary,
-      params: async (req, file) => {
-        const timestamp = Date.now();
-        const originalName = file.originalname.split(".").slice(0, -1).join(".");
-        // const extension = file.originalname.split(".").pop();
-        const fileExt = file.mimetype === "application/pdf" ? ".pdf" : "";
-
-        return {
-          folder: "migonest",
-          allowed_formats: ["jpeg", "png", "jpg", "webp", "svg", "pdf"],
-          resource_type: file.mimetype === "application/pdf" ? "raw" : "auto",
-          public_id: `${originalName.replace(/\s+/g, "_")}_${timestamp}${fileExt}`,
-        };
+    const uploadStream = cloudinary.uploader.upload_stream(
+      {
+        folder: "migonest",
+        resource_type: isPDF ? "raw" : "auto",
+        public_id: `${baseName}_${timestamp}`,
       },
-    });
-  }
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
 
-  return storage;
-}
+    streamifier.createReadStream(buffer).pipe(uploadStream);
+  });
+};
 
-module.exports = { getCloudinaryStorage };
+module.exports = { uploadStreamToCloudinary };
