@@ -32,12 +32,15 @@ const messageCreate = async (req, res) => {
     const { error } = messageService.validateMessage(requestedPayload);
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
-    const conversationAllowed = await conversationService.conversationsAllowed(
-      req.user._id,
-      req.body.conversationId
-    );
-    if (!conversationAllowed)
-      return ResponseHandler.sendForbiddenResponse("You are not allowed to send messages", res);
+    const isCurrentUserStudent = req.user.type === Constants.STUDENT;
+    if (isCurrentUserStudent) {
+      const conversationAllowed = await conversationService.conversationsAllowed(
+        req.user._id,
+        req.body.conversationId
+      );
+      if (!conversationAllowed)
+        return ResponseHandler.sendForbiddenResponse("You are not allowed to send messages", res);
+    }
 
     const conversation = await conversationRepository.findById(requestedPayload.conversationId);
     if (!conversation) return ResponseHandler.sendNotFoundResponse(Constants.CONVERSATION_NOT_FOUND, res);
