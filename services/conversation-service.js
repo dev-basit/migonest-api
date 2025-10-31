@@ -63,7 +63,7 @@ const conversationsAllowed = async (userId, conversationId) => {
 
     const now = new Date();
     const hasActiveSubscription = Boolean(
-      subscription && subscription.status === "active" && new Date(subscription.currentPeriodEnd) > now
+      subscription && !subscription.cancelAtPeriodEnd && new Date(subscription.currentPeriodEnd) > now
     );
 
     if (hasActiveSubscription) {
