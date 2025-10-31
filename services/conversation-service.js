@@ -1,6 +1,11 @@
 const Joi = require("joi");
 const { Constants } = require("../utils");
-const { conversationRepository } = require("../repositories");
+const {
+  conversationRepository,
+  subscriptionRepository,
+  uniExpertRequestRepository,
+} = require("../repositories");
+const { Logger } = require("../startup/logs");
 
 function validateConversationCreatePayload(data) {
   const schema = Joi.object({
@@ -50,4 +55,49 @@ const updateConversation = async (conversationId, updatedData) => {
   return updatedConversation;
 };
 
-exports.conversationService = { validateConversationCreatePayload, updateConversation };
+// TODO: cache this function value when using redis
+const conversationsAllowed = async (userId, conversationId) => {
+  try {
+    const filters = { members: { $in: userId } };
+    const subscription = await subscriptionRepository.findSubscription({ userId });
+
+    const now = new Date();
+    const hasActiveSubscription = Boolean(
+      subscription && subscription.status === "active" && new Date(subscription.currentPeriodEnd) > now
+    );
+
+    if (hasActiveSubscription) {
+      Logger.info("User has active subscription");
+
+      return true;
+    } else {
+      Logger.info("User does not have active subscription");
+
+      const conversations = await conversationRepository.findAll(filters);
+      const paidRequests = await uniExpertRequestRepository.findUniExpertRequests({
+        studentId: userId,
+        paymentStatus: true,
+      });
+      let allowedUniExpertIds = new Set();
+      if (Array.isArray(paidRequests) && paidRequests.length > 0) {
+        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId._id.toString()));
+      }
+
+      const allowedConversations = conversations.map((conversation) => {
+        const memberIds = (conversation.members || []).map((member) =>
+          member && member._id ? member._id.toString() : member?.toString()
+        );
+        const isAllowed = memberIds.some((id) => allowedUniExpertIds.has(id));
+        return { id: conversation._id.toString(), allowed: isAllowed };
+      });
+
+      return allowedConversations.some(
+        (conversation) => conversation.allowed && conversation.id === conversationId
+      );
+    }
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.conversationService = { validateConversationCreatePayload, updateConversation, conversationsAllowed };
