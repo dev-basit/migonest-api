@@ -18,11 +18,11 @@ const conversationsFind = async (req, res) => {
     ]);
 
     const now = new Date();
-    const hasActiveSubscription = Boolean(
-      subscription && subscription.status === "active" && new Date(subscription.currentPeriodEnd) > now
-    );
+    const hasActiveSubscription = Boolean(subscription && new Date(subscription.currentPeriodEnd) > now);
 
-    if (hasActiveSubscription) {
+    const isCurrentUserUniExpert = req.user.type === Constants.UNI_EXPERT;
+
+    if (hasActiveSubscription || isCurrentUserUniExpert) {
       Logger.info("User has active subscription");
 
       const allowedConversations = conversations.map((conversation) => ({ ...conversation, allowed: true }));

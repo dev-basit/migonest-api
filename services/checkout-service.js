@@ -23,11 +23,11 @@ const createUniExpertServiceSession = async (student, uniExpertRequestId) => {
           price_data: {
             currency: "eur",
             product_data: {
-              name: "Consultation Fee",
+              name: "Migonest Uni Expert Service Fee",
               // images: [course.imageUrl],
             },
-            unit_amount: Math.round(499 * 100),
-            // unit_amount: 100,
+            // unit_amount: Math.round(499 * 100),
+            unit_amount: 100,
           },
           quantity: 1,
         },

@@ -62,9 +62,7 @@ const conversationsAllowed = async (userId, conversationId) => {
     const subscription = await subscriptionRepository.findSubscription({ userId });
 
     const now = new Date();
-    const hasActiveSubscription = Boolean(
-      subscription && subscription.status === "active" && new Date(subscription.currentPeriodEnd) > now
-    );
+    const hasActiveSubscription = Boolean(subscription && new Date(subscription.currentPeriodEnd) > now);
 
     if (hasActiveSubscription) {
       Logger.info("User has active subscription");
