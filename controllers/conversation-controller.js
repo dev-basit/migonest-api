@@ -19,7 +19,7 @@ const conversationsFind = async (req, res) => {
 
     const now = new Date();
     const hasActiveSubscription = Boolean(
-      subscription && subscription.status === "active" && new Date(subscription.currentPeriodEnd) > now
+      subscription && !subscription.cancelAtPeriodEnd && new Date(subscription.currentPeriodEnd) > now
     );
 
     if (hasActiveSubscription) {
