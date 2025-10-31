@@ -69,30 +69,42 @@ const subscriptionUpdated = async (subscription) => {
   const plan = item.plan.id === config.stripeMonthlyPriceId ? "month" : "year";
 
   const isSubscriptionCancelled = subscription.cancellation_details.reason === "cancellation_requested";
+
+  const subscriptionData = {
+    userId: user._id.toString(),
+    planType: plan,
+    stripeSubscriptionId: subscription.id,
+    status: isSubscriptionCancelled ? "cancelled" : "active",
+    currentPeriodStart: new Date(currentPeriodStart * 1000),
+    currentPeriodEnd: new Date(currentPeriodEnd * 1000),
+    cancelAtPeriodEnd: subscription.cancel_at_period_end,
+  };
+
+  const updatedSubscription = await subscriptionRepository.updateSubscription(
+    { stripeSubscriptionId: subscription.id },
+    subscriptionData,
+    { new: true, upsert: true }
+  );
+
+  await userRepository.updateUser(user._id, { currentSubscriptionId: updatedSubscription._id });
+
   if (isSubscriptionCancelled) {
-    const subscriptionData = {
-      userId: user._id.toString(),
-      planType: plan,
-      stripeSubscriptionId: subscription.id,
-      status: "cancelled",
-      currentPeriodStart: new Date(currentPeriodStart * 1000),
-      currentPeriodEnd: new Date(currentPeriodEnd * 1000),
-      cancelAtPeriodEnd: subscription.cancel_at_period_end,
-    };
-
-    const updatedSubscription = await subscriptionRepository.updateSubscription(
-      { stripeSubscriptionId: subscription.id },
-      subscriptionData,
-      { new: true, upsert: true }
-    );
-
-    await userRepository.updateUser(user._id, { currentSubscriptionId: updatedSubscription._id });
-
     await sendEmail({
       receiver: user.email,
       subject: "Subscription Deactivated",
       text: html.subscriptionDeactivated({
         name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+        periodEnd: new Date(currentPeriodEnd * 1000).toDateString(),
+      }),
+    });
+  } else {
+    await sendEmail({
+      receiver: user.email,
+      subject: "Subscription Activated Again",
+      text: html.subscriptionActivated({
+        name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+        plan,
+        periodStart: new Date(currentPeriodStart * 1000).toDateString(),
         periodEnd: new Date(currentPeriodEnd * 1000).toDateString(),
       }),
     });
