@@ -1,16 +1,54 @@
 const { ResponseHandler, Constants } = require("../utils");
 const { Logger } = require("../startup/logs");
-const { userRepository, conversationRepository } = require("../repositories");
+const {
+  userRepository,
+  conversationRepository,
+  uniExpertRequestRepository,
+  subscriptionRepository,
+} = require("../repositories");
 const { conversationService } = require("../services");
 
 const conversationsFind = async (req, res) => {
   try {
     const filters = { members: { $in: req.user._id } };
 
-    Logger.info(Constants.FETCHING_DATA);
+    const [conversations, subscription] = await Promise.all([
+      conversationRepository.findAll(filters),
+      subscriptionRepository.findSubscription({ userId: req.user._id }),
+    ]);
 
-    const conversations = await conversationRepository.findAll(filters);
-    return ResponseHandler.sendOkResponse(conversations, Constants.SUCCESSFULLY_FETCED, res);
+    const now = new Date();
+    const hasActiveSubscription = Boolean(
+      subscription && subscription.status === "active" && new Date(subscription.currentPeriodEnd) > now
+    );
+
+    if (hasActiveSubscription) {
+      Logger.info("User has active subscription");
+
+      const allowedConversations = conversations.map((conversation) => ({ ...conversation, allowed: true }));
+      return ResponseHandler.sendOkResponse(allowedConversations, Constants.SUCCESSFULLY_FETCED, res);
+    } else {
+      Logger.info("User does not have active subscription");
+
+      const paidRequests = await uniExpertRequestRepository.findUniExpertRequests({
+        studentId: req.user._id,
+        paymentStatus: true,
+      });
+      let allowedUniExpertIds = new Set();
+      if (Array.isArray(paidRequests) && paidRequests.length > 0) {
+        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId._id.toString()));
+      }
+
+      const allowedConversations = conversations.map((conversation) => {
+        const memberIds = (conversation.members || []).map((member) =>
+          member && member._id ? member._id.toString() : member?.toString()
+        );
+        const isAllowed = memberIds.some((id) => allowedUniExpertIds.has(id));
+        return { ...conversation, allowed: isAllowed };
+      });
+
+      return ResponseHandler.sendOkResponse(allowedConversations, Constants.SUCCESSFULLY_FETCED, res);
+    }
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
