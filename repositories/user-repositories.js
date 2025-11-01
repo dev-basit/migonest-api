@@ -72,11 +72,18 @@ const findUsersPublic = async (params = {}) => {
   }
 };
 
-const findUsersSuggestions = async (params = {}) => {
+const findUsersSuggestions = async (params = {}, { pageSize, skip }) => {
   try {
-    return await UserModel.find(params)
-      .select("_id userName profilePicture preferences type")
-      .sort({ createdAt: -1 });
+    const [users, count] = await Promise.all([
+      UserModel.find(params)
+        .select("_id userName profilePicture preferences type")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      UserModel.countDocuments(params),
+    ]);
+    return { users, count };
   } catch (error) {
     throw new Error(error.message);
   }

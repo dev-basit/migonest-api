@@ -205,7 +205,7 @@ const userSuggestions = async (req, res) => {
     const type = req.query.type;
     const linkedUsers = req.query.linkedUsers === "true";
 
-    const suggestedUsers = await userService.userSuggestions(userId, type, linkedUsers);
+    const { users: suggestedUsers } = await userService.userSuggestions(userId, type, linkedUsers);
     return ResponseHandler.sendOkResponse(suggestedUsers, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
@@ -216,6 +216,7 @@ const network = async (req, res) => {
   try {
     const userId = req.user._id;
     const showFollowers = req.query.showFollowers === "true";
+    const { pageNo, pageSize, skip } = req.pagination;
 
     const currentUser = await userRepository.findUserById(userId);
     if (!currentUser) throw new Error(Constants.USER_NOT_FOUND);
@@ -231,8 +232,12 @@ const network = async (req, res) => {
 
     Logger.info(Constants.FETCHING_DATA);
 
-    const network = await userRepository.findUsersSuggestions(filters);
-    return ResponseHandler.sendOkResponse(network, Constants.SUCCESSFULLY_FETCED, res);
+    const { users: network, count } = await userRepository.findUsersSuggestions(filters, { pageSize, skip });
+    return ResponseHandler.sendOkResponse(
+      { network, pagination: { count, pageNo, pageSize, totalPages: Math.ceil(count / pageSize) } },
+      Constants.SUCCESSFULLY_FETCED,
+      res
+    );
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
