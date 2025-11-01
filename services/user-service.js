@@ -134,7 +134,10 @@ const userSuggestions = async (userId, type, linkedUsers) => {
 
     Logger.info(Constants.FETCHING_DATA);
 
-    return await userRepository.findUsersSuggestions(filters);
+    return await userRepository.findUsersSuggestions(filters, {
+      pageSize: Constants.PAGE_SIZE,
+      skip: 0,
+    });
   } catch (error) {
     throw new Error(error.message);
   }

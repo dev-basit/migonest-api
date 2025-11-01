@@ -7,6 +7,9 @@ exports.Constants = {
   SUCCESS: "success",
   FAIL: "fail",
 
+  PAGE_NO: 1,
+  PAGE_SIZE: 10,
+
   STUDENT: STUDENT,
   UNI_EXPERT: UNI_EXPERT,
   ADMIN: ADMIN,
