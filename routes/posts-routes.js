@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const { postsControllers } = require("../controllers");
+const { paginationMiddleware } = require("../middleware");
 
-router.get("/", postsControllers.posts);
+router.get("/", paginationMiddleware, postsControllers.posts);
 router.post("/", postsControllers.createPost);
 router.post("/like/dislike", postsControllers.likeDislikePost);
 router.post("/share", postsControllers.sharePost);
