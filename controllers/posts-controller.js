@@ -6,15 +6,24 @@ const { postService } = require("../services");
 // TODO: api for share
 const posts = async (req, res) => {
   try {
+    const { pageNo, pageSize, skip } = req.pagination;
+
     Logger.info("Fetching followers list");
     const user = await userRepository.findUserById(req.user._id);
     const userFollowingIds = user.following.map((followedUser) => followedUser._id);
     userFollowingIds.push(req.user._id); // show user own post to user
 
     Logger.info(Constants.FETCHING_DATA);
-    const posts = await postRepository.findAllPosts({ author: { $in: userFollowingIds }, isVisible: true });
+    const { posts, count } = await postRepository.findAllPosts(
+      { author: { $in: userFollowingIds }, isVisible: true },
+      { skip, pageSize }
+    );
 
-    return ResponseHandler.sendOkResponse(posts, Constants.SUCCESSFULLY_FETCED, res);
+    return ResponseHandler.sendOkResponse(
+      { posts, pagination: { count, pageNo, pageSize, totalPages: Math.ceil(count / pageSize) } },
+      Constants.SUCCESSFULLY_FETCED,
+      res
+    );
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }

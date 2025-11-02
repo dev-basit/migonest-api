@@ -1,10 +1,17 @@
 const { PostModel } = require("../models");
 
-const findAllPosts = async (params = {}) => {
+const findAllPosts = async (params = {}, { skip, pageSize }) => {
   try {
-    return await PostModel.find(params)
-      .populate("author", "userName firstName lastName profilePicture type")
-      .sort({ createdAt: -1 });
+    const [posts, count] = await Promise.all([
+      PostModel.find(params)
+        .populate("author", "userName firstName lastName profilePicture type")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      PostModel.countDocuments(params),
+    ]);
+    return { posts, count };
   } catch (error) {
     throw new Error(error.message);
   }

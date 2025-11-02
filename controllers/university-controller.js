@@ -10,9 +10,15 @@ const universitiesFind = async (req, res) => {
     const filters = {};
     if (req.query.name) filters.name = { $regex: req.query.name, $options: "i" };
     if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
-    const universities = await universityRepository.findUniversities(filters);
 
-    return ResponseHandler.sendOkResponse(universities, Constants.SUCCESSFULLY_FETCED, res);
+    const { pageNo, pageSize, skip } = req.pagination;
+
+    const { universities, count } = await universityRepository.findUniversities(filters, { skip, pageSize });
+    return ResponseHandler.sendOkResponse(
+      { universities, pagination: { count, pageNo, pageSize, totalPages: Math.ceil(count / pageSize) } },
+      Constants.SUCCESSFULLY_FETCED,
+      res
+    );
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
