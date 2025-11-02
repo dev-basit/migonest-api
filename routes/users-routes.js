@@ -4,7 +4,7 @@ const { usersControllers } = require("../controllers");
 const { adminMiddleware, paginationMiddleware } = require("../middleware");
 
 // all these routes will undergo authMiddleware since it is applied at global level
-router.get("/", usersControllers.users);
+router.get("/", paginationMiddleware, usersControllers.users);
 router.get("/my/details", usersControllers.currentUserDetails);
 router.get("/suggests/to/follow", usersControllers.userSuggestions);
 router.get("/network", paginationMiddleware, usersControllers.network);

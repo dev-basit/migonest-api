@@ -64,9 +64,17 @@ const findUsers = async (params = {}) => {
 };
 
 // gets minimum info to be used by public
-const findUsersPublic = async (params = {}) => {
+const findUsersPublic = async (params = {}, { skip, pageSize }) => {
   try {
-    return await UserModel.find(params).select("_id userName firstName lastName profilePicture");
+    const [users, count] = await Promise.all([
+      UserModel.find(params)
+        .select("_id userName firstName lastName profilePicture")
+        .skip(skip)
+        .limit(pageSize)
+        .lean(),
+      UserModel.countDocuments(params),
+    ]);
+    return { users, count };
   } catch (error) {
     throw new Error(error.message);
   }
