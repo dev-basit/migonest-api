@@ -24,9 +24,16 @@ const users = async (req, res) => {
       ];
     }
 
+    const { pageNo, pageSize, skip } = req.pagination;
+
     Logger.info(Constants.FETCHING_DATA);
-    const users = await userRepository.findUsersPublic(filters);
-    return ResponseHandler.sendOkResponse(users, Constants.SUCCESSFULLY_FETCED, res);
+
+    const { users, count } = await userRepository.findUsersPublic(filters, { skip, pageSize });
+    return ResponseHandler.sendOkResponse(
+      { users, pagination: { count, pageNo, pageSize, totalPages: Math.ceil(count / pageSize) } },
+      Constants.SUCCESSFULLY_FETCED,
+      res
+    );
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
