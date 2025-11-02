@@ -232,7 +232,7 @@ const network = async (req, res) => {
 
     Logger.info(Constants.FETCHING_DATA);
 
-    const { users: network, count } = await userRepository.findUsersSuggestions(filters, { pageSize, skip });
+    const { users: network, count } = await userRepository.findUsersSuggestions(filters, { skip, pageSize });
     return ResponseHandler.sendOkResponse(
       { network, pagination: { count, pageNo, pageSize, totalPages: Math.ceil(count / pageSize) } },
       Constants.SUCCESSFULLY_FETCED,
