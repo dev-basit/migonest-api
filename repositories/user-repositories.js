@@ -72,7 +72,7 @@ const findUsersPublic = async (params = {}) => {
   }
 };
 
-const findUsersSuggestions = async (params = {}, { pageSize, skip }) => {
+const findUsersSuggestions = async (params = {}, { skip, pageSize }) => {
   try {
     const [users, count] = await Promise.all([
       UserModel.find(params)
