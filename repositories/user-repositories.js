@@ -69,6 +69,7 @@ const findUsersPublic = async (params = {}, { skip, pageSize }) => {
     const [users, count] = await Promise.all([
       UserModel.find(params)
         .select("_id userName firstName lastName profilePicture")
+        .sort({ createdAt: -1 })
         .skip(skip)
         .limit(pageSize)
         .lean(),
