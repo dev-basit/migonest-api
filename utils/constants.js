@@ -1,7 +1,7 @@
-const STUDENT = "student";
-const UNI_EXPERT = "uni-expert";
-const ADMIN = "admin";
-const SUPER_ADMIN = "super-admin";
+const STUDENT = "STUDENT";
+const UNI_EXPERT = "UNI_EXPERT";
+const ADMIN = "ADMIN";
+const SUPER_ADMIN = "SUPER_ADMIN";
 
 exports.Constants = {
   SUCCESS: "success",
@@ -16,8 +16,8 @@ exports.Constants = {
   SUPER_ADMIN: SUPER_ADMIN,
   USER_TYPES: [STUDENT, UNI_EXPERT, ADMIN, SUPER_ADMIN],
 
-  ACCEPT_STATUS: "accepted",
-  OPEN_STATUS: "open",
+  ACCEPT_STATUS: "ACCEPTED",
+  OPEN_STATUS: "OPEN",
 
   FETCHING_DATA: "Fethcing data from database.",
   SEND_ID_IN_PAYLOAD: "Please send id in payload.",
