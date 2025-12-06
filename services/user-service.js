@@ -105,11 +105,11 @@ const ieltsCreate = async (data) => {
 
 const userSuggestions = async (userId, type, linkedUsers) => {
   try {
-    const currentUser = await userRepository.findUserById(userId);
+    const currentUser = await userRepository.findUserDetails({ id: userId });
     if (!currentUser) throw new Error(Constants.USER_NOT_FOUND);
 
-    const excludeUserIds = currentUser.following.concat(userId);
-    let filters = { _id: { $nin: excludeUserIds } };
+    const excludeUserIds = currentUser.following.map((following) => following.id).concat(userId);
+    let filters = { id: { notIn: excludeUserIds } };
     if (type) filters.type = type;
 
     if (linkedUsers) {
@@ -118,17 +118,17 @@ const userSuggestions = async (userId, type, linkedUsers) => {
           await uniExpertRequestRepository.findUniExpertRequests({ studentId: userId })
         )
           .filter((request) => request.paymentStatus === true)
-          .map((request) => request.uniExpertId._id);
+          .map((request) => request.uniExpertId.id);
 
-        filters._id = { $in: paymentDoneToUniExperts };
+        filters.id = { in: paymentDoneToUniExperts };
       } else if (currentUser.type === Constants.UNI_EXPERT) {
         const paymentDoneByStudents = (
           await uniExpertRequestRepository.findUniExpertRequests({ uniExpertId: userId })
         )
           .filter((request) => request.paymentStatus === true)
-          .map((request) => request.studentId._id);
+          .map((request) => request.studentId.id);
 
-        filters._id = { $in: paymentDoneByStudents };
+        filters.id = { in: paymentDoneByStudents };
       }
     }
 

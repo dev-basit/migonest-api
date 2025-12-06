@@ -9,9 +9,9 @@ const posts = async (req, res) => {
     const { pageNo, pageSize, skip } = req.pagination;
 
     Logger.info("Fetching followers list");
-    const user = await userRepository.findUserById(req.user._id);
-    const userFollowingIds = user.following.map((followedUser) => followedUser._id);
-    userFollowingIds.push(req.user._id); // show user own post to user
+    const user = await userRepository.findUserById(req.user.id);
+    const userFollowingIds = user.following.map((followedUser) => followedUser.id);
+    userFollowingIds.push(req.user.id); // show user own post to user
 
     Logger.info(Constants.FETCHING_DATA);
     const { posts, count } = await postRepository.findAllPosts(
@@ -52,7 +52,7 @@ const createPost = async (req, res) => {
 const likeDislikePost = async (req, res) => {
   try {
     const { postId } = req.body;
-    const currentUserId = req.user._id;
+    const currentUserId = req.user.id;
 
     if (!postId) return ResponseHandler.sendBadResponse("Post ID is required.", res);
 
@@ -83,7 +83,7 @@ const sharePost = async (req, res) => {
     if (!post) return ResponseHandler.sendNotFoundResponse("Post not found.", res);
 
     const newPost = {};
-    newPost.author = req.user._id;
+    newPost.author = req.user.id;
     newPost.content = post.content;
     newPost.picture = post.picture;
     newPost.isShared = true;
@@ -97,7 +97,7 @@ const sharePost = async (req, res) => {
 
     // TODO: apply transaction here
     let sharedPostCreated = await postRepository.createPost(newPost);
-    await postRepository.updatePost(postId, { $push: { shares: sharedPostCreated._id } });
+    await postRepository.updatePost(postId, { $push: { shares: sharedPostCreated.id } });
     return ResponseHandler.sendOkResponse(sharedPostCreated, "Successfully shared the post.", res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
@@ -112,7 +112,7 @@ const updatePost = async (req, res) => {
     const postExisitngDetails = await postRepository.findPostById(postId);
     if (!postExisitngDetails) return ResponseHandler.sendNotFoundResponse(Constants.DATA_NOT_FOUND, res);
 
-    if (postExisitngDetails.author.toString() !== req.user._id.toString())
+    if (postExisitngDetails.author.toString() !== req.user.id.toString())
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
     const { content, picture, isVisible } = req.body;

@@ -78,15 +78,15 @@ const conversationsAllowed = async (userId, conversationId) => {
       });
       let allowedUniExpertIds = new Set();
       if (Array.isArray(paidRequests) && paidRequests.length > 0) {
-        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId._id.toString()));
+        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId.id.toString()));
       }
 
       const allowedConversations = conversations.map((conversation) => {
         const memberIds = (conversation.members || []).map((member) =>
-          member && member._id ? member._id.toString() : member?.toString()
+          member && member.id ? member.id.toString() : member?.toString()
         );
         const isAllowed = memberIds.some((id) => allowedUniExpertIds.has(id));
-        return { id: conversation._id.toString(), allowed: isAllowed };
+        return { id: conversation.id.toString(), allowed: isAllowed };
       });
 
       return allowedConversations.some(

@@ -5,7 +5,7 @@ const { notificationService } = require("../services");
 
 const notificationsFind = async (req, res) => {
   try {
-    const filters = { user: req.user._id };
+    const filters = { user: req.user.id };
 
     Logger.info(Constants.FETCHING_DATA);
 

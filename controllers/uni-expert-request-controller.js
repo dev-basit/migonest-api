@@ -50,7 +50,7 @@ const uniExpertRequestCreate = async (req, res) => {
     const universityDetails = await universityRepository.findUniversityById(requestedPayload.universityId);
     if (!universityDetails) return ResponseHandler.sendNotFoundResponse(Constants.UNIVERSITY_NOT_FOUND, res);
 
-    if (universityDetails.uniExpertId.toString() !== uniExpertDetails._id.toString()) {
+    if (universityDetails.uniExpertId.toString() !== uniExpertDetails.id.toString()) {
       return ResponseHandler.sendForbiddenResponse(
         "This uni expert cannot provide services for this university.",
         res

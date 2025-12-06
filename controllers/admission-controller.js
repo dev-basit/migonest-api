@@ -16,7 +16,7 @@ const admissionsFind = async (req, res) => {
     Logger.info(Constants.FETCHING_DATA);
 
     const uniExpertRequests = (await uniExpertRequestRepository.findUniExpertRequests(filters)).map(
-      (request) => request._id
+      (request) => request.id
     );
 
     const admissions = await admissionRepository.findAdmissions({ uniExpertRequestId: uniExpertRequests });

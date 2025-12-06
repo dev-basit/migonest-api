@@ -6,8 +6,8 @@ const findAdmissions = async (params = {}) => {
       .populate({
         path: "uniExpertRequestId",
         populate: [
-          { path: "studentId", select: "_id userName profilePicture" },
-          { path: "uniExpertId", select: "_id userName profilePicture" },
+          { path: "studentId", select: "id userName profilePicture" },
+          { path: "uniExpertId", select: "id userName profilePicture" },
           { path: "universityId" },
         ],
       })

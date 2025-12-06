@@ -4,7 +4,7 @@ const findUniversities = async (params = {}, { skip, pageSize }) => {
   try {
     const [universities, count] = await Promise.all([
       UniversityModel.find(params)
-        .populate("uniExpertId", "_id userName firstName lastName profilePicture type")
+        .populate("uniExpertId", "id userName firstName lastName profilePicture type")
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(pageSize)

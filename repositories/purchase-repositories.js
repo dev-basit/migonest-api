@@ -24,8 +24,8 @@ const findPurchases = async (params = {}) => {
       .populate({
         path: "uniExpertRequestId",
         populate: [
-          { path: "studentId", select: "_id userName profilePicture" },
-          { path: "uniExpertId", select: "_id userName profilePicture" },
+          { path: "studentId", select: "id userName profilePicture" },
+          { path: "uniExpertId", select: "id userName profilePicture" },
           { path: "universityId" },
         ],
       })
@@ -70,7 +70,7 @@ async function findPurchasesAll(query) {
         $lookup: {
           from: "uniexpertrequests",
           localField: "uniExpertRequestId",
-          foreignField: "_id",
+          foreignField: "id",
           as: "uniExpertRequest",
         },
       },
@@ -89,10 +89,10 @@ async function findPurchasesAll(query) {
           from: "users",
           let: { id: "$uniExpertRequest.uniExpertId" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+            { $match: { $expr: { $eq: ["$id", "$$id"] } } },
             {
               $project: {
-                _id: 1,
+                id: 1,
                 userName: 1,
                 email: 1,
                 profilePicture: 1,
@@ -111,10 +111,10 @@ async function findPurchasesAll(query) {
           from: "users",
           let: { id: "$uniExpertRequest.studentId" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+            { $match: { $expr: { $eq: ["$id", "$$id"] } } },
             {
               $project: {
-                _id: 1,
+                id: 1,
                 userName: 1,
                 email: 1,
                 profilePicture: 1,
@@ -133,10 +133,10 @@ async function findPurchasesAll(query) {
           from: "users",
           let: { id: "$userId" },
           pipeline: [
-            { $match: { $expr: { $eq: ["$_id", "$$id"] } } },
+            { $match: { $expr: { $eq: ["$id", "$$id"] } } },
             {
               $project: {
-                _id: 1,
+                id: 1,
                 userName: 1,
                 email: 1,
                 profilePicture: 1,

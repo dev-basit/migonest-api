@@ -35,7 +35,7 @@ const messageCreate = async (req, res) => {
     const isCurrentUserStudent = req.user.type === Constants.STUDENT;
     if (isCurrentUserStudent) {
       const conversationAllowed = await conversationService.conversationsAllowed(
-        req.user._id,
+        req.user.id,
         req.body.conversationId
       );
       if (!conversationAllowed)
@@ -46,7 +46,7 @@ const messageCreate = async (req, res) => {
     if (!conversation) return ResponseHandler.sendNotFoundResponse(Constants.CONVERSATION_NOT_FOUND, res);
 
     const isSenderMemberOfConversation = conversation.members
-      .map((member) => member._id.toString())
+      .map((member) => member.id.toString())
       .includes(requestedPayload.senderId);
     if (!isSenderMemberOfConversation)
       return ResponseHandler.sendForbiddenResponse("Sender is not a member of this conversation", res);
@@ -58,8 +58,8 @@ const messageCreate = async (req, res) => {
 
     // increment unread count for receiver
     const receiver = conversation.members
-      .find((member) => member._id.toString() !== requestedPayload.senderId)
-      ._id.toString();
+      .find((member) => member.id.toString() !== requestedPayload.senderId)
+      .id.toString();
 
     const updatedConversation = {
       lastMessage: newConversation,
