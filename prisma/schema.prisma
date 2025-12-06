@@ -1,0 +1,371 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("databaseUrl")
+}
+
+model Users {
+  id                      String    @id @default(uuid()) @db.Uuid
+  userName                String    @db.VarChar(128)
+  firstName               String    @db.VarChar(128)
+  lastName                String    @db.VarChar(128)
+  profilePicture          String    @db.VarChar(512)
+  coverPicture            String?   @db.VarChar(512)
+  email                   String    @unique @db.VarChar(128)
+  password                String    @db.VarChar(1024)
+  dateOfBirth             DateTime?
+  gender                  Genders
+  type                    UserTypes
+  isVerified              Boolean   @default(false)
+  emailVerificationCode   String?   @db.VarChar(6)
+  fotgotPasswordOtp       String?   @db.VarChar(6)
+  fotgotPasswordOtpExpiry DateTime?
+  preferences             Json      @default("{}")
+  about                   String?   @db.VarChar(1024)
+  stripeCustomerId        String    @unique @db.VarChar(255)
+  currentSubscriptionId   String?   @unique
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+
+  followers                     UsersFollow[]         @relation("UserFollowers")
+  following                     UsersFollow[]         @relation("UserFollowing")
+  experiences                   Experiences[]
+  education                     Education[]
+  ielts                         Ielts[]
+  documents                     Documents[]
+  posts                         Posts[]               @relation("UserPosts")
+  postLikes                     PostLikes[]
+  universities                  Universities[]        @relation("UniExpertUniversities")
+  uniExpertRequestsByStudents   UniExpertRequests[]   @relation("StudentRequests")
+  uniExpertRequestsByUniExperts UniExpertRequests[]   @relation("ExpertRequests")
+  becomeUniExpertRequests       BecomeUniExperts?
+  notifications                 Notifications[]
+  conversationMemberships       ConversationMembers[]
+  messages                      Messages[]            @relation("UserMessages")
+  purchases                     Purchases[]
+  subscriptions                 Subscriptions[]
+
+  @@index([email])
+  @@index([userName])
+}
+
+enum Genders {
+  MALE
+  FEMALE
+  OTHER
+}
+
+enum UserTypes {
+  STUDENT
+  UNI_EXPERT
+  ADMIN
+  SUPER_ADMIN
+}
+
+model Documents {
+  id             String   @id @default(uuid()) @db.Uuid
+  label          String   @db.VarChar(128)
+  url            String   @db.VarChar(1024)
+  userId         String?  @db.Uuid
+  universitiesId String?  @db.Uuid
+  admissionId    String?  @db.Uuid
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  user         Users?        @relation(fields: [userId], references: [id])
+  universities Universities? @relation(fields: [universitiesId], references: [id])
+  admission    Admissions?   @relation(fields: [admissionId], references: [id])
+}
+
+model UsersFollow {
+  id          String   @id @default(uuid()) @db.Uuid
+  followerId  String   @db.Uuid
+  followingId String   @db.Uuid
+  createdAt   DateTime @default(now())
+
+  follower  Users @relation("UserFollowing", fields: [followerId], references: [id])
+  following Users @relation("UserFollowers", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Experiences {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  jobTitle  String    @db.VarChar(128)
+  company   String    @db.VarChar(128)
+  address   String    @db.VarChar(512)
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  user Users @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Education {
+  id              String    @id @default(uuid()) @db.Uuid
+  userId          String    @db.Uuid
+  institutionName String    @db.VarChar(128)
+  address         String    @db.VarChar(512)
+  degree          String    @db.VarChar(128)
+  startDate       DateTime
+  endDate         DateTime?
+  totalScore      Decimal?  @db.Decimal(5, 2)
+  scoreGained     Decimal?  @db.Decimal(5, 2)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  user Users @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Ielts {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @db.Uuid
+  name         String   @db.VarChar(128)
+  overallScore Decimal? @db.Decimal(5, 2)
+  listening    Decimal? @db.Decimal(5, 2)
+  reading      Decimal? @db.Decimal(5, 2)
+  writing      Decimal? @db.Decimal(5, 2)
+  speaking     Decimal? @db.Decimal(5, 2)
+  givenDate    DateTime
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  user Users @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Posts {
+  id        String   @id @default(uuid()) @db.Uuid
+  authorId  String   @db.Uuid
+  content   String   @db.VarChar(1500)
+  picture   String?  @default("") @db.VarChar(1024)
+  isShared  Boolean  @default(false)
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  likes  PostLikes[]
+  author Users       @relation("UserPosts", fields: [authorId], references: [id])
+
+  @@index([authorId])
+}
+
+model PostLikes {
+  id        String   @id @default(uuid()) @db.Uuid
+  postId    String   @db.Uuid
+  userId    String   @db.Uuid
+  enabled   Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  post Posts @relation(fields: [postId], references: [id])
+  user Users @relation(fields: [userId], references: [id])
+
+  @@unique([postId, userId])
+  @@index([postId])
+  @@index([userId])
+}
+
+model Universities {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String    @db.VarChar(255)
+  requirements   String[]  @default([])
+  deadline       DateTime?
+  tuitionFee     String    @db.VarChar(16)
+  applicationFee String    @db.VarChar(16)
+  location       String?   @db.VarChar(512)
+  uniExpertId    String    @db.Uuid
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  documents Documents[]
+  requests  UniExpertRequests[]
+  uniExpert Users               @relation("UniExpertUniversities", fields: [uniExpertId], references: [id])
+
+  @@index([uniExpertId])
+}
+
+model UniExpertRequests {
+  id               String                 @id @default(uuid()) @db.Uuid
+  uniExpertId      String                 @db.Uuid
+  studentId        String                 @db.Uuid
+  universityId     String                 @db.Uuid
+  acceptStatus     UniExpertRequestStatus @default(OPEN)
+  paymentStatus    Boolean                @default(false)
+  stripePurchaseId String?                @db.VarChar(512)
+  createdAt        DateTime               @default(now())
+  updatedAt        DateTime               @updatedAt
+
+  admission  Admissions?
+  purchases  Purchases[]
+  uniExpert  Users        @relation("ExpertRequests", fields: [uniExpertId], references: [id])
+  student    Users        @relation("StudentRequests", fields: [studentId], references: [id])
+  university Universities @relation(fields: [universityId], references: [id])
+
+  @@unique([uniExpertId, studentId, universityId])
+  @@index([uniExpertId])
+  @@index([studentId])
+  @@index([universityId])
+}
+
+enum UniExpertRequestStatus {
+  OPEN
+  ACCEPTED
+  REJECTED
+}
+
+model Admissions {
+  id                 String   @id @default(uuid()) @db.Uuid
+  step               Int      @default(0)
+  uniExpertRequestId String   @unique @db.Uuid
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  documents        Documents[]
+  uniExpertRequest UniExpertRequests @relation(fields: [uniExpertRequestId], references: [id])
+}
+
+model BecomeUniExperts {
+  id           String                @id @default(uuid()) @db.Uuid
+  studentId    String                @unique @db.Uuid
+  acceptStatus BecomeUniExpertStatus @default(OPEN)
+  createdAt    DateTime              @default(now())
+  updatedAt    DateTime              @updatedAt
+
+  student Users @relation(fields: [studentId], references: [id])
+}
+
+enum BecomeUniExpertStatus {
+  OPEN
+  ACCEPTED
+  REJECTED
+}
+
+model Conversations {
+  id            String   @id @default(uuid()) @db.Uuid
+  lastMessageId String?  @unique @db.Uuid
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  members     ConversationMembers[]
+  messages    Messages[]            @relation("ConversationMessages")
+  lastMessage Messages?             @relation("ConversationLastMessage", fields: [lastMessageId], references: [id])
+
+  @@index([lastMessageId])
+}
+
+model ConversationMembers {
+  id             String @id @default(uuid()) @db.Uuid
+  conversationId String @db.Uuid
+  userId         String @db.Uuid
+  unreadCount    Int    @default(0)
+
+  conversation Conversations @relation(fields: [conversationId], references: [id])
+  user         Users         @relation(fields: [userId], references: [id])
+
+  @@unique([conversationId, userId])
+  @@index([conversationId])
+  @@index([userId])
+}
+
+model Messages {
+  id             String       @id @default(uuid()) @db.Uuid
+  type           MessageTypes @default(TEXT)
+  message        String       @db.VarChar(2048)
+  senderId       String       @db.Uuid
+  conversationId String       @db.Uuid
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  lastMessageOf Conversations? @relation("ConversationLastMessage")
+  conversation  Conversations  @relation("ConversationMessages", fields: [conversationId], references: [id])
+  sender        Users          @relation("UserMessages", fields: [senderId], references: [id])
+
+  @@index([senderId])
+  @@index([conversationId])
+}
+
+enum MessageTypes {
+  TEXT
+  IMAGE
+  VIDEO
+}
+
+model Notifications {
+  id        String            @id @default(uuid()) @db.Uuid
+  userId    String            @db.Uuid
+  type      NotificationTypes @default(REQUEST)
+  message   String            @db.VarChar(128)
+  isRead    Boolean           @default(false)
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  user Users @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+enum NotificationTypes {
+  REQUEST
+  MESSAGE
+  ALERT
+}
+
+model Subscriptions {
+  id                   String            @id @default(uuid()) @db.Uuid
+  userId               String            @db.Uuid
+  planType             SubscriptionTypes @default(MONTH)
+  stripeSubscriptionId String            @unique @db.VarChar(255)
+  status               String            @db.VarChar(50)
+  currentPeriodStart   DateTime
+  currentPeriodEnd     DateTime
+  cancelAtPeriodEnd    Boolean           @default(false)
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  purchases Purchases[]
+  user      Users       @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+enum SubscriptionTypes {
+  MONTH
+  YEAR
+}
+
+model Purchases {
+  id                 String         @id @default(uuid()) @db.Uuid
+  userId             String         @db.Uuid
+  uniExpertRequestId String?        @db.Uuid
+  subscriptionId     String?        @db.Uuid
+  type               PurchasesTypes @default(UNI_EXPERT_REQUEST)
+  amount             Decimal        @db.Decimal(10, 2)
+  stripePurchaseId   String         @unique @db.VarChar(255)
+  purchaseDate       DateTime       @default(now())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+
+  user             Users              @relation(fields: [userId], references: [id])
+  uniExpertRequest UniExpertRequests? @relation(fields: [uniExpertRequestId], references: [id])
+  subscription     Subscriptions?     @relation(fields: [subscriptionId], references: [id])
+
+  @@index([userId])
+}
+
+enum PurchasesTypes {
+  UNI_EXPERT_REQUEST
+  SUBSCRIPTION
+}
