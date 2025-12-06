@@ -1,12 +1,13 @@
 const { UniExpertRequestModel } = require("../models");
+const { db } = require("../startup/db");
 
 const findUniExpertRequests = async (params = {}) => {
   try {
-    return await UniExpertRequestModel.find(params)
-      .populate("studentId", "userName firstName lastName profilePicture preferences following")
-      .populate("uniExpertId", "userName firstName lastName profilePicture preferences following")
-      .populate("universityId")
-      .sort({ createdAt: -1 });
+    return await db.uniExpertRequests.findMany({
+      where: params,
+      // include: { studentId: true, uniExpertId: true, universityId: true },
+      orderBy: { createdAt: "desc" },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
