@@ -3,21 +3,14 @@ const app = express();
 const { config } = require("./config");
 
 const { initLogs, Logger } = require("./startup/logs");
-initLogs(app);
+initLogs();
 
-const {
-  initConfiguration,
-  initCors,
-  initRoutes,
-  initDatabase,
-  addMongooseObjectIdValidation,
-} = require("./startup");
+const { initConfiguration, initCors, initRoutes, initDatabase } = require("./startup");
 
 initConfiguration();
 initCors(app);
-initRoutes(app);
 initDatabase();
-addMongooseObjectIdValidation();
+initRoutes(app);
 
 // server starting
 const port = config.port;
