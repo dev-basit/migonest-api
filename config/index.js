@@ -4,7 +4,7 @@ exports.config = {
   APP_NAME: process.env.APP_NAME || "Migonest",
 
   clientUrl: process.env.clientUrl,
-  db: process.env.db,
+  databaseUrl: process.env.databaseUrl,
   port: process.env.port,
   jwtPrivateKey: process.env.jwtPrivateKey,
   cloudinaryCloudName: process.env.cloudinary_cloud_name,
