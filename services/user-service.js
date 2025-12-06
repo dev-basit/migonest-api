@@ -5,11 +5,12 @@ const { userProfileRepository, userRepository, uniExpertRequestRepository } = re
 
 function validateExperiencePayload(data) {
   const schema = Joi.object({
+    userId: Joi.string().guid({ version: "uuidv4" }).required(),
     jobTitle: Joi.string().min(3).max(128).required(),
     company: Joi.string().min(3).max(128).required(),
     address: Joi.string().min(3).max(128).required(),
-    startDate: Joi.string().min(9).max(11).required(),
-    endDate: Joi.string().min(9).max(11).optional().allow(""),
+    startDate: Joi.date().iso().required(),
+    endDate: Joi.date().iso().optional().allow(""),
   });
 
   return schema.validate(data);
@@ -17,11 +18,12 @@ function validateExperiencePayload(data) {
 
 function validateEducationPayload(data) {
   const schema = Joi.object({
+    userId: Joi.string().guid({ version: "uuidv4" }).required(),
     institutionName: Joi.string().min(3).max(128).required(),
     address: Joi.string().min(3).max(128).required(),
     degree: Joi.string().min(3).max(128).required(),
-    startDate: Joi.string().min(9).max(11).required(),
-    endDate: Joi.alternatives().try(Joi.string().min(9).max(11), Joi.valid(null, "")).optional(),
+    startDate: Joi.date().iso().required(),
+    endDate: Joi.date().iso().optional().allow(""),
     totalScore: Joi.number().optional().allow(""),
     scoreGained: Joi.number().optional().allow(""),
   });
@@ -31,13 +33,14 @@ function validateEducationPayload(data) {
 
 function validateIeltsPayload(data) {
   const schema = Joi.object({
+    userId: Joi.string().guid({ version: "uuidv4" }).required(),
     name: Joi.string().min(3).max(128).required(),
     overallScore: Joi.number().min(1).optional().allow(""),
     listening: Joi.number().min(1).optional().allow(""),
     reading: Joi.number().min(1).optional().allow(""),
     writing: Joi.number().min(1).optional().allow(""),
     speaking: Joi.number().min(1).optional().allow(""),
-    givenDate: Joi.string().min(9).max(11).required(),
+    givenDate: Joi.date().iso().required(),
   });
 
   return schema.validate(data);

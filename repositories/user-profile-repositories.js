@@ -1,8 +1,8 @@
-const { ExperienceModel, EducationModel, IeltsModel } = require("../models");
+const { db } = require("../startup/db");
 
 const findExperienceById = async (id) => {
   try {
-    return await ExperienceModel.findById(id);
+    return await db.experiences.findUnique({ where: { id } });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -10,7 +10,7 @@ const findExperienceById = async (id) => {
 
 const findEducationById = async (id) => {
   try {
-    return await EducationModel.findById(id);
+    return await db.education.findUnique({ where: { id } });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -18,7 +18,7 @@ const findEducationById = async (id) => {
 
 const findIeltsById = async (id) => {
   try {
-    return await IeltsModel.findById(id);
+    return await db.ielts.findUnique({ where: { id } });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -26,8 +26,7 @@ const findIeltsById = async (id) => {
 
 const createExperience = async (data) => {
   try {
-    const experience = new ExperienceModel(data);
-    return await experience.save();
+    return await db.experiences.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -35,8 +34,7 @@ const createExperience = async (data) => {
 
 const createEducation = async (data) => {
   try {
-    const education = new EducationModel(data);
-    return await education.save();
+    return await db.education.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -44,32 +42,31 @@ const createEducation = async (data) => {
 
 const createIelts = async (data) => {
   try {
-    const ielts = new IeltsModel(data);
-    return await ielts.save();
+    return await db.ielts.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const updateExperience = async (id, updatedData, options = { new: true }) => {
+const updateExperience = async (id, updatedData) => {
   try {
-    return await ExperienceModel.findByIdAndUpdate(id, updatedData, options);
+    return await db.experiences.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const updateEducation = async (id, updatedData, options = { new: true }) => {
+const updateEducation = async (id, updatedData) => {
   try {
-    return await EducationModel.findByIdAndUpdate(id, updatedData, options);
+    return await db.education.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const updateIelts = async (id, updatedData, options = { new: true }) => {
+const updateIelts = async (id, updatedData) => {
   try {
-    return await IeltsModel.findByIdAndUpdate(id, updatedData, options);
+    return await db.ielts.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }
