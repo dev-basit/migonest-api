@@ -11,8 +11,8 @@ const experienceCreate = async (req, res) => {
       return ResponseHandler.sendBadResponse(experience.message, res);
     }
 
-    const userUpdate = await userRepository.updateUser(req.user._id, {
-      $addToSet: { experiences: experience._id },
+    const userUpdate = await userRepository.updateUser(req.user.id, {
+      $addToSet: { experiences: experience.id },
     });
 
     if (!userUpdate) {
@@ -33,7 +33,7 @@ const experienceUpdate = async (req, res) => {
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
     // TODO: optimize this, (remove this api call, save experiences info in token)
-    const currentUserDetails = await userRepository.findUserById(req.user._id);
+    const currentUserDetails = await userRepository.findUserById(req.user.id);
 
     // normal users can only update their own details and not any other user details
     if (
@@ -65,8 +65,8 @@ const educationCreate = async (req, res) => {
       return ResponseHandler.sendBadResponse(education.message, res);
     }
 
-    const userUpdate = await userRepository.updateUser(req.user._id, {
-      $addToSet: { education: education._id },
+    const userUpdate = await userRepository.updateUser(req.user.id, {
+      $addToSet: { education: education.id },
     });
 
     if (!userUpdate) {
@@ -87,7 +87,7 @@ const educationUpdate = async (req, res) => {
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
     // TODO: optimize this, (remove this api call, save experiences info in token)
-    const currentUserDetails = await userRepository.findUserById(req.user._id);
+    const currentUserDetails = await userRepository.findUserById(req.user.id);
 
     // normal users can only update their own details and not any other user details
     if (
@@ -119,8 +119,8 @@ const ieltsCreate = async (req, res) => {
       return ResponseHandler.sendBadResponse(ielts.message, res);
     }
 
-    const userUpdate = await userRepository.updateUser(req.user._id, {
-      $addToSet: { ielts: ielts._id },
+    const userUpdate = await userRepository.updateUser(req.user.id, {
+      $addToSet: { ielts: ielts.id },
     });
 
     if (!userUpdate) {
@@ -141,7 +141,7 @@ const ieltsUpdate = async (req, res) => {
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
     // TODO: optimize this, (remove this api call, save experiences info in token)
-    const currentUserDetails = await userRepository.findUserById(req.user._id);
+    const currentUserDetails = await userRepository.findUserById(req.user.id);
 
     // normal users can only update their own details and not any other user details
     if (
