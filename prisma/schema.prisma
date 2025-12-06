@@ -21,7 +21,7 @@ model Users {
   type                    UserTypes
   isVerified              Boolean   @default(false)
   emailVerificationCode   String?   @db.VarChar(6)
-  fotgotPasswordOtp       String?   @db.VarChar(6)
+  fotgotPasswordOtp       String?   @db.VarChar(128)
   fotgotPasswordOtpExpiry DateTime?
   preferences             Json      @default("{}")
   about                   String?   @db.VarChar(1024)
