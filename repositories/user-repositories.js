@@ -113,6 +113,15 @@ async function findUser(params = {}) {
   }
 }
 
+async function findUserByEmail(email) {
+  try {
+    const user = await db.users.findUnique({ where: { email }, select: userInfo });
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
 async function findUserWithPassword(params = {}) {
   try {
     const user = await db.users.findUnique({ where: params, select: userInfoWithPassword });
@@ -260,6 +269,7 @@ async function updateUser(userId, updatedData) {
 
 exports.userRepository = {
   findUser,
+  findUserByEmail,
   findUserById,
   findUserWithPassword,
   findUsersPublic,

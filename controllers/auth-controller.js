@@ -62,7 +62,7 @@ const verifyEmail = async (req, res) => {
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
-    let user = await userRepository.findUser({ email: req.body.email });
+    let user = await userRepository.findUserByEmail(req.body.email);
     if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
 
     if (user.isVerified) return ResponseHandler.sendBadResponse(Constants.EMAIL_ALREADY_VERIFIED, res);
