@@ -9,12 +9,9 @@ function userCreate(user) {
     email: Joi.string().min(3).max(128).required().email(),
     password: Joi.string().min(4).max(1024).required(),
     profilePicture: Joi.string().min(3).max(2048).required(),
-    date: Joi.string().min(9).max(11).required(),
-    gender: Joi.string().valid("male", "female", "other").required(),
+    dateOfBirth: Joi.string().min(9).max(11).required(),
+    gender: Joi.string().valid("MALE", "FEMALE", "OTHER").required(),
     type: Joi.string().valid(Constants.STUDENT, Constants.UNI_EXPERT, Constants.SUPER_ADMIN).required(),
-    documents: Joi.array()
-      .items(Joi.object({ label: Joi.string().required(), url: Joi.string().uri().required() }))
-      .default([]),
   });
 
   return schema.validate(user);
