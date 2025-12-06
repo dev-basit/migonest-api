@@ -12,7 +12,7 @@ exports.initConfiguration = function () {
     process.exit(1);
   }
 
-  if (!config.db) {
+  if (!config.databaseUrl) {
     Logger.error("ERROR STARTING SERVER: database connection is not defined in environment variables.");
     process.exit(1); // terminate the app process
   }
@@ -75,7 +75,7 @@ exports.initConfiguration = function () {
 // in nodejs, unhandled exceptions and unhandled rejections, terminates the app process
 
 // exports.initConfiguration = function () {
-//   if (!config.db) {
+//   if (!config.DATABASE_URL) {
 //     throw new Error("ERROR: database connection is not defined.");
 //   }
 
