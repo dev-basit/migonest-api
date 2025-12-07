@@ -268,6 +268,7 @@ async function updateUser(userId, updatedData) {
 }
 
 exports.userRepository = {
+  userBasicInfo,
   findUser,
   findUserByEmail,
   findUserById,
