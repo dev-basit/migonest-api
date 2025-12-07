@@ -8,7 +8,7 @@ const universitiesFind = async (req, res) => {
     Logger.info(Constants.FETCHING_DATA);
 
     const filters = {};
-    if (req.query.name) filters.name = { $regex: req.query.name, $options: "i" };
+    if (req.query.name) filters.name = { contains: req.query.name, mode: "insensitive" };
     if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
 
     const { pageNo, pageSize, skip } = req.pagination;
@@ -32,7 +32,7 @@ const universityCreate = async (req, res) => {
       deadline: req.body.deadline,
       tuitionFee: req.body.tuitionFee,
       applicationFee: req.body.applicationFee,
-      documents: req.body.documents,
+      // documents: req.body.documents,
       uniExpertId: req.body.uniExpertId,
       location: req.body.location,
     };
@@ -69,7 +69,7 @@ const universityUpdate = async (req, res) => {
       deadline: req.body.deadline,
       tuitionFee: req.body.tuitionFee,
       applicationFee: req.body.applicationFee,
-      documents: req.body.documents,
+      // documents: req.body.documents,
       uniExpertId: req.body.uniExpertId,
     };
 
