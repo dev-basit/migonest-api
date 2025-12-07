@@ -19,7 +19,9 @@ const admissionsFind = async (req, res) => {
       (request) => request.id
     );
 
-    const admissions = await admissionRepository.findAdmissions({ uniExpertRequestId: uniExpertRequests });
+    const admissions = await admissionRepository.findAdmissions({
+      uniExpertRequestId: { in: uniExpertRequests },
+    });
 
     return ResponseHandler.sendOkResponse(admissions, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
@@ -32,7 +34,7 @@ const admissionCreate = async (req, res) => {
     const requestedPayload = {
       step: req.body.step,
       uniExpertRequestId: req.body.uniExpertRequestId,
-      documents: req.body.documents,
+      // documents: req.body.documents,
     };
 
     const { error } = admissionService.validateAdmissionCreatePayload(requestedPayload);
@@ -56,7 +58,6 @@ const admissionCreate = async (req, res) => {
 const admissionUpdate = async (req, res) => {
   try {
     const admissionId = req.params.id;
-
     if (!admissionId) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
 
     const admissionExisitngDetails = await admissionRepository.findAdmissionById(admissionId);
@@ -66,11 +67,10 @@ const admissionUpdate = async (req, res) => {
     // TODO
     // if payment is not done for uniexpertrequest from which this admission is created, give error and return
 
-    const { step, documents } = req.body;
+    const { step } = req.body;
 
     const payload = {};
     if (step) payload.step = step;
-    if (documents) payload.documents = documents;
 
     const updatedAdmission = await admissionRepository.updateAdmission(admissionId, payload);
     if (!updatedAdmission) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);

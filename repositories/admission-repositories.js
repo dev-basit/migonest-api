@@ -1,17 +1,21 @@
-const { AdmissionModel } = require("../models");
+const { db } = require("../startup/db");
+const { userRepository } = require("./user-repositories");
 
 const findAdmissions = async (params = {}) => {
   try {
-    return await AdmissionModel.find(params)
-      .populate({
-        path: "uniExpertRequestId",
-        populate: [
-          { path: "studentId", select: "id userName profilePicture" },
-          { path: "uniExpertId", select: "id userName profilePicture" },
-          { path: "universityId" },
-        ],
-      })
-      .sort({ createdAt: -1 });
+    return await db.admissions.findMany({
+      where: params,
+      include: {
+        uniExpertRequest: {
+          include: {
+            student: { select: userRepository.userBasicInfo },
+            uniExpert: { select: userRepository.userBasicInfo },
+            university: true,
+          },
+        },
+      },
+      orderBy: { createdAt: "desc" },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -19,7 +23,18 @@ const findAdmissions = async (params = {}) => {
 
 const findAdmissionById = async (id) => {
   try {
-    return await AdmissionModel.findById(id);
+    return await db.admissions.findUnique({
+      where: { id },
+      include: {
+        uniExpertRequest: {
+          include: {
+            student: { select: userRepository.userBasicInfo },
+            uniExpert: { select: userRepository.userBasicInfo },
+            university: true,
+          },
+        },
+      },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -27,16 +42,15 @@ const findAdmissionById = async (id) => {
 
 const createAdmission = async (data) => {
   try {
-    const admission = new AdmissionModel(data);
-    return await admission.save();
+    return await db.admissions.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const updateAdmission = async (id, updatedData, options = { new: true }) => {
+const updateAdmission = async (id, updatedData) => {
   try {
-    return await AdmissionModel.findByIdAndUpdate(id, updatedData, options);
+    return await db.admissions.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }

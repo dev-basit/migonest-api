@@ -98,9 +98,14 @@ const uniExpertRequestUpdate = async (req, res) => {
     const updatedRequest = await uniExpertRequestRepository.updateUniExpertRequest(req.params.id, payload);
     if (!updatedRequest) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
 
-    if (acceptStatus && acceptStatus === "accepted") {
-      Logger.info("Creating admission record for student.");
-      await admissionRepository.createAdmission({ uniExpertRequestId: req.params.id });
+    if (acceptStatus && acceptStatus === Constants.ACCEPT_STATUS) {
+      const admissionExists = await admissionRepository.findAdmissions({ uniExpertRequestId: req.params.id });
+      if (!admissionExists) {
+        Logger.info("Creating admission record for student.");
+        await admissionRepository.createAdmission({ uniExpertRequestId: req.params.id });
+      } else {
+        Logger.info("Admission record already exists for this uni expert request.");
+      }
     }
 
     return ResponseHandler.sendOkResponse(updatedRequest, Constants.SUCCESSFULLY_UPDATED_, res);
