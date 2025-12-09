@@ -1,8 +1,11 @@
-const { NotificationModel } = require("../models");
+const { db } = require("../startup/db");
 
 const findAll = async (params = {}) => {
   try {
-    return await NotificationModel.find(params).sort({ createdAt: -1 });
+    return await db.notifications.findMany({
+      where: params,
+      orderBy: { createdAt: "desc" },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -10,8 +13,7 @@ const findAll = async (params = {}) => {
 
 const create = async (data) => {
   try {
-    const notification = new NotificationModel(data);
-    return await notification.save();
+    return await db.notifications.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -19,7 +21,7 @@ const create = async (data) => {
 
 const update = async (id, updatedData) => {
   try {
-    return await NotificationModel.findByIdAndUpdate(id, updatedData, { new: true });
+    return await db.notifications.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }
