@@ -1,8 +1,8 @@
-const { SubscriptionModel } = require("../models");
+const { db } = require("../startup/db");
 
 const findSubscription = async (params = {}) => {
   try {
-    return await SubscriptionModel.findOne(params);
+    return await db.subscriptions.findFirst({ where: params });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -10,7 +10,7 @@ const findSubscription = async (params = {}) => {
 
 const findSubscriptionById = async (id) => {
   try {
-    return await SubscriptionModel.findById(id);
+    return await db.subscriptions.findUnique({ where: { id } });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -18,7 +18,7 @@ const findSubscriptionById = async (id) => {
 
 const findSubscriptions = async (params = {}) => {
   try {
-    return await SubscriptionModel.find(params);
+    return await db.subscriptions.findMany({ where: params });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -26,16 +26,22 @@ const findSubscriptions = async (params = {}) => {
 
 const createSubscription = async (subscriptionData) => {
   try {
-    const subscription = new SubscriptionModel(subscriptionData);
-    return await subscription.save();
+    return await db.subscriptions.create({ data: subscriptionData });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const updateSubscription = async (filter, updatedData, options = { new: true }) => {
+const updateSubscription = async (filter, updatedData) => {
   try {
-    return await SubscriptionModel.findOneAndUpdate(filter, updatedData, options);
+    // If filter contains id, use it directly; otherwise use findFirst to get the id
+    if (filter.id) {
+      return await db.subscriptions.update({ where: { id: filter.id }, data: updatedData });
+    } else {
+      const existing = await db.subscriptions.findFirst({ where: filter });
+      if (!existing) throw new Error("Subscription not found");
+      return await db.subscriptions.update({ where: { id: existing.id }, data: updatedData });
+    }
   } catch (error) {
     throw new Error(error.message);
   }

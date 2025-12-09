@@ -4,6 +4,7 @@ const {
   conversationRepository,
   subscriptionRepository,
   uniExpertRequestRepository,
+  conversationMembersRepository,
 } = require("../repositories");
 const { Logger } = require("../startup/logs");
 
@@ -11,9 +12,8 @@ function validateConversationCreatePayload(data) {
   const schema = Joi.object({
     members: Joi.array()
       .items(
-        Joi.string().length(24).required().messages({
-          "string.length": "`members` entries must be 24 characters long",
-          "string.pattern.name": "`members` entries must be valid ObjectId",
+        Joi.string().guid({ version: "uuidv4" }).required().messages({
+          "string.guid": "`members` entries must be valid UUID",
         })
       )
       .length(2)
@@ -22,8 +22,7 @@ function validateConversationCreatePayload(data) {
         "array.base": "`members` must be an array",
         "array.length": "`members` must contain exactly two user IDs",
       }),
-    lastMessage: Joi.objectId(),
-    unreadCounts: Joi.object().pattern(Joi.string(), Joi.number().min(0)),
+    lastMessage: Joi.string().guid({ version: "uuidv4" }),
   });
 
   return schema.validate(data);
@@ -98,4 +97,20 @@ const conversationsAllowed = async (userId, conversationId) => {
   }
 };
 
-exports.conversationService = { validateConversationCreatePayload, updateConversation, conversationsAllowed };
+const isConvAlreadyExists = async (members) => {
+  try {
+    const conversationMembers = await conversationMembersRepository.findAll({ userId: { in: members } });
+    const conversationIds = new Set(conversationMembers.map((m) => m.conversationId));
+    const commonConversationIds = [...conversationIds].filter((id) => conversationIds.has(id));
+    return commonConversationIds.length > 0;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.conversationService = {
+  validateConversationCreatePayload,
+  updateConversation,
+  conversationsAllowed,
+  isConvAlreadyExists,
+};

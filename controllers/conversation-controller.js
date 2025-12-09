@@ -10,7 +10,7 @@ const { conversationService } = require("../services");
 
 const conversationsFind = async (req, res) => {
   try {
-    const filters = { members: { $in: req.user.id } };
+    const filters = { members: { some: { userId: req.user.id } } };
 
     const [conversations, subscription] = await Promise.all([
       conversationRepository.findAll(filters),
@@ -63,13 +63,13 @@ const conversationCreate = async (req, res) => {
     if (requestedPayload.members[0] === requestedPayload.members[1])
       return ResponseHandler.sendBadResponse("Chat members must be two distinct users.", res);
 
-    const membersDetails = await userRepository.findUsers({ id: { $in: req.body.members } });
+    const membersDetails = await userRepository.findUsers({ id: { in: req.body.members } });
     if (!membersDetails || membersDetails.length !== 2)
       return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
 
-    const isConversationAlreadyExists = await conversationRepository.findOne({
-      members: { $all: req.body.members },
-    });
+    const isConversationAlreadyExists = await conversationService.isConvAlreadyExists(
+      requestedPayload.members
+    );
     if (isConversationAlreadyExists)
       return ResponseHandler.sendConflictResponse("Conversation already exists.", res);
 
