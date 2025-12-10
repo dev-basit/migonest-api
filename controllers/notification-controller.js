@@ -40,7 +40,7 @@ const notificationUpdate = async (req, res) => {
     if (!notificationId) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
 
     const payload = {};
-    if (req.body.isRead) payload.isRead = req.body.isRead;
+    if (req.body.isRead.toString()) payload.isRead = req.body.isRead;
     const updatedNotification = await notificationRepository.update(notificationId, payload);
     return ResponseHandler.sendOkResponse(updatedNotification, Constants.SUCCESSFULLY_UPDATED_, res);
   } catch (error) {
