@@ -12,6 +12,7 @@ const userBasicInfo = {
   profilePicture: true,
   type: true,
   preferences: true,
+  stripeCustomerId: true,
 };
 
 const userInfo = {
