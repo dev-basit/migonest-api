@@ -25,7 +25,7 @@ const purchaseUniExpertRequest = async (session) => {
   await purchaseRepository.createPurchase({
     userId,
     uniExpertRequestId,
-    type: "uniExpertRequest",
+    type: "UNI_EXPERT_REQUEST",
     amount: session.amount_total / 100,
     stripePurchaseId: session.id,
   });

@@ -82,8 +82,7 @@ const subscriptionUpdated = async (subscription) => {
 
   const updatedSubscription = await subscriptionRepository.updateSubscription(
     { stripeSubscriptionId: subscription.id },
-    subscriptionData,
-    { new: true, upsert: true }
+    subscriptionData
   );
 
   await userRepository.updateUser(user.id, { currentSubscriptionId: updatedSubscription.id });

@@ -34,14 +34,7 @@ const createSubscription = async (subscriptionData) => {
 
 const updateSubscription = async (filter, updatedData) => {
   try {
-    // If filter contains id, use it directly; otherwise use findFirst to get the id
-    if (filter.id) {
-      return await db.subscriptions.update({ where: { id: filter.id }, data: updatedData });
-    } else {
-      const existing = await db.subscriptions.findFirst({ where: filter });
-      if (!existing) throw new Error("Subscription not found");
-      return await db.subscriptions.update({ where: { id: existing.id }, data: updatedData });
-    }
+    return await db.subscriptions.update({ where: filter, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }
