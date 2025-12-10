@@ -3,20 +3,20 @@ const { Logger } = require("../startup/logs");
 const { conversationMembersRepository, conversationRepository, userRepository } = require("../repositories");
 const { conversationMembersService } = require("../services");
 
-const conversationMembersFind = async (req, res) => {
-  try {
-    const filters = {};
-    if (req.query.conversationId) filters.conversationId = req.query.conversationId;
-    else filters.userId = req.user.id;
+// const conversationMembersFind = async (req, res) => {
+//   try {
+//     const filters = {};
+//     if (req.query.conversationId) filters.conversationId = req.query.conversationId;
+//     else filters.userId = req.user.id;
 
-    Logger.info(Constants.FETCHING_DATA);
+//     Logger.info(Constants.FETCHING_DATA);
 
-    const conversationMembers = await conversationMembersRepository.findAll(filters);
-    return ResponseHandler.sendOkResponse(conversationMembers, Constants.SUCCESSFULLY_FETCED, res);
-  } catch (error) {
-    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
-  }
-};
+//     const conversationMembers = await conversationMembersRepository.findAll(filters);
+//     return ResponseHandler.sendOkResponse(conversationMembers, Constants.SUCCESSFULLY_FETCED, res);
+//   } catch (error) {
+//     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+//   }
+// };
 
 // const conversationMemberCreate = async (req, res) => {
 //   try {
@@ -76,7 +76,7 @@ const conversationMemberUpdate = async (req, res) => {
 };
 
 exports.conversationMembersControllers = {
-  conversationMembersFind,
+  // conversationMembersFind,
   // conversationMemberCreate,
   conversationMemberUpdate,
 };
