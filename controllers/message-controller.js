@@ -62,7 +62,7 @@ const messageCreate = async (req, res) => {
       .id.toString();
 
     const updatedConversation = {
-      lastMessage: newConversation,
+      lastMessageId: newConversation,
       setUnreadCountsFor: {
         id: receiver,
         value: conversation.unreadCounts.get(receiver) + 1,

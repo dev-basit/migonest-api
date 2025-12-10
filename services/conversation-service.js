@@ -34,11 +34,11 @@ const updateConversation = async (conversationId, updatedData) => {
   const existingConversation = await conversationRepository.findById(conversationId);
   if (!existingConversation) throw { status: 404, message: Constants.RESOURCE_NOT_FOUND };
 
-  const { lastMessage, setUnreadCountsFor } = updatedData;
+  const { lastMessageId, setUnreadCountsFor } = updatedData;
   const payload = {};
 
-  if (lastMessage) {
-    payload.lastMessage = lastMessage;
+  if (lastMessageId) {
+    payload.lastMessageId = lastMessageId;
   }
 
   if (setUnreadCountsFor) {
