@@ -23,6 +23,17 @@ const findOne = async (params = {}) => {
   }
 };
 
+const findUnique = async (params = {}) => {
+  try {
+    return await db.conversationMembers.findUnique({
+      where: params,
+      include: { user: { select: userRepository.userBasicInfo }, conversation: true },
+    });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
 const findAll = async (params = {}) => {
   try {
     return await db.conversationMembers.findMany({
@@ -61,6 +72,7 @@ const deleteById = async (id) => {
 exports.conversationMembersRepository = {
   findById,
   findOne,
+  findUnique,
   findAll,
   create,
   update,

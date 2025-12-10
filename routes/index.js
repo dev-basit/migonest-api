@@ -9,6 +9,7 @@ const { becomeUniExpertRoutes } = require("./become-uni-expert-routes");
 const { contactUsRoutes } = require("./contact-us-routes");
 const { uploadRoutes } = require("./upload-routes");
 const { conversationRoutes } = require("./conversation-routes");
+const { conversationMembersRoutes } = require("./conversation-members-routes");
 const { messageRoutes } = require("./message-routes");
 const { notificationRoutes } = require("./notification-routes");
 const { purchaseRoutes } = require("./purchase-routes");
@@ -28,6 +29,7 @@ module.exports = {
   contactUsRoutes,
   uploadRoutes,
   conversationRoutes,
+  conversationMembersRoutes,
   messageRoutes,
   notificationRoutes,
   purchaseRoutes,

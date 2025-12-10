@@ -9,6 +9,7 @@ const { becomeUniExpertControllers } = require("./become-uni-expert-controller")
 const { contactUsControllers } = require("./contact-us-controller");
 const { uploadControllers } = require("./upload-controller");
 const { conversationControllers } = require("./conversation-controller");
+const { conversationMembersControllers } = require("./conversation-members-controller");
 const { messageControllers } = require("./message-controller");
 const { notificationControllers } = require("./notification-controller");
 const { purchaseControllers } = require("./purchase-controller");
@@ -28,6 +29,7 @@ module.exports = {
   contactUsControllers,
   uploadControllers,
   conversationControllers,
+  conversationMembersControllers,
   messageControllers,
   notificationControllers,
   purchaseControllers,

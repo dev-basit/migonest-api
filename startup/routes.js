@@ -11,6 +11,7 @@ const {
   contactUsRoutes,
   uploadRoutes,
   conversationRoutes,
+  conversationMembersRoutes,
   messageRoutes,
   notificationRoutes,
   purchaseRoutes,
@@ -41,6 +42,7 @@ exports.initRoutes = function (app) {
   app.use("/v1/become/uni/experts", becomeUniExpertRoutes);
   app.use("/v1/contact/us", contactUsRoutes);
   app.use("/v1/conversations", conversationRoutes);
+  app.use("/v1/conversation-members", conversationMembersRoutes);
   app.use("/v1/messages", messageRoutes);
   app.use("/v1/notifications", notificationRoutes);
   app.use("/v1/purchases", purchaseRoutes);
