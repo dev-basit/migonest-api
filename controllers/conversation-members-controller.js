@@ -7,7 +7,7 @@ const conversationMembersFind = async (req, res) => {
   try {
     const filters = {};
     if (req.query.conversationId) filters.conversationId = req.query.conversationId;
-    if (req.query.userId) filters.userId = req.query.userId;
+    else filters.userId = req.user.id;
 
     Logger.info(Constants.FETCHING_DATA);
 
@@ -18,35 +18,35 @@ const conversationMembersFind = async (req, res) => {
   }
 };
 
-const conversationMemberCreate = async (req, res) => {
-  try {
-    const requestedPayload = req.body;
-    const { error } = conversationMembersService.validateConversationMemberCreatePayload(requestedPayload);
-    if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
+// const conversationMemberCreate = async (req, res) => {
+//   try {
+//     const requestedPayload = req.body;
+//     const { error } = conversationMembersService.validateConversationMemberCreatePayload(requestedPayload);
+//     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
-    const conversation = await conversationRepository.findById(requestedPayload.conversationId);
-    if (!conversation) return ResponseHandler.sendNotFoundResponse(Constants.CONVERSATION_NOT_FOUND, res);
+//     const conversation = await conversationRepository.findById(requestedPayload.conversationId);
+//     if (!conversation) return ResponseHandler.sendNotFoundResponse(Constants.CONVERSATION_NOT_FOUND, res);
 
-    const user = await userRepository.findUserById(requestedPayload.userId);
-    if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
+//     const user = await userRepository.findUserById(requestedPayload.userId);
+//     if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
 
-    const isAlreadyMemberOfConversation = await conversationMembersRepository.findUnique({
-      conversationId_userId: {
-        conversationId: requestedPayload.conversationId,
-        userId: requestedPayload.userId,
-      },
-    });
-    if (isAlreadyMemberOfConversation)
-      return ResponseHandler.sendConflictResponse("You are already a member of this conversation.", res);
+//     const isAlreadyMemberOfConversation = await conversationMembersRepository.findUnique({
+//       conversationId_userId: {
+//         conversationId: requestedPayload.conversationId,
+//         userId: requestedPayload.userId,
+//       },
+//     });
+//     if (isAlreadyMemberOfConversation)
+//       return ResponseHandler.sendConflictResponse("You are already a member of this conversation.", res);
 
-    Logger.info(Constants.PAYLOAD_IS_CORRECT);
+//     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
-    const newConversationMember = await conversationMembersRepository.create(requestedPayload);
-    return ResponseHandler.sendCreatedResponse(newConversationMember, Constants.SUCCESSFULLY_ADDED, res);
-  } catch (error) {
-    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
-  }
-};
+//     const newConversationMember = await conversationMembersRepository.create(requestedPayload);
+//     return ResponseHandler.sendCreatedResponse(newConversationMember, Constants.SUCCESSFULLY_ADDED, res);
+//   } catch (error) {
+//     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+//   }
+// };
 
 const conversationMemberUpdate = async (req, res) => {
   try {
@@ -77,6 +77,6 @@ const conversationMemberUpdate = async (req, res) => {
 
 exports.conversationMembersControllers = {
   conversationMembersFind,
-  conversationMemberCreate,
+  // conversationMemberCreate,
   conversationMemberUpdate,
 };
