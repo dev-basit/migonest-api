@@ -1,6 +1,4 @@
 const Joi = require("joi");
-const { Constants } = require("../utils");
-const { conversationMembersRepository, conversationRepository, userRepository } = require("../repositories");
 
 function validateConversationMemberCreatePayload(data) {
   const schema = Joi.object({
