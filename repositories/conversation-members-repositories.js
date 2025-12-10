@@ -53,9 +53,9 @@ const create = async (data) => {
   }
 };
 
-const update = async (id, updatedData) => {
+const update = async (params, updatedData) => {
   try {
-    return await db.conversationMembers.update({ where: { id }, data: updatedData });
+    return await db.conversationMembers.update({ where: params, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }

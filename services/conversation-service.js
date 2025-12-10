@@ -1,5 +1,4 @@
 const Joi = require("joi");
-const { Constants } = require("../utils");
 const {
   conversationRepository,
   subscriptionRepository,
@@ -28,36 +27,10 @@ function validateConversationCreatePayload(data) {
   return schema.validate(data);
 }
 
-const updateConversation = async (conversationId, updatedData) => {
-  if (!conversationId) throw { status: 400, message: Constants.SEND_ID_IN_PARAMS };
-
-  const existingConversation = await conversationRepository.findById(conversationId);
-  if (!existingConversation) throw { status: 404, message: Constants.RESOURCE_NOT_FOUND };
-
-  const { lastMessageId, setUnreadCountsFor } = updatedData;
-  const payload = {};
-
-  if (lastMessageId) {
-    payload.lastMessageId = lastMessageId;
-  }
-
-  if (setUnreadCountsFor) {
-    payload.unreadCounts = existingConversation.unreadCounts;
-    payload.unreadCounts.set(setUnreadCountsFor.id, setUnreadCountsFor.value);
-  }
-
-  if (Object.keys(payload).length === 0) throw { status: 400, message: "No valid fields to update." };
-
-  const updatedConversation = await conversationRepository.update(conversationId, payload);
-  if (!updatedConversation) throw { status: 400, message: Constants.ERROR_UPDATING };
-
-  return updatedConversation;
-};
-
 // TODO: cache this function value when using redis
 const conversationsAllowed = async (userId, conversationId) => {
   try {
-    const filters = { members: { $in: userId } };
+    const filters = { members: { some: { userId } } };
     const subscription = await subscriptionRepository.findSubscription({ userId });
 
     const now = new Date();
@@ -110,7 +83,6 @@ const isConvAlreadyExists = async (members) => {
 
 exports.conversationService = {
   validateConversationCreatePayload,
-  updateConversation,
   conversationsAllowed,
   isConvAlreadyExists,
 };

@@ -61,7 +61,7 @@ const conversationMemberUpdate = async (req, res) => {
       return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
 
     const updatedConversationMember = await conversationMembersRepository.update(
-      req.params.id,
+      { id: req.params.id },
       requestedPayload
     );
     if (!updatedConversationMember) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
