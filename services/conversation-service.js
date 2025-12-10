@@ -28,7 +28,7 @@ function validateConversationCreatePayload(data) {
 }
 
 // TODO: cache this function value when using redis
-const conversationsAllowed = async (userId, conversationId) => {
+const isConversationsAllowed = async (userId, conversationId) => {
   try {
     const filters = { members: { some: { userId } } };
     const subscription = await subscriptionRepository.findSubscription({ userId });
@@ -83,6 +83,6 @@ const isConvAlreadyExists = async (members) => {
 
 exports.conversationService = {
   validateConversationCreatePayload,
-  conversationsAllowed,
+  isConversationsAllowed,
   isConvAlreadyExists,
 };

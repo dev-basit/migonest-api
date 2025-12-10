@@ -38,7 +38,7 @@ const messageCreate = async (req, res) => {
 
     const isCurrentUserStudent = req.user.type === Constants.STUDENT;
     if (isCurrentUserStudent) {
-      const conversationAllowed = await conversationService.conversationsAllowed(
+      const conversationAllowed = await conversationService.isConversationsAllowed(
         req.user.id,
         req.body.conversationId
       );
