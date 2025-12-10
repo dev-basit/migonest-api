@@ -56,11 +56,17 @@ const conversationMemberUpdate = async (req, res) => {
     const { error } = conversationMembersService.validateConversationMemberUpdatePayload(requestedPayload);
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
-    const updatedMember = await conversationMembersService.updateConversationMember(
+    const existingConversationMember = await conversationMembersRepository.findById(id);
+    if (!existingConversationMember)
+      return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
+
+    const updatedConversationMember = await conversationMembersRepository.update(
       req.params.id,
       requestedPayload
     );
-    return ResponseHandler.sendOkResponse(updatedMember, Constants.SUCCESSFULLY_UPDATED_, res);
+    if (!updatedConversationMember) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
+
+    return ResponseHandler.sendOkResponse(updatedConversationMember, Constants.SUCCESSFULLY_UPDATED_, res);
   } catch (error) {
     if (error.status && error.message) {
       return ResponseHandler.sendErrorResponse(error.message, error.status, res);

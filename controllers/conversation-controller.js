@@ -75,30 +75,29 @@ const conversationCreate = async (req, res) => {
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
-    const newConversation = await conversationRepository.create(requestedPayload);
+    const newConversation = await conversationRepository.create(requestedPayload.members);
     return ResponseHandler.sendCreatedResponse(newConversation, Constants.SUCCESSFULLY_ADDED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
 };
 
-const conversationUpdate = async (req, res) => {
-  try {
-    const requestBody = req.body;
-    requestBody.setUnreadCountsFor = { id: requestBody.setUnreadCountsFor, value: 0 };
-
-    const updatedConversation = await conversationService.updateConversation(req.params.id, requestBody);
-    return ResponseHandler.sendOkResponse(updatedConversation, Constants.SUCCESSFULLY_UPDATED_, res);
-  } catch (error) {
-    if (error.status && error.message) {
-      return ResponseHandler.sendErrorResponse(error.message, error.status, res);
-    }
-    return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
-  }
-};
+// const conversationUpdate = async (req, res) => {
+//   try {
+//     // const requestBody = req.body;
+//     const requestBody = {};
+//     const updatedConversation = await conversationRepository.update(req.params.id, requestBody);
+//     return ResponseHandler.sendOkResponse(updatedConversation, Constants.SUCCESSFULLY_UPDATED_, res);
+//   } catch (error) {
+//     if (error.status && error.message) {
+//       return ResponseHandler.sendErrorResponse(error.message, error.status, res);
+//     }
+//     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
+//   }
+// };
 
 exports.conversationControllers = {
   conversationsFind,
   conversationCreate,
-  conversationUpdate,
+  // conversationUpdate,
 };

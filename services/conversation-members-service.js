@@ -24,20 +24,7 @@ function validateConversationMemberUpdatePayload(data) {
   return schema.validate(data);
 }
 
-const updateConversationMember = async (id, updatedData) => {
-  if (!id) throw { status: 400, message: Constants.SEND_ID_IN_PARAMS };
-
-  const existingMember = await conversationMembersRepository.findById(id);
-  if (!existingMember) throw { status: 404, message: Constants.RESOURCE_NOT_FOUND };
-
-  const updatedMember = await conversationMembersRepository.update(id, updatedData);
-  if (!updatedMember) throw { status: 400, message: Constants.ERROR_UPDATING };
-
-  return updatedMember;
-};
-
 exports.conversationMembersService = {
   validateConversationMemberCreatePayload,
   validateConversationMemberUpdatePayload,
-  updateConversationMember,
 };
