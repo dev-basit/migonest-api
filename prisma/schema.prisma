@@ -9,7 +9,7 @@ datasource db {
 
 model Users {
   id                      String    @id @default(uuid()) @db.Uuid
-  userName                String    @db.VarChar(128)
+  userName                String    @unique @db.VarChar(128)
   firstName               String    @db.VarChar(128)
   lastName                String    @db.VarChar(128)
   profilePicture          String    @db.VarChar(512)
@@ -66,17 +66,17 @@ enum UserTypes {
 }
 
 model Documents {
-  id             String   @id @default(uuid()) @db.Uuid
-  label          String   @db.VarChar(128)
-  url            String   @db.VarChar(1024)
-  userId         String?  @db.Uuid
-  universitiesId String?  @db.Uuid
-  admissionId    String?  @db.Uuid
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id           String   @id @default(uuid()) @db.Uuid
+  label        String   @db.VarChar(128)
+  url          String   @db.VarChar(1024)
+  userId       String?  @db.Uuid
+  universityId String?  @db.Uuid
+  admissionId  String?  @db.Uuid
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   user         Users?        @relation(fields: [userId], references: [id])
-  universities Universities? @relation(fields: [universitiesId], references: [id])
+  universities Universities? @relation(fields: [universityId], references: [id])
   admission    Admissions?   @relation(fields: [admissionId], references: [id])
 }
 
