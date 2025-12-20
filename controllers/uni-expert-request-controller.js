@@ -100,7 +100,7 @@ const uniExpertRequestUpdate = async (req, res) => {
 
     if (acceptStatus && acceptStatus === Constants.ACCEPT_STATUS) {
       const admissionExists = await admissionRepository.findAdmissions({ uniExpertRequestId: req.params.id });
-      if (!admissionExists) {
+      if (admissionExists.length === 0) {
         Logger.info("Creating admission record for student.");
         await admissionRepository.createAdmission({ uniExpertRequestId: req.params.id });
       } else {
