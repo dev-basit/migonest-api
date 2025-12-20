@@ -307,7 +307,7 @@ model Notifications {
   id        String            @id @default(uuid()) @db.Uuid
   userId    String            @db.Uuid
   type      NotificationTypes @default(REQUEST)
-  message   String            @db.VarChar(128)
+  message   String            @db.VarChar(1024)
   isRead    Boolean           @default(false)
   createdAt DateTime          @default(now())
   updatedAt DateTime          @updatedAt
