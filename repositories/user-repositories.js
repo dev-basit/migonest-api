@@ -225,7 +225,7 @@ async function createUser(newUserData) {
       "email",
       "password",
       "profilePicture",
-      "date",
+      "dateOfBirth",
       "gender",
       "type",
       "stripeCustomerId",
