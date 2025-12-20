@@ -111,7 +111,7 @@ const userSuggestions = async (userId, type, linkedUsers) => {
     const currentUser = await userRepository.findUserDetails({ id: userId });
     if (!currentUser) throw new Error(Constants.USER_NOT_FOUND);
 
-    const excludeUserIds = currentUser.following.map((following) => following.id).concat(userId);
+    const excludeUserIds = currentUser.following.map((following) => following.followingId).concat(userId);
     let filters = { id: { notIn: excludeUserIds } };
     if (type) filters.type = type;
 
@@ -121,7 +121,7 @@ const userSuggestions = async (userId, type, linkedUsers) => {
           await uniExpertRequestRepository.findUniExpertRequests({ studentId: userId })
         )
           .filter((request) => request.paymentStatus === true)
-          .map((request) => request.uniExpertId.id);
+          .map((request) => request.uniExpertId);
 
         filters.id = { in: paymentDoneToUniExperts };
       } else if (currentUser.type === Constants.UNI_EXPERT) {
@@ -129,7 +129,7 @@ const userSuggestions = async (userId, type, linkedUsers) => {
           await uniExpertRequestRepository.findUniExpertRequests({ uniExpertId: userId })
         )
           .filter((request) => request.paymentStatus === true)
-          .map((request) => request.studentId.id);
+          .map((request) => request.studentId);
 
         filters.id = { in: paymentDoneByStudents };
       }

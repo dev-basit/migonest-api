@@ -10,7 +10,7 @@ const posts = async (req, res) => {
 
     Logger.info("Fetching followers list");
     const user = await userRepository.findUserDetailsById(req.user.id);
-    const userFollowingIds = user.following.map((followedUser) => followedUser.id);
+    const userFollowingIds = user.following.map((followingUser) => followingUser.followingId);
     userFollowingIds.push(req.user.id); // show user own post to user
 
     Logger.info(Constants.FETCHING_DATA);

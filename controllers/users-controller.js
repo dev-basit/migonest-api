@@ -47,7 +47,9 @@ const userCreate = async (req, res) => {
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
-    let user = await userRepository.findUser({ email: req.body.email });
+    let user = await userRepository.findUser({
+      OR: [{ email: req.body.email }, { userName: req.body.userName }],
+    });
     if (user) return ResponseHandler.sendConflictResponse(Constants.NEW_USER_EMAIL_CLASH, res);
 
     Logger.info(Constants.EMAI_IS_UNIQUE);
@@ -224,10 +226,10 @@ const network = async (req, res) => {
     const filters = {};
 
     if (!showFollowers) {
-      const excludeUserIds = currentUser.following.map((following) => following.id).concat(userId);
+      const excludeUserIds = currentUser.following.map((following) => following.followingId).concat(userId);
       filters.id = { notIn: excludeUserIds };
     } else {
-      filters.id = { in: currentUser.following.map((following) => following.id) };
+      filters.id = { in: currentUser.following.map((following) => following.followingId) };
     }
 
     Logger.info(Constants.FETCHING_DATA);
