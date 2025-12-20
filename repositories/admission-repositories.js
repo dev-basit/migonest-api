@@ -1,16 +1,30 @@
 const { db } = require("../startup/db");
 const { userRepository } = require("./user-repositories");
 
+const userBasicInfoWithDocuments = {
+  id: true,
+  userName: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  profilePicture: true,
+  type: true,
+  preferences: true,
+  stripeCustomerId: true,
+  documents: true,
+};
+
 const findAdmissions = async (params = {}) => {
   try {
     return await db.admissions.findMany({
       where: params,
       include: {
+        documents: true,
         uniExpertRequest: {
           include: {
-            student: { select: userRepository.userBasicInfo },
+            student: { select: userBasicInfoWithDocuments },
             uniExpert: { select: userRepository.userBasicInfo },
-            university: true,
+            university: { include: { documents: true } },
           },
         },
       },

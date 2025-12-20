@@ -6,7 +6,10 @@ const findUniversities = async (params = {}, { skip, pageSize }) => {
     const [universities, count] = await Promise.all([
       db.universities.findMany({
         where: params,
-        include: { uniExpert: { select: userRepository.userBasicInfo } },
+        include: {
+          uniExpert: { select: userRepository.userBasicInfo },
+          documents: { select: { id: true, label: true, url: true } },
+        },
         orderBy: { createdAt: "desc" },
         skip,
         take: pageSize,
