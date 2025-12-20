@@ -16,6 +16,7 @@ const { purchaseControllers } = require("./purchase-controller");
 const { subscriptionControllers } = require("./subscription-controller");
 const { checkoutControllers } = require("./checkout-controller");
 const { stripeWebhooksControllers } = require("./stripe-webhooks-controller");
+const { documentsControllers } = require("./documents-controller");
 
 module.exports = {
   authControllers,
@@ -36,4 +37,5 @@ module.exports = {
   subscriptionControllers,
   checkoutControllers,
   stripeWebhooksControllers,
+  documentsControllers,
 };

@@ -18,6 +18,7 @@ const {
   subscriptionRoutes,
   checkoutRoutes,
   stripeWebhooksRoutes,
+  documentsRoutes,
 } = require("../routes");
 const { authMiddleware, errorMiddleware, logMiddleware } = require("../middleware");
 
@@ -48,5 +49,6 @@ exports.initRoutes = function (app) {
   app.use("/v1/purchases", purchaseRoutes);
   app.use("/v1/subscriptions", subscriptionRoutes);
   app.use("/v1/checkout", checkoutRoutes);
+  app.use("/v1/documents", documentsRoutes);
   app.use(errorMiddleware);
 };

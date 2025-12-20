@@ -13,6 +13,7 @@ const { notificationService } = require("./notification-service");
 const { purchaseService } = require("./purchase-service");
 const { subscriptionService } = require("./subscription-service");
 const { checkoutService } = require("./checkout-service");
+const { documentService } = require("./documents-service");
 
 module.exports = {
   authService,
@@ -30,4 +31,5 @@ module.exports = {
   purchaseService,
   subscriptionService,
   checkoutService,
+  documentService,
 };

@@ -16,6 +16,7 @@ const { purchaseRoutes } = require("./purchase-routes");
 const { subscriptionRoutes } = require("./subscription-routes");
 const { checkoutRoutes } = require("./checkout-routes");
 const { stripeWebhooksRoutes } = require("./stripe-webhooks-routes");
+const { documentsRoutes } = require("./documents-routes");
 
 module.exports = {
   authRoutes,
@@ -36,4 +37,5 @@ module.exports = {
   subscriptionRoutes,
   checkoutRoutes,
   stripeWebhooksRoutes,
+  documentsRoutes,
 };

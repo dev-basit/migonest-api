@@ -11,6 +11,7 @@ const { messageRepository } = require("./message-repositories");
 const { notificationRepository } = require("./notification-repositories");
 const { purchaseRepository } = require("./purchase-repositories");
 const { subscriptionRepository } = require("./subscription-repositories");
+const { documentRepository } = require("./documents-repositories");
 
 module.exports = {
   userRepository,
@@ -26,4 +27,5 @@ module.exports = {
   notificationRepository,
   purchaseRepository,
   subscriptionRepository,
+  documentRepository,
 };
