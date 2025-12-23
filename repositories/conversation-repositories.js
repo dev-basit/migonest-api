@@ -35,7 +35,7 @@ const findAll = async (params = {}) => {
     const conversations = await db.conversations.findMany({
       where: params,
       include: {
-        members: { select: { user: { select: userRepository.userBasicInfo }, unreadCount: true } },
+        members: { select: { id: true, unreadCount: true, user: { select: userRepository.userBasicInfo } } },
         lastMessage: { select: { message: true, createdAt: true } },
       },
     });

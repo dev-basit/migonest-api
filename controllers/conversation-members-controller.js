@@ -56,7 +56,7 @@ const conversationMemberUpdate = async (req, res) => {
     const { error } = conversationMembersService.validateConversationMemberUpdatePayload(requestedPayload);
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
-    const existingConversationMember = await conversationMembersRepository.findById(id);
+    const existingConversationMember = await conversationMembersRepository.findById(req.params.id);
     if (!existingConversationMember)
       return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
 

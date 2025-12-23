@@ -50,15 +50,13 @@ const isConversationsAllowed = async (userId, conversationId) => {
       });
       let allowedUniExpertIds = new Set();
       if (Array.isArray(paidRequests) && paidRequests.length > 0) {
-        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId.id.toString()));
+        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId));
       }
 
       const allowedConversations = conversations.map((conversation) => {
-        const memberIds = (conversation.members || []).map((member) =>
-          member && member.id ? member.id.toString() : member?.toString()
-        );
+        const memberIds = (conversation.members || []).map((member) => member.user.id);
         const isAllowed = memberIds.some((id) => allowedUniExpertIds.has(id));
-        return { id: conversation.id.toString(), allowed: isAllowed };
+        return { id: conversation.id, allowed: isAllowed };
       });
 
       return allowedConversations.some(
@@ -72,9 +70,24 @@ const isConversationsAllowed = async (userId, conversationId) => {
 
 const isConvAlreadyExists = async (members) => {
   try {
-    const conversationMembers = await conversationMembersRepository.findAll({ userId: { in: members } });
-    const conversationIds = new Set(conversationMembers.map((m) => m.conversationId));
-    const commonConversationIds = [...conversationIds].filter((id) => conversationIds.has(id));
+    const conversationMembersForFirstUser = await conversationMembersRepository.findAll({
+      userId: members[0],
+    });
+    const conversationMembersForSecondUser = await conversationMembersRepository.findAll({
+      userId: members[1],
+    });
+
+    const conversationIdsForFirstUser = conversationMembersForFirstUser.map(
+      (member) => member.conversationId
+    );
+    const conversationIdsForSecondUser = conversationMembersForSecondUser.map(
+      (member) => member.conversationId
+    );
+
+    const commonConversationIds = conversationIdsForFirstUser.filter((id) =>
+      conversationIdsForSecondUser.includes(id)
+    );
+
     return commonConversationIds.length > 0;
   } catch (error) {
     throw error;

@@ -34,15 +34,14 @@ const conversationsFind = async (req, res) => {
         studentId: req.user.id,
         paymentStatus: true,
       });
+
       let allowedUniExpertIds = new Set();
       if (Array.isArray(paidRequests) && paidRequests.length > 0) {
-        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId.id.toString()));
+        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId));
       }
 
       const allowedConversations = conversations.map((conversation) => {
-        const memberIds = (conversation.members || []).map((member) =>
-          member && member.id ? member.id.toString() : member?.toString()
-        );
+        const memberIds = (conversation.members || []).map((member) => member.user.id);
         const isAllowed = memberIds.some((id) => allowedUniExpertIds.has(id));
         return { ...conversation, allowed: isAllowed };
       });
