@@ -76,7 +76,7 @@ const becomeUniExpertUpdate = async (req, res) => {
 
     if (acceptStatus && acceptStatus === Constants.ACCEPT_STATUS) {
       Logger.info("Updating user type to uni expert.");
-      await userRepository.updateUser(existingRequestDetails.studentId._id, { type: Constants.UNI_EXPERT });
+      await userRepository.updateUser(existingRequestDetails.studentId, { type: Constants.UNI_EXPERT });
     }
 
     return ResponseHandler.sendOkResponse(updatedRequest, Constants.SUCCESSFULLY_UPDATED_, res);

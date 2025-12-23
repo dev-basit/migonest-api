@@ -7,7 +7,7 @@ const createBillingPortalSession = async (req, res) => {
   try {
     Logger.info(Constants.FETCHING_DATA);
 
-    const user = await userRepository.findUserById(req.user._id);
+    const user = await userRepository.findUserById(req.user.id);
     if (!user || !user.stripeCustomerId) {
       return ResponseHandler.sendNotFoundResponse("User not found or no Stripe customer ID found", res);
     }
@@ -32,7 +32,7 @@ const createUniExpertServiceSession = async (req, res) => {
 
     Logger.info(Constants.FETCHING_DATA);
 
-    const user = await userRepository.findUserById(req.user._id);
+    const user = await userRepository.findUserById(req.user.id);
     if (!user) {
       return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
     }
@@ -53,14 +53,14 @@ const createSubscriptionSession = async (req, res) => {
   try {
     const { callbackPath } = req.body;
 
-    const planDuration = "month";
+    const planDuration = "MONTH";
     if (!planDuration) {
       return ResponseHandler.sendBadResponse("Plan duration is required", res);
     }
 
     Logger.info(Constants.FETCHING_DATA);
 
-    const user = await userRepository.findUserById(req.user._id);
+    const user = await userRepository.findUserById(req.user.id);
     if (!user) {
       return ResponseHandler.sendNotFoundResponse("User not found", res);
     }

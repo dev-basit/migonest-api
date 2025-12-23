@@ -4,6 +4,6 @@ const { conversationControllers } = require("../controllers");
 
 router.get("/", conversationControllers.conversationsFind);
 router.post("/", conversationControllers.conversationCreate);
-router.put("/:id", conversationControllers.conversationUpdate);
+// router.put("/:id", conversationControllers.conversationUpdate);
 
 exports.conversationRoutes = router;

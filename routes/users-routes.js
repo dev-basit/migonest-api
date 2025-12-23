@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { usersControllers } = require("../controllers");
-const { adminMiddleware, paginationMiddleware } = require("../middleware");
+const { paginationMiddleware } = require("../middleware");
 
 // all these routes will undergo authMiddleware since it is applied at global level
 router.get("/", paginationMiddleware, usersControllers.users);

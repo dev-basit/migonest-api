@@ -5,11 +5,12 @@ const { userProfileRepository, userRepository, uniExpertRequestRepository } = re
 
 function validateExperiencePayload(data) {
   const schema = Joi.object({
+    userId: Joi.string().guid({ version: "uuidv4" }).required(),
     jobTitle: Joi.string().min(3).max(128).required(),
     company: Joi.string().min(3).max(128).required(),
     address: Joi.string().min(3).max(128).required(),
-    startDate: Joi.string().min(9).max(11).required(),
-    endDate: Joi.string().min(9).max(11).optional().allow(""),
+    startDate: Joi.date().iso().required(),
+    endDate: Joi.date().iso().optional().allow(""),
   });
 
   return schema.validate(data);
@@ -17,11 +18,12 @@ function validateExperiencePayload(data) {
 
 function validateEducationPayload(data) {
   const schema = Joi.object({
+    userId: Joi.string().guid({ version: "uuidv4" }).required(),
     institutionName: Joi.string().min(3).max(128).required(),
     address: Joi.string().min(3).max(128).required(),
     degree: Joi.string().min(3).max(128).required(),
-    startDate: Joi.string().min(9).max(11).required(),
-    endDate: Joi.alternatives().try(Joi.string().min(9).max(11), Joi.valid(null, "")).optional(),
+    startDate: Joi.date().iso().required(),
+    endDate: Joi.date().iso().optional().allow(""),
     totalScore: Joi.number().optional().allow(""),
     scoreGained: Joi.number().optional().allow(""),
   });
@@ -31,13 +33,14 @@ function validateEducationPayload(data) {
 
 function validateIeltsPayload(data) {
   const schema = Joi.object({
+    userId: Joi.string().guid({ version: "uuidv4" }).required(),
     name: Joi.string().min(3).max(128).required(),
     overallScore: Joi.number().min(1).optional().allow(""),
     listening: Joi.number().min(1).optional().allow(""),
     reading: Joi.number().min(1).optional().allow(""),
     writing: Joi.number().min(1).optional().allow(""),
     speaking: Joi.number().min(1).optional().allow(""),
-    givenDate: Joi.string().min(9).max(11).required(),
+    givenDate: Joi.date().iso().required(),
   });
 
   return schema.validate(data);
@@ -105,11 +108,11 @@ const ieltsCreate = async (data) => {
 
 const userSuggestions = async (userId, type, linkedUsers) => {
   try {
-    const currentUser = await userRepository.findUserById(userId);
+    const currentUser = await userRepository.findUserDetails({ id: userId });
     if (!currentUser) throw new Error(Constants.USER_NOT_FOUND);
 
-    const excludeUserIds = currentUser.following.concat(userId);
-    let filters = { _id: { $nin: excludeUserIds } };
+    const excludeUserIds = currentUser.following.map((following) => following.followingId).concat(userId);
+    let filters = { id: { notIn: excludeUserIds } };
     if (type) filters.type = type;
 
     if (linkedUsers) {
@@ -118,17 +121,17 @@ const userSuggestions = async (userId, type, linkedUsers) => {
           await uniExpertRequestRepository.findUniExpertRequests({ studentId: userId })
         )
           .filter((request) => request.paymentStatus === true)
-          .map((request) => request.uniExpertId._id);
+          .map((request) => request.uniExpertId);
 
-        filters._id = { $in: paymentDoneToUniExperts };
+        filters.id = { in: paymentDoneToUniExperts };
       } else if (currentUser.type === Constants.UNI_EXPERT) {
         const paymentDoneByStudents = (
           await uniExpertRequestRepository.findUniExpertRequests({ uniExpertId: userId })
         )
           .filter((request) => request.paymentStatus === true)
-          .map((request) => request.studentId._id);
+          .map((request) => request.studentId);
 
-        filters._id = { $in: paymentDoneByStudents };
+        filters.id = { in: paymentDoneByStudents };
       }
     }
 

@@ -9,12 +9,14 @@ const { becomeUniExpertControllers } = require("./become-uni-expert-controller")
 const { contactUsControllers } = require("./contact-us-controller");
 const { uploadControllers } = require("./upload-controller");
 const { conversationControllers } = require("./conversation-controller");
+const { conversationMembersControllers } = require("./conversation-members-controller");
 const { messageControllers } = require("./message-controller");
 const { notificationControllers } = require("./notification-controller");
 const { purchaseControllers } = require("./purchase-controller");
 const { subscriptionControllers } = require("./subscription-controller");
 const { checkoutControllers } = require("./checkout-controller");
 const { stripeWebhooksControllers } = require("./stripe-webhooks-controller");
+const { documentsControllers } = require("./documents-controller");
 
 module.exports = {
   authControllers,
@@ -28,10 +30,12 @@ module.exports = {
   contactUsControllers,
   uploadControllers,
   conversationControllers,
+  conversationMembersControllers,
   messageControllers,
   notificationControllers,
   purchaseControllers,
   subscriptionControllers,
   checkoutControllers,
   stripeWebhooksControllers,
+  documentsControllers,
 };

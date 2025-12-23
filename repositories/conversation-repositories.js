@@ -1,10 +1,15 @@
-const { ConversationModel } = require("../models");
+const { db } = require("../startup/db");
+const { userRepository } = require("./user-repositories");
 
 const findById = async (id) => {
   try {
-    return await ConversationModel.findById(id)
-      .populate("members", "firstName lastName profilePicture type")
-      .populate("lastMessage", "message createdAt");
+    return await db.conversations.findUnique({
+      where: { id },
+      include: {
+        members: { select: { user: { select: userRepository.userBasicInfo } } },
+        lastMessage: { select: { message: true, createdAt: true } },
+      },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -12,10 +17,14 @@ const findById = async (id) => {
 
 const findOne = async (params = {}) => {
   try {
-    return await ConversationModel.findOne(params)
-      .populate("members", "firstName lastName profilePicture type")
-      .populate("lastMessage", "message createdAt")
-      .sort({ createdAt: -1 });
+    return await db.conversations.findFirst({
+      where: params,
+      include: {
+        members: { select: { user: { select: userRepository.userBasicInfo } } },
+        lastMessage: { select: { message: true, createdAt: true } },
+      },
+      orderBy: { createdAt: "desc" },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -23,10 +32,13 @@ const findOne = async (params = {}) => {
 
 const findAll = async (params = {}) => {
   try {
-    const conversations = await ConversationModel.find(params)
-      .populate("members", "firstName lastName profilePicture type")
-      .populate("lastMessage", "message createdAt")
-      .lean();
+    const conversations = await db.conversations.findMany({
+      where: params,
+      include: {
+        members: { select: { id: true, unreadCount: true, user: { select: userRepository.userBasicInfo } } },
+        lastMessage: { select: { message: true, createdAt: true } },
+      },
+    });
 
     // sortiing by lastMessage within conversation
     return conversations.sort((a, b) => {
@@ -39,10 +51,11 @@ const findAll = async (params = {}) => {
   }
 };
 
-const create = async (data) => {
+const create = async (members) => {
   try {
-    const conversation = new ConversationModel(data);
-    return await conversation.save();
+    return await db.conversations.create({
+      data: { members: { create: members.map((member) => ({ userId: member })) } },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -50,7 +63,7 @@ const create = async (data) => {
 
 const update = async (id, updatedData) => {
   try {
-    return await ConversationModel.findByIdAndUpdate(id, updatedData, { new: true });
+    return await db.conversations.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }

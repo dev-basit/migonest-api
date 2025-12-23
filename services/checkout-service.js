@@ -37,7 +37,7 @@ const createUniExpertServiceSession = async (student, uniExpertRequestId) => {
       success_url: `${config.clientUrl}/dashboard/admission`,
       cancel_url: `${config.clientUrl}/dashboard/admission`,
       metadata: {
-        userId: student._id.toString(),
+        userId: student.id.toString(),
         uniExpertRequestId,
       },
     });
@@ -50,9 +50,9 @@ const createUniExpertServiceSession = async (student, uniExpertRequestId) => {
 const createSubscriptionSession = async (user, planDuration, callbackPath) => {
   try {
     let priceIdForSubscriptionPlan;
-    if (planDuration === "month") {
+    if (planDuration === "MONTH") {
       priceIdForSubscriptionPlan = config.stripeMonthlyPriceId;
-    } else if (planDuration === "year") {
+    } else if (planDuration === "YEAR") {
       priceIdForSubscriptionPlan = config.stripeYearlyPriceId;
     }
 
@@ -68,7 +68,7 @@ const createSubscriptionSession = async (user, planDuration, callbackPath) => {
       success_url: `${config.clientUrl}/${callbackPath}`,
       cancel_url: `${config.clientUrl}/${callbackPath}`,
       metadata: {
-        userId: user._id.toString(),
+        userId: user.id.toString(),
         email: user.email,
         planDuration: planDuration,
       },

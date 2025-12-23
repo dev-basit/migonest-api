@@ -7,11 +7,13 @@ const { admissionService } = require("./admission-service");
 const { becomeUniExpertService } = require("./become-uni-expert-service");
 const { contactUsService } = require("./contact-us-service");
 const { conversationService } = require("./conversation-service");
+const { conversationMembersService } = require("./conversation-members-service");
 const { messageService } = require("./message-service");
 const { notificationService } = require("./notification-service");
 const { purchaseService } = require("./purchase-service");
 const { subscriptionService } = require("./subscription-service");
 const { checkoutService } = require("./checkout-service");
+const { documentService } = require("./documents-service");
 
 module.exports = {
   authService,
@@ -23,9 +25,11 @@ module.exports = {
   becomeUniExpertService,
   contactUsService,
   conversationService,
+  conversationMembersService,
   messageService,
   notificationService,
   purchaseService,
   subscriptionService,
   checkoutService,
+  documentService,
 };

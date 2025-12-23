@@ -1,16 +1,19 @@
-const { PostModel } = require("../models");
+const { db } = require("../startup/db");
+const { userRepository } = require("./user-repositories");
 
 const findAllPosts = async (params = {}, { skip, pageSize }) => {
   try {
     const [posts, count] = await Promise.all([
-      PostModel.find(params)
-        .populate("author", "userName firstName lastName profilePicture type")
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(pageSize)
-        .lean(),
-      PostModel.countDocuments(params),
+      db.posts.findMany({
+        where: params,
+        include: { author: { select: userRepository.userBasicInfo }, likes: { select: { userId: true } } },
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: pageSize,
+      }),
+      db.posts.count({ where: params }),
     ]);
+
     return { posts, count };
   } catch (error) {
     throw new Error(error.message);
@@ -19,7 +22,10 @@ const findAllPosts = async (params = {}, { skip, pageSize }) => {
 
 const findPostById = async (id) => {
   try {
-    return await PostModel.findById(id);
+    return await db.posts.findUnique({
+      where: { id },
+      include: { author: { select: userRepository.userBasicInfo }, likes: { select: { userId: true } } },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -27,8 +33,7 @@ const findPostById = async (id) => {
 
 const createPost = async (data) => {
   try {
-    const post = new PostModel(data);
-    return await post.save();
+    return await db.posts.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -36,7 +41,23 @@ const createPost = async (data) => {
 
 const updatePost = async (postId, updatedData) => {
   try {
-    return await PostModel.findByIdAndUpdate(postId, updatedData, { new: true });
+    return await db.posts.update({ where: { id: postId }, data: updatedData });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const createPostLike = async (postId, userId) => {
+  try {
+    return await db.postLikes.create({ data: { postId, userId } });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+};
+
+const deletePostLike = async (postId, userId) => {
+  try {
+    return await db.postLikes.delete({ where: { postId_userId: { postId, userId } } });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -47,4 +68,6 @@ exports.postRepository = {
   findPostById,
   createPost,
   updatePost,
+  createPostLike,
+  deletePostLike,
 };

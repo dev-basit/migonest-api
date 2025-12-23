@@ -1,8 +1,13 @@
-const { MessageModel } = require("../models");
+const { db } = require("../startup/db");
+const { userRepository } = require("./user-repositories");
 
 const findAll = async (params = {}) => {
   try {
-    return await MessageModel.find(params).sort({ createdAt: 1 });
+    return await db.messages.findMany({
+      where: params,
+      include: { sender: { select: userRepository.userBasicInfo } },
+      orderBy: { createdAt: "asc" },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -10,8 +15,7 @@ const findAll = async (params = {}) => {
 
 const create = async (data) => {
   try {
-    const message = new MessageModel(data);
-    return await message.save();
+    return await db.messages.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -19,7 +23,7 @@ const create = async (data) => {
 
 const update = async (id, updatedData) => {
   try {
-    return await MessageModel.findByIdAndUpdate(id, updatedData, { new: true });
+    return await db.messages.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }

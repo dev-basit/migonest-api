@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const subscriptionSchema = new mongoose.Schema(
   {
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    planType: { type: String, enum: ["month", "year"], default: "month" },
+    planType: { type: String, enum: ["MONTH", "YEAR"], default: "MONTH" },
     stripeSubscriptionId: { type: String, required: true, unique: true },
     status: { type: String, required: true },
     currentPeriodStart: { type: Date, required: true },

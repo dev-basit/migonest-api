@@ -1,12 +1,17 @@
-const { UniExpertRequestModel } = require("../models");
+const { db } = require("../startup/db");
+const { userRepository } = require("./user-repositories");
 
 const findUniExpertRequests = async (params = {}) => {
   try {
-    return await UniExpertRequestModel.find(params)
-      .populate("studentId", "userName firstName lastName profilePicture preferences following")
-      .populate("uniExpertId", "userName firstName lastName profilePicture preferences following")
-      .populate("universityId")
-      .sort({ createdAt: -1 });
+    return await db.uniExpertRequests.findMany({
+      where: params,
+      include: {
+        student: { select: userRepository.userBasicInfo },
+        uniExpert: { select: userRepository.userBasicInfo },
+        university: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -14,7 +19,7 @@ const findUniExpertRequests = async (params = {}) => {
 
 const findUniExpertRequestById = async (id) => {
   try {
-    return await UniExpertRequestModel.findById(id);
+    return await db.uniExpertRequests.findUnique({ where: { id } });
   } catch (error) {
     throw new Error(error.message);
   }
@@ -22,16 +27,15 @@ const findUniExpertRequestById = async (id) => {
 
 const createUniExpertRequest = async (data) => {
   try {
-    const request = new UniExpertRequestModel(data);
-    return await request.save();
+    return await db.uniExpertRequests.create({ data });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-const updateUniExpertRequest = async (id, updatedData, options = { new: true }) => {
+const updateUniExpertRequest = async (id, updatedData) => {
   try {
-    return await UniExpertRequestModel.findByIdAndUpdate(id, updatedData, options);
+    return await db.uniExpertRequests.update({ where: { id }, data: updatedData });
   } catch (error) {
     throw new Error(error.message);
   }

@@ -4,7 +4,7 @@ const { Utils } = require("../utils");
 const becomeUniExpertSchema = new mongoose.Schema(
   {
     studentId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    acceptStatus: { type: String, enum: ["open", "accepted", "rejected"], default: "open" },
+    acceptStatus: { type: String, enum: ["OPEN", "ACCEPTED", "REJECTED"], default: "OPEN" },
     createdAt: {
       type: String,
       minlength: 9,
