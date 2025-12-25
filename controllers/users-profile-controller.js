@@ -3,20 +3,11 @@ const { Logger } = require("../startup/logs");
 const { userRepository, userProfileRepository } = require("../repositories");
 const { userService } = require("../services");
 
-// TODO: add transaction
 const experienceCreate = async (req, res) => {
   try {
     let experience = await userService.experienceCreate(req.body);
     if (experience.status === Constants.FAIL) {
       return ResponseHandler.sendBadResponse(experience.message, res);
-    }
-
-    const userUpdate = await userRepository.updateUser(req.user._id, {
-      $addToSet: { experiences: experience._id },
-    });
-
-    if (!userUpdate) {
-      return ResponseHandler.sendBadResponse("Error while updating user.", res);
     }
 
     return ResponseHandler.sendCreatedResponse(experience, Constants.SUCCESSFULLY_ADDED, res);
@@ -33,12 +24,12 @@ const experienceUpdate = async (req, res) => {
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
     // TODO: optimize this, (remove this api call, save experiences info in token)
-    const currentUserDetails = await userRepository.findUserById(req.user._id);
+    const currentUserDetails = await userRepository.findUserDetailsById(req.user.id);
 
     // normal users can only update their own details and not any other user details
     if (
       (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
-      !currentUserDetails.experiences.includes(req.params.id)
+      !currentUserDetails.experiences.some((experience) => experience.id === req.params.id)
     )
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
@@ -57,20 +48,11 @@ const experienceUpdate = async (req, res) => {
   }
 };
 
-// TODO: add transaction
 const educationCreate = async (req, res) => {
   try {
     let education = await userService.educationCreate(req.body);
     if (education.status === Constants.FAIL) {
       return ResponseHandler.sendBadResponse(education.message, res);
-    }
-
-    const userUpdate = await userRepository.updateUser(req.user._id, {
-      $addToSet: { education: education._id },
-    });
-
-    if (!userUpdate) {
-      return ResponseHandler.sendBadResponse("Error while updating user.", res);
     }
 
     return ResponseHandler.sendCreatedResponse(education, Constants.SUCCESSFULLY_ADDED, res);
@@ -87,12 +69,12 @@ const educationUpdate = async (req, res) => {
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
     // TODO: optimize this, (remove this api call, save experiences info in token)
-    const currentUserDetails = await userRepository.findUserById(req.user._id);
+    const currentUserDetails = await userRepository.findUserDetailsById(req.user.id);
 
     // normal users can only update their own details and not any other user details
     if (
       (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
-      !currentUserDetails.education.includes(req.params.id)
+      !currentUserDetails.education.some((education) => education.id === req.params.id)
     )
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
@@ -111,20 +93,11 @@ const educationUpdate = async (req, res) => {
   }
 };
 
-// TODO: add transaction
 const ieltsCreate = async (req, res) => {
   try {
     let ielts = await userService.ieltsCreate(req.body);
     if (ielts.status === Constants.FAIL) {
       return ResponseHandler.sendBadResponse(ielts.message, res);
-    }
-
-    const userUpdate = await userRepository.updateUser(req.user._id, {
-      $addToSet: { ielts: ielts._id },
-    });
-
-    if (!userUpdate) {
-      return ResponseHandler.sendBadResponse("Error while updating user.", res);
     }
 
     return ResponseHandler.sendCreatedResponse(ielts, Constants.SUCCESSFULLY_ADDED, res);
@@ -141,12 +114,12 @@ const ieltsUpdate = async (req, res) => {
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
     // TODO: optimize this, (remove this api call, save experiences info in token)
-    const currentUserDetails = await userRepository.findUserById(req.user._id);
+    const currentUserDetails = await userRepository.findUserDetailsById(req.user.id);
 
     // normal users can only update their own details and not any other user details
     if (
       (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
-      !currentUserDetails.ielts.includes(req.params.id)
+      !currentUserDetails.ielts.some((ielts) => ielts.id === req.params.id)
     )
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 

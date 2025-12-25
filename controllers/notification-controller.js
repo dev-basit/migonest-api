@@ -5,7 +5,7 @@ const { notificationService } = require("../services");
 
 const notificationsFind = async (req, res) => {
   try {
-    const filters = { user: req.user._id };
+    const filters = { userId: req.user.id };
 
     Logger.info(Constants.FETCHING_DATA);
 
@@ -22,7 +22,7 @@ const notificationCreate = async (req, res) => {
     const { error } = notificationService.validateNotification(payload);
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
 
-    const user = await userRepository.findUserById(payload.user);
+    const user = await userRepository.findUserById(payload.userId);
     if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
@@ -40,7 +40,7 @@ const notificationUpdate = async (req, res) => {
     if (!notificationId) return ResponseHandler.sendBadResponse(Constants.SEND_ID_IN_PARAMS, res);
 
     const payload = {};
-    if (req.body.isRead) payload.isRead = req.body.isRead;
+    if (req.body.isRead.toString()) payload.isRead = req.body.isRead;
     const updatedNotification = await notificationRepository.update(notificationId, payload);
     return ResponseHandler.sendOkResponse(updatedNotification, Constants.SUCCESSFULLY_UPDATED_, res);
   } catch (error) {

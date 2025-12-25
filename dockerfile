@@ -5,7 +5,7 @@ RUN npm i
 COPY . .
 ENV NODE_ENV=production
 ENV clientUrl=""
-ENV db=""
+ENV databaseUrl=""
 ENV port=""
 ENV jwtPrivateKey=""
 ENV cloudinary_cloud_name=""

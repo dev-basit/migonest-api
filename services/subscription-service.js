@@ -17,10 +17,10 @@ const subscriptionCreated = async (subscription) => {
   const item = subscription.items.data[0];
   const currentPeriodStart = item.current_period_start;
   const currentPeriodEnd = item.current_period_end;
-  const plan = item.plan.id === config.stripeMonthlyPriceId ? "month" : "year";
+  const plan = item.plan.id === config.stripeMonthlyPriceId ? "MONTH" : "YEAR";
 
   const subscriptionData = {
-    userId: user._id.toString(),
+    userId: user.id.toString(),
     planType: plan,
     stripeSubscriptionId: subscription.id,
     status: subscription.status,
@@ -31,19 +31,19 @@ const subscriptionCreated = async (subscription) => {
 
   const newSubscription = await subscriptionRepository.createSubscription(subscriptionData);
 
-  await userRepository.updateUser(user._id, { currentSubscriptionId: newSubscription._id });
+  await userRepository.updateUser(user.id, { currentSubscriptionId: newSubscription.id });
 
-  Logger.info(`Payment received for user ${user._id.toString()} with plan ${plan}`);
+  Logger.info(`Payment received for user ${user.id.toString()} with plan ${plan}`);
 
   await purchaseRepository.createPurchase({
-    userId: user._id.toString(),
-    subscriptionId: newSubscription._id,
-    type: "subscription",
+    userId: user.id.toString(),
+    subscriptionId: newSubscription.id,
+    type: "SUBSCRIPTION",
     amount: subscription.items.data[0].plan.amount / 100,
     stripePurchaseId: subscription.id,
   });
 
-  Logger.info(`Subscription purchase created for user ${user._id.toString()} with plan ${plan}`);
+  Logger.info(`Subscription purchase created for user ${user.id.toString()} with plan ${plan}`);
 
   if (subscription.status === "active") {
     await sendEmail({
@@ -66,12 +66,12 @@ const subscriptionUpdated = async (subscription) => {
   const item = subscription.items.data[0];
   const currentPeriodStart = item.current_period_start;
   const currentPeriodEnd = item.current_period_end;
-  const plan = item.plan.id === config.stripeMonthlyPriceId ? "month" : "year";
+  const plan = item.plan.id === config.stripeMonthlyPriceId ? "MONTH" : "YEAR";
 
   const isSubscriptionCancelled = subscription.cancellation_details.reason === "cancellation_requested";
 
   const subscriptionData = {
-    userId: user._id.toString(),
+    userId: user.id.toString(),
     planType: plan,
     stripeSubscriptionId: subscription.id,
     status: isSubscriptionCancelled ? "cancelled" : "active",
@@ -82,11 +82,10 @@ const subscriptionUpdated = async (subscription) => {
 
   const updatedSubscription = await subscriptionRepository.updateSubscription(
     { stripeSubscriptionId: subscription.id },
-    subscriptionData,
-    { new: true, upsert: true }
+    subscriptionData
   );
 
-  await userRepository.updateUser(user._id, { currentSubscriptionId: updatedSubscription._id });
+  await userRepository.updateUser(user.id, { currentSubscriptionId: updatedSubscription.id });
 
   if (isSubscriptionCancelled) {
     await sendEmail({
@@ -120,7 +119,7 @@ const subscriptionDeleted = async (subscription) => {
     { status: "deleted" }
   );
 
-  await userRepository.updateUser(user._id, { $unset: { currentSubscriptionId: 1 } });
+  await userRepository.updateUser(user.id, { $unset: { currentSubscriptionId: 1 } });
 
   await sendEmail({
     receiver: user.email,

@@ -11,12 +11,14 @@ const {
   contactUsRoutes,
   uploadRoutes,
   conversationRoutes,
+  conversationMembersRoutes,
   messageRoutes,
   notificationRoutes,
   purchaseRoutes,
   subscriptionRoutes,
   checkoutRoutes,
   stripeWebhooksRoutes,
+  documentsRoutes,
 } = require("../routes");
 const { authMiddleware, errorMiddleware, logMiddleware } = require("../middleware");
 
@@ -41,10 +43,12 @@ exports.initRoutes = function (app) {
   app.use("/v1/become/uni/experts", becomeUniExpertRoutes);
   app.use("/v1/contact/us", contactUsRoutes);
   app.use("/v1/conversations", conversationRoutes);
+  app.use("/v1/conversation-members", conversationMembersRoutes);
   app.use("/v1/messages", messageRoutes);
   app.use("/v1/notifications", notificationRoutes);
   app.use("/v1/purchases", purchaseRoutes);
   app.use("/v1/subscriptions", subscriptionRoutes);
   app.use("/v1/checkout", checkoutRoutes);
+  app.use("/v1/documents", documentsRoutes);
   app.use(errorMiddleware);
 };

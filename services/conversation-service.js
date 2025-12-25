@@ -1,9 +1,9 @@
 const Joi = require("joi");
-const { Constants } = require("../utils");
 const {
   conversationRepository,
   subscriptionRepository,
   uniExpertRequestRepository,
+  conversationMembersRepository,
 } = require("../repositories");
 const { Logger } = require("../startup/logs");
 
@@ -11,9 +11,8 @@ function validateConversationCreatePayload(data) {
   const schema = Joi.object({
     members: Joi.array()
       .items(
-        Joi.string().length(24).required().messages({
-          "string.length": "`members` entries must be 24 characters long",
-          "string.pattern.name": "`members` entries must be valid ObjectId",
+        Joi.string().guid({ version: "uuidv4" }).required().messages({
+          "string.guid": "`members` entries must be valid UUID",
         })
       )
       .length(2)
@@ -22,43 +21,16 @@ function validateConversationCreatePayload(data) {
         "array.base": "`members` must be an array",
         "array.length": "`members` must contain exactly two user IDs",
       }),
-    lastMessage: Joi.objectId(),
-    unreadCounts: Joi.object().pattern(Joi.string(), Joi.number().min(0)),
+    lastMessage: Joi.string().guid({ version: "uuidv4" }),
   });
 
   return schema.validate(data);
 }
 
-const updateConversation = async (conversationId, updatedData) => {
-  if (!conversationId) throw { status: 400, message: Constants.SEND_ID_IN_PARAMS };
-
-  const existingConversation = await conversationRepository.findById(conversationId);
-  if (!existingConversation) throw { status: 404, message: Constants.RESOURCE_NOT_FOUND };
-
-  const { lastMessage, setUnreadCountsFor } = updatedData;
-  const payload = {};
-
-  if (lastMessage) {
-    payload.lastMessage = lastMessage;
-  }
-
-  if (setUnreadCountsFor) {
-    payload.unreadCounts = existingConversation.unreadCounts;
-    payload.unreadCounts.set(setUnreadCountsFor.id, setUnreadCountsFor.value);
-  }
-
-  if (Object.keys(payload).length === 0) throw { status: 400, message: "No valid fields to update." };
-
-  const updatedConversation = await conversationRepository.update(conversationId, payload);
-  if (!updatedConversation) throw { status: 400, message: Constants.ERROR_UPDATING };
-
-  return updatedConversation;
-};
-
 // TODO: cache this function value when using redis
-const conversationsAllowed = async (userId, conversationId) => {
+const isConversationsAllowed = async (userId, conversationId) => {
   try {
-    const filters = { members: { $in: userId } };
+    const filters = { members: { some: { userId } } };
     const subscription = await subscriptionRepository.findSubscription({ userId });
 
     const now = new Date();
@@ -78,15 +50,13 @@ const conversationsAllowed = async (userId, conversationId) => {
       });
       let allowedUniExpertIds = new Set();
       if (Array.isArray(paidRequests) && paidRequests.length > 0) {
-        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId._id.toString()));
+        allowedUniExpertIds = new Set(paidRequests.map((request) => request.uniExpertId));
       }
 
       const allowedConversations = conversations.map((conversation) => {
-        const memberIds = (conversation.members || []).map((member) =>
-          member && member._id ? member._id.toString() : member?.toString()
-        );
+        const memberIds = (conversation.members || []).map((member) => member.user.id);
         const isAllowed = memberIds.some((id) => allowedUniExpertIds.has(id));
-        return { id: conversation._id.toString(), allowed: isAllowed };
+        return { id: conversation.id, allowed: isAllowed };
       });
 
       return allowedConversations.some(
@@ -98,4 +68,34 @@ const conversationsAllowed = async (userId, conversationId) => {
   }
 };
 
-exports.conversationService = { validateConversationCreatePayload, updateConversation, conversationsAllowed };
+const isConvAlreadyExists = async (members) => {
+  try {
+    const conversationMembersForFirstUser = await conversationMembersRepository.findAll({
+      userId: members[0],
+    });
+    const conversationMembersForSecondUser = await conversationMembersRepository.findAll({
+      userId: members[1],
+    });
+
+    const conversationIdsForFirstUser = conversationMembersForFirstUser.map(
+      (member) => member.conversationId
+    );
+    const conversationIdsForSecondUser = conversationMembersForSecondUser.map(
+      (member) => member.conversationId
+    );
+
+    const commonConversationIds = conversationIdsForFirstUser.filter((id) =>
+      conversationIdsForSecondUser.includes(id)
+    );
+
+    return commonConversationIds.length > 0;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.conversationService = {
+  validateConversationCreatePayload,
+  isConversationsAllowed,
+  isConvAlreadyExists,
+};

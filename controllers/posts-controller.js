@@ -9,13 +9,13 @@ const posts = async (req, res) => {
     const { pageNo, pageSize, skip } = req.pagination;
 
     Logger.info("Fetching followers list");
-    const user = await userRepository.findUserById(req.user._id);
-    const userFollowingIds = user.following.map((followedUser) => followedUser._id);
-    userFollowingIds.push(req.user._id); // show user own post to user
+    const user = await userRepository.findUserDetailsById(req.user.id);
+    const userFollowingIds = user.following.map((followingUser) => followingUser.followingId);
+    userFollowingIds.push(req.user.id); // show user own post to user
 
     Logger.info(Constants.FETCHING_DATA);
     const { posts, count } = await postRepository.findAllPosts(
-      { author: { $in: userFollowingIds }, isVisible: true },
+      { authorId: { in: userFollowingIds }, enabled: true },
       { skip, pageSize }
     );
 
@@ -32,7 +32,7 @@ const posts = async (req, res) => {
 const createPost = async (req, res) => {
   try {
     const requestedPayload = {
-      author: req.body.author,
+      authorId: req.body.authorId,
       content: req.body.content,
       picture: req.body.picture,
     };
@@ -52,20 +52,20 @@ const createPost = async (req, res) => {
 const likeDislikePost = async (req, res) => {
   try {
     const { postId } = req.body;
-    const currentUserId = req.user._id;
+    const currentUserId = req.user.id;
 
     if (!postId) return ResponseHandler.sendBadResponse("Post ID is required.", res);
 
     const post = await postRepository.findPostById(postId);
     if (!post) return ResponseHandler.sendNotFoundResponse("Post not found.", res);
 
-    const isLikedAlready = post.likes.includes(currentUserId);
+    const isLikedAlready = post.likes.some((like) => like.userId === currentUserId);
     if (isLikedAlready) {
-      const updatedPost = await postRepository.updatePost(postId, { $pull: { likes: currentUserId } });
-      return ResponseHandler.sendOkResponse(updatedPost, "Successfully disliked the post.", res);
+      await postRepository.deletePostLike(postId, currentUserId);
+      return ResponseHandler.sendOkResponse(null, "Successfully disliked the post.", res);
     } else {
-      const updatedPost = await postRepository.updatePost(postId, { $addToSet: { likes: currentUserId } });
-      return ResponseHandler.sendOkResponse(updatedPost, "Successfully liked the post.", res);
+      await postRepository.createPostLike(postId, currentUserId);
+      return ResponseHandler.sendOkResponse(null, "Successfully liked the post.", res);
     }
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
@@ -73,7 +73,7 @@ const likeDislikePost = async (req, res) => {
 };
 
 // TODO: dont allow shared post to be updated
-// TODO: when deleting, delete from both, originol post share array, and author post record
+// TODO: when deleting, delete from both, originol post share array, and authorId post record
 const sharePost = async (req, res) => {
   try {
     const { postId } = req.body;
@@ -83,21 +83,15 @@ const sharePost = async (req, res) => {
     if (!post) return ResponseHandler.sendNotFoundResponse("Post not found.", res);
 
     const newPost = {};
-    newPost.author = req.user._id;
+    newPost.authorId = req.user.id;
     newPost.content = post.content;
     newPost.picture = post.picture;
     newPost.isShared = true;
-    newPost.likes = [];
-    newPost.shares = [];
-
-    console.log("newpost ", newPost);
 
     Logger.info("Post being shared: " + JSON.stringify(post));
     Logger.info("New Post: " + JSON.stringify(newPost));
 
-    // TODO: apply transaction here
     let sharedPostCreated = await postRepository.createPost(newPost);
-    await postRepository.updatePost(postId, { $push: { shares: sharedPostCreated._id } });
     return ResponseHandler.sendOkResponse(sharedPostCreated, "Successfully shared the post.", res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
@@ -112,17 +106,17 @@ const updatePost = async (req, res) => {
     const postExisitngDetails = await postRepository.findPostById(postId);
     if (!postExisitngDetails) return ResponseHandler.sendNotFoundResponse(Constants.DATA_NOT_FOUND, res);
 
-    if (postExisitngDetails.author.toString() !== req.user._id.toString())
+    if (postExisitngDetails.authorId.toString() !== req.user.id.toString())
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
-    const { content, picture, isVisible } = req.body;
+    const { content, picture, enabled } = req.body;
     const payload = {
       content: content || postExisitngDetails.content,
       picture: picture || postExisitngDetails.picture,
     };
 
-    if (req.body.isVisible !== undefined) payload.isVisible = isVisible;
-    else payload.isVisible = postExisitngDetails.isVisible;
+    if (req.body.enabled !== undefined) payload.enabled = enabled;
+    else payload.enabled = postExisitngDetails.enabled;
 
     const updatedPost = await postRepository.updatePost(postId, payload);
     if (!updatedPost) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);

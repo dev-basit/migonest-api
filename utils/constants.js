@@ -1,7 +1,7 @@
-const STUDENT = "student";
-const UNI_EXPERT = "uni-expert";
-const ADMIN = "admin";
-const SUPER_ADMIN = "super-admin";
+const STUDENT = "STUDENT";
+const UNI_EXPERT = "UNI_EXPERT";
+const ADMIN = "ADMIN";
+const SUPER_ADMIN = "SUPER_ADMIN";
 
 exports.Constants = {
   SUCCESS: "success",
@@ -16,8 +16,8 @@ exports.Constants = {
   SUPER_ADMIN: SUPER_ADMIN,
   USER_TYPES: [STUDENT, UNI_EXPERT, ADMIN, SUPER_ADMIN],
 
-  ACCEPT_STATUS: "accepted",
-  OPEN_STATUS: "open",
+  ACCEPT_STATUS: "ACCEPTED",
+  OPEN_STATUS: "OPEN",
 
   FETCHING_DATA: "Fethcing data from database.",
   SEND_ID_IN_PAYLOAD: "Please send id in payload.",
@@ -29,12 +29,13 @@ exports.Constants = {
     "Successfully created account. Please check verification code in your email and enter it here.",
   SUCCESSFULLY_UPDATED: "Successfully updated data.",
   SUCCESSFULLY_UPDATED_: "Successfully updated.",
+  SUCCESSFULLY_DELETED: "Successfully deleted.",
   SUCCESSFULLY_JWT_CREATED: "Successfully generated jwt token.",
   SUCCESSFULLY_LOGGED_IN: "Successfully logged in.",
   SUCCESSFULLY_VERIFIED_ACCOUNT: "Successfully verified account.",
   PAYLOAD_IS_CORRECT: "Requested payload data is correct.",
   EMAI_IS_UNIQUE: "User email is unique.",
-  NEW_USER_EMAIL_CLASH: "User with given email already registered.",
+  NEW_USER_EMAIL_CLASH: "User with given email or username already registered.",
   EMAIL_ALREADY_VERIFIED: "User is already verified.",
   INVALID_EMAIL_PASSWORD: "Invalid email or password.",
   EMAIL_REQUIRED: "Email is required.",
@@ -55,6 +56,7 @@ exports.Constants = {
   FORBIDDEN_: "You are not allowed to perform this operation.",
   CONFLICT: "Already data exist.",
   ERROR_UPDATING: "Error while updating details.",
+  ERROR_DELETING: "Error while deleting.",
   SERVER_ERROR: "INTERNAL_SERVER_ERROR",
   INVALID_CURRENT_PASSWORD: "Please provide correct current password.",
 

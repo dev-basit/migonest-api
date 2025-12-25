@@ -1,139 +1,277 @@
 const bcrypt = require("bcrypt");
 const _ = require("lodash");
-const { UserModel } = require("../models");
+const { db } = require("../startup/db");
 const { Utils } = require("../utils");
 
-// dont fetch password
-const findUser = async (params = {}) => {
-  try {
-    return await UserModel.findOne(params).select("-password");
-  } catch (error) {
-    throw new Error(error.message);
-  }
+const userBasicInfo = {
+  id: true,
+  userName: true,
+  firstName: true,
+  lastName: true,
+  email: true,
+  profilePicture: true,
+  type: true,
+  preferences: true,
+  stripeCustomerId: true,
 };
 
-// fetch password as well
-const findUserWithPassword = async (params = {}) => {
-  try {
-    return await UserModel.findOne(params);
-  } catch (error) {
-    throw new Error(error.message);
-  }
+const userInfo = {
+  id: true,
+  userName: true,
+  firstName: true,
+  lastName: true,
+  profilePicture: true,
+  coverPicture: true,
+  email: true,
+  // password: true,
+  dateOfBirth: true,
+  gender: true,
+  type: true,
+  isVerified: true,
+  emailVerificationCode: true,
+  fotgotPasswordOtp: true,
+  fotgotPasswordOtpExpiry: true,
+  preferences: true,
+  about: true,
+  stripeCustomerId: true,
+  currentSubscriptionId: true,
+  createdAt: true,
+  updatedAt: true,
 };
 
-const findUserDetails = async (params = {}) => {
-  try {
-    return await UserModel.findOne(params)
-      .select("-password")
-      .populate("experiences")
-      .populate("education")
-      .populate("ielts");
-  } catch (error) {
-    throw new Error(error.message);
-  }
+const userInfoWithPassword = {
+  id: true,
+  userName: true,
+  firstName: true,
+  lastName: true,
+  profilePicture: true,
+  coverPicture: true,
+  email: true,
+  password: true,
+  dateOfBirth: true,
+  gender: true,
+  type: true,
+  isVerified: true,
+  emailVerificationCode: true,
+  fotgotPasswordOtp: true,
+  fotgotPasswordOtpExpiry: true,
+  preferences: true,
+  about: true,
+  stripeCustomerId: true,
+  currentSubscriptionId: true,
+  createdAt: true,
+  updatedAt: true,
 };
 
-const findUserById = async (id) => {
-  try {
-    return await UserModel.findById(id)
-      .select("-password")
-      .populate("following", "_id userName firstName lastName profilePicture type");
-  } catch (error) {
-    throw new Error(error.message);
-  }
+const userDetails = {
+  id: true,
+  userName: true,
+  firstName: true,
+  lastName: true,
+  profilePicture: true,
+  coverPicture: true,
+  email: true,
+  // password: true,
+  dateOfBirth: true,
+  gender: true,
+  type: true,
+  isVerified: true,
+  emailVerificationCode: true,
+  fotgotPasswordOtp: true,
+  fotgotPasswordOtpExpiry: true,
+  preferences: true,
+  about: true,
+  documents: true,
+  stripeCustomerId: true,
+  currentSubscriptionId: true,
+  // currentSubscription: {
+  //   select: {
+  //     id: true,
+  //     planType: true,
+  //     stripeSubscriptionId: true,
+  //     status: true,
+  //     currentPeriodStart: true,
+  //     currentPeriodEnd: true,
+  //     cancelAtPeriodEnd: true,
+  //   },
+  // },
+  // becomeUniExpertRequests: true,
+  createdAt: true,
+  updatedAt: true,
+  followers: true,
+  following: true,
+  experiences: true,
+  education: true,
+  ielts: true,
 };
 
-const findUserDetailsById = async (id) => {
+async function findUser(params = {}) {
   try {
-    return await UserModel.findById(id)
-      .select("-password -email -date -gender")
-      .populate("experiences")
-      .populate("education")
-      .populate("ielts");
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-const findUsers = async (params = {}) => {
-  try {
-    return await UserModel.find(params).select("-password");
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-// gets minimum info to be used by public
-const findUsersPublic = async (params = {}, { skip, pageSize }) => {
-  try {
-    const [users, count] = await Promise.all([
-      UserModel.find(params)
-        .select("_id userName firstName lastName profilePicture")
-        .skip(skip)
-        .limit(pageSize)
-        .lean(),
-      UserModel.countDocuments(params),
-    ]);
-    return { users, count };
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-const findUsersSuggestions = async (params = {}, { skip, pageSize }) => {
-  try {
-    const [users, count] = await Promise.all([
-      UserModel.find(params)
-        .select("_id userName profilePicture preferences type")
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(pageSize)
-        .lean(),
-      UserModel.countDocuments(params),
-    ]);
-    return { users, count };
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
-
-const createUser = async (newUserData) => {
-  try {
-    const user = new UserModel(
-      _.pick(newUserData, [
-        "_id",
-        "userName",
-        "firstName",
-        "lastName",
-        "email",
-        "password",
-        "profilePicture",
-        "date",
-        "gender",
-        "type",
-        "stripeCustomerId",
-      ])
-    );
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-    user.emailVerificationCode = Utils.generateCode(6); // generate code, used to verify email
-    await user.save();
+    const user = await db.users.findFirst({ where: params, select: userInfo });
     return user;
   } catch (error) {
     throw new Error(error.message);
   }
-};
+}
 
-const updateUser = async (userId, updatedData, options = { new: true }) => {
+async function findUserByEmail(email) {
   try {
-    return await UserModel.findByIdAndUpdate(userId, updatedData, options);
+    const user = await db.users.findUnique({ where: { email }, select: userInfo });
+    return user;
   } catch (error) {
     throw new Error(error.message);
   }
-};
+}
+
+async function findUserWithPassword(params = {}) {
+  try {
+    const user = await db.users.findUnique({ where: params, select: userInfoWithPassword });
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function findUserDetails(params = {}) {
+  try {
+    const user = await db.users.findUnique({ where: params, select: userDetails });
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function findUserById(id) {
+  try {
+    const user = await db.users.findUnique({ where: { id }, select: userInfo });
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function findUserDetailsById(id) {
+  try {
+    const user = await db.users.findUnique({ where: { id }, select: userDetails });
+
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function findUsers(params = {}) {
+  try {
+    const users = await db.users.findMany({ where: params, select: userInfo });
+    return users;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function findUsersPublic(params = {}, { skip = 0, pageSize = 10 }) {
+  try {
+    const [users, count] = await Promise.all([
+      db.users.findMany({
+        where: params,
+        select: userBasicInfo,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: pageSize,
+      }),
+      db.users.count({ where: params }),
+    ]);
+
+    return { users, count };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function findUsersSuggestions(params = {}, { skip = 0, pageSize = 10 }) {
+  try {
+    const [users, count] = await Promise.all([
+      db.users.findMany({
+        where: params,
+        select: userBasicInfo,
+        orderBy: { createdAt: "desc" },
+        skip,
+        take: pageSize,
+      }),
+      db.users.count({ where: params }),
+    ]);
+
+    return { users, count };
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function findUserFollowers(params = {}) {
+  try {
+    const followers = await db.usersFollow.findUnique({ where: params });
+    return followers;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function createUser(newUserData) {
+  try {
+    const data = _.pick(newUserData, [
+      "userName",
+      "firstName",
+      "lastName",
+      "email",
+      "password",
+      "profilePicture",
+      "dateOfBirth",
+      "gender",
+      "type",
+      "stripeCustomerId",
+    ]);
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(data.password, salt);
+    const emailVerificationCode = Utils.generateCode(6);
+
+    const user = await db.users.create({
+      data: {
+        ...data,
+        password: hashedPassword,
+        emailVerificationCode,
+        // documents: data.documents || [],
+        preferences: data.preferences || "{}",
+      },
+      select: userInfo,
+    });
+
+    return user;
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
+
+async function addFollowRelationship(followerId, followingId) {
+  await db.usersFollow.create({ data: { followerId, followingId } });
+}
+
+async function removeFollowRelationship(followerId, followingId) {
+  await db.usersFollow.delete({ where: { followerId, followingId } });
+}
+
+async function updateUser(userId, updatedData) {
+  try {
+    return await db.users.update({ where: { id: userId }, data: updatedData });
+  } catch (error) {
+    throw new Error(error.message);
+  }
+}
 
 exports.userRepository = {
+  userBasicInfo,
   findUser,
+  findUserByEmail,
   findUserById,
   findUserWithPassword,
   findUsersPublic,
@@ -141,6 +279,8 @@ exports.userRepository = {
   findUserDetailsById, // public info
   findUsers,
   findUsersSuggestions,
+  findUserFollowers,
   createUser,
   updateUser,
+  addFollowRelationship,
 };

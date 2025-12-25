@@ -1,5 +1,14 @@
 const bcrypt = require("bcrypt");
-const { validatePayload, ResponseHandler, Response, Constants, Utils, sendEmail, html } = require("../utils");
+const {
+  validatePayload,
+  ResponseHandler,
+  Response,
+  Constants,
+  Utils,
+  sendEmail,
+  html,
+  generateUserAuthToken,
+} = require("../utils");
 const { Logger } = require("../startup/logs");
 const { authService } = require("../services");
 const { userRepository } = require("../repositories");
@@ -22,13 +31,13 @@ const userLogin = async (req, res) => {
     // generate new code, send code in email and return 403 response
     if (!user.isVerified) {
       user.emailVerificationCode = Utils.generateCode(6);
-      await userRepository.updateUser(user._id, user);
+      await userRepository.updateUser(user.id, user);
       await sendEmail({ receiver: user.email, text: html.verificationEmail(user.emailVerificationCode) });
 
       return ResponseHandler.sendForbiddenResponse("Your email is not verified yet.", res);
     }
 
-    const token = user.generateAuthToken();
+    const token = generateUserAuthToken(user);
     Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);
 
     return res
@@ -53,7 +62,7 @@ const verifyEmail = async (req, res) => {
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
-    let user = await userRepository.findUser({ email: req.body.email });
+    let user = await userRepository.findUserByEmail(req.body.email);
     if (!user) return ResponseHandler.sendNotFoundResponse(Constants.USER_NOT_FOUND, res);
 
     if (user.isVerified) return ResponseHandler.sendBadResponse(Constants.EMAIL_ALREADY_VERIFIED, res);
@@ -64,11 +73,11 @@ const verifyEmail = async (req, res) => {
       return ResponseHandler.sendBadResponse(Constants.INVALID_VERIFICATION_CODE, res);
 
     const userUpdatedDetails = { isVerified: true, emailVerificationCode: "" };
-    const updatedUser = await userRepository.updateUser(user._id, userUpdatedDetails);
+    const updatedUser = await userRepository.updateUser(user.id, userUpdatedDetails);
     if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
 
     // return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_VERIFIED_ACCOUNT, res);
-    const token = user.generateAuthToken();
+    const token = generateUserAuthToken(user);
     Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);
 
     return res
@@ -107,7 +116,7 @@ const passwordUpdate = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     user.password = await bcrypt.hash(req.body.newPassword, salt);
 
-    const updatedUser = await userRepository.updateUser(req.user._id, user);
+    const updatedUser = await userRepository.updateUser(req.user.id, user);
     if (!updatedUser) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
 
     // dont send user password to the consumer
@@ -118,8 +127,6 @@ const passwordUpdate = async (req, res) => {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
 };
-
-exports.authControllers = { userLogin, verifyEmail, passwordUpdate };
 
 // TODO: logout of users after password change success
 const requestForgotPasswordOTP = async (req, res) => {
@@ -141,7 +148,7 @@ const requestForgotPasswordOTP = async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       const hashedOtp = await bcrypt.hash(String(otp), salt);
 
-      user = await userRepository.updateUser(user._id, {
+      user = await userRepository.updateUser(user.id, {
         fotgotPasswordOtp: hashedOtp,
         fotgotPasswordOtpExpiry: new Date(now.getTime() + 10 * 60 * 1000),
       });
@@ -183,7 +190,7 @@ const forgotPasswordVerify = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(newPassword, salt);
 
-    const updated = await userRepository.updateUser(user._id, {
+    const updated = await userRepository.updateUser(user.id, {
       password: hashedPassword,
       fotgotPasswordOtp: null,
       fotgotPasswordOtpExpiry: null,
@@ -191,7 +198,7 @@ const forgotPasswordVerify = async (req, res) => {
     if (!updated) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
 
     // return ResponseHandler.sendOkResponse(null, "Password reset successful.", res);
-    const token = user.generateAuthToken();
+    const token = generateUserAuthToken(user);
     Logger.info(Constants.SUCCESSFULLY_JWT_CREATED);
 
     return res

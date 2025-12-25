@@ -5,7 +5,7 @@ const { subscriptionService } = require("../services");
 const subscriptionFind = async (req, res) => {
   try {
     Logger.info(Constants.FETCHING_DATA);
-    const subscription = await subscriptionService.getSubscription(req.user._id);
+    const subscription = await subscriptionService.getSubscription(req.user.id);
     return ResponseHandler.sendOkResponse(subscription, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);

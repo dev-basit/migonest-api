@@ -8,7 +8,7 @@ const universitiesFind = async (req, res) => {
     Logger.info(Constants.FETCHING_DATA);
 
     const filters = {};
-    if (req.query.name) filters.name = { $regex: req.query.name, $options: "i" };
+    if (req.query.name) filters.name = { contains: req.query.name, mode: "insensitive" };
     if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
 
     const { pageNo, pageSize, skip } = req.pagination;
@@ -47,6 +47,16 @@ const universityCreate = async (req, res) => {
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
+    if (req.body.documents) {
+      delete requestedPayload.documents;
+      requestedPayload.documents = {
+        create: req.body.documents.map((document) => ({
+          label: document.label,
+          url: document.url,
+        })),
+      };
+    }
+
     const newUniversity = await universityRepository.createUniversity(requestedPayload);
     return ResponseHandler.sendCreatedResponse(newUniversity, Constants.SUCCESSFULLY_ADDED, res);
   } catch (error) {
@@ -64,6 +74,7 @@ const universityUpdate = async (req, res) => {
       return ResponseHandler.sendNotFoundResponse(Constants.RESOURCE_NOT_FOUND, res);
 
     const requestedPayload = {
+      id: universityId,
       name: req.body.name,
       requirements: req.body.requirements,
       deadline: req.body.deadline,
@@ -71,10 +82,24 @@ const universityUpdate = async (req, res) => {
       applicationFee: req.body.applicationFee,
       documents: req.body.documents,
       uniExpertId: req.body.uniExpertId,
+      location: req.body.location,
     };
 
-    const { error } = universityService.validateUniversityCreatePayload(requestedPayload);
+    const { error } = universityService.validateUniversityUpdatePayload(requestedPayload);
     if (error) return ResponseHandler.sendBadResponse(error.details[0].message, res);
+
+    if (req.body.documents) {
+      delete requestedPayload.documents;
+      requestedPayload.documents = {
+        deleteMany: {},
+        createMany: {
+          data: req.body.documents.map((document) => ({
+            label: document.label,
+            url: document.url,
+          })),
+        },
+      };
+    }
 
     const uniExpertDetails = await userRepository.findUserById(requestedPayload.uniExpertId);
     if (!uniExpertDetails) return ResponseHandler.sendNotFoundResponse(Constants.UNI_EXPERT_NOT_FOUND, res);

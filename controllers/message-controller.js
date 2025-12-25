@@ -1,6 +1,10 @@
 const { ResponseHandler, Constants } = require("../utils");
 const { Logger } = require("../startup/logs");
-const { messageRepository, conversationRepository } = require("../repositories");
+const {
+  messageRepository,
+  conversationRepository,
+  conversationMembersRepository,
+} = require("../repositories");
 const { messageService, conversationService } = require("../services");
 
 const messageFind = async (req, res) => {
@@ -34,8 +38,8 @@ const messageCreate = async (req, res) => {
 
     const isCurrentUserStudent = req.user.type === Constants.STUDENT;
     if (isCurrentUserStudent) {
-      const conversationAllowed = await conversationService.conversationsAllowed(
-        req.user._id,
+      const conversationAllowed = await conversationService.isConversationsAllowed(
+        req.user.id,
         req.body.conversationId
       );
       if (!conversationAllowed)
@@ -46,32 +50,25 @@ const messageCreate = async (req, res) => {
     if (!conversation) return ResponseHandler.sendNotFoundResponse(Constants.CONVERSATION_NOT_FOUND, res);
 
     const isSenderMemberOfConversation = conversation.members
-      .map((member) => member._id.toString())
+      .map((member) => member.user.id)
       .includes(requestedPayload.senderId);
     if (!isSenderMemberOfConversation)
       return ResponseHandler.sendForbiddenResponse("Sender is not a member of this conversation", res);
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
-    // TODO: wrap in transaction
-    const newConversation = await messageRepository.create(requestedPayload);
+    // TODO: wrap in transaction (message creation, lastMessageId update, unread count update)
+    const newMessage = await messageRepository.create(requestedPayload);
+    await conversationRepository.update(requestedPayload.conversationId, { lastMessageId: newMessage.id });
 
+    const receiver = conversation.members.find((mem) => mem.user.id !== requestedPayload.senderId).user.id;
     // increment unread count for receiver
-    const receiver = conversation.members
-      .find((member) => member._id.toString() !== requestedPayload.senderId)
-      ._id.toString();
+    await conversationMembersRepository.update(
+      { conversationId_userId: { conversationId: requestedPayload.conversationId, userId: receiver } },
+      { unreadCount: { increment: 1 } }
+    );
 
-    const updatedConversation = {
-      lastMessage: newConversation,
-      setUnreadCountsFor: {
-        id: receiver,
-        value: conversation.unreadCounts.get(receiver) + 1,
-      },
-    };
-
-    await conversationService.updateConversation(requestedPayload.conversationId, updatedConversation);
-
-    return ResponseHandler.sendOkResponse(newConversation, Constants.SUCCESSFULLY_ADDED, res);
+    return ResponseHandler.sendOkResponse(newMessage, Constants.SUCCESSFULLY_ADDED, res);
   } catch (error) {
     if (error.status && error.message) {
       return ResponseHandler.sendErrorResponse(error.message, error.status, res);

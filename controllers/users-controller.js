@@ -8,6 +8,7 @@ const {
   sendEmail,
   stripe,
   html,
+  generateUserAuthToken,
 } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { userRepository } = require("../repositories");
@@ -18,9 +19,9 @@ const users = async (req, res) => {
     const filters = {};
     if (req.query.name) {
       const name = req.query.name;
-      filters.$or = [
-        { firstName: { $regex: name, $options: "i" } },
-        { lastName: { $regex: name, $options: "i" } },
+      filters.OR = [
+        { firstName: { contains: name, mode: "insensitive" } },
+        { lastName: { contains: name, mode: "insensitive" } },
       ];
     }
 
@@ -46,7 +47,9 @@ const userCreate = async (req, res) => {
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
 
-    let user = await userRepository.findUser({ email: req.body.email });
+    let user = await userRepository.findUser({
+      OR: [{ email: req.body.email }, { userName: req.body.userName }],
+    });
     if (user) return ResponseHandler.sendConflictResponse(Constants.NEW_USER_EMAIL_CLASH, res);
 
     Logger.info(Constants.EMAI_IS_UNIQUE);
@@ -68,7 +71,7 @@ const userCreate = async (req, res) => {
 
     await sendEmail({ receiver: user.email, text: html.verificationEmail(user.emailVerificationCode) });
 
-    const token = user.generateAuthToken();
+    const token = generateUserAuthToken(user);
     return res
       .header("x-auth-token", token)
       .header("access-control-expose-headers", "x-auth-token")
@@ -76,7 +79,7 @@ const userCreate = async (req, res) => {
       .send(
         new Response(
           _.pick(user, [
-            "_id",
+            "id",
             "userName",
             "firstName",
             "lastName",
@@ -105,7 +108,7 @@ const userUpdate = async (req, res) => {
     // normal users can only update their own details and not any other user details
     if (
       (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
-      req.user._id !== req.body.id
+      req.user.id !== req.body.id
     )
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
@@ -125,12 +128,11 @@ const userUpdate = async (req, res) => {
       password: userExisitingDetails.password,
       isVerified: userExisitingDetails.isVerified,
       emailVerificationCode: userExisitingDetails.emailVerificationCode,
-      date: req.body.date || userExisitingDetails.date,
+      dateOfBirth: req.body.dateOfBirth || userExisitingDetails.dateOfBirth,
       gender: req.body.gender || userExisitingDetails.gender,
       type: req.body.type || userExisitingDetails.type,
       preferences: req.body.preferences || userExisitingDetails.preferences,
       about: req.body.about || userExisitingDetails.about,
-      documents: req.body.documents || userExisitingDetails.documents || [],
       stripeCustomerId: userExisitingDetails.stripeCustomerId,
     };
 
@@ -166,7 +168,7 @@ const userDetails = async (req, res) => {
 const currentUserDetails = async (req, res) => {
   try {
     Logger.info(Constants.FETCHING_DATA);
-    const currentUser = await userRepository.findUserDetails({ _id: req.user._id });
+    const currentUser = await userRepository.findUserDetails({ id: req.user.id });
     return ResponseHandler.sendOkResponse(currentUser, Constants.SUCCESSFULLY_FETCED, res);
   } catch (error) {
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
@@ -174,41 +176,34 @@ const currentUserDetails = async (req, res) => {
 };
 
 const followUser = async (req, res) => {
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
     const { userId } = req.body;
     if (!userId) return ResponseHandler.sendBadResponse("Please send user's id to follow.", res);
 
-    if (userId === req.user._id.toString())
+    if (userId === req.user.id.toString())
       return ResponseHandler.sendBadResponse("You cannot follow yourself.", res);
 
     const userToFollow = await userRepository.findUserById(userId);
     if (!userToFollow) return ResponseHandler.sendNotFoundResponse("User to follow does not exist.", res);
 
-    const isAlreadyFollowingUser = await userRepository.findUser({ _id: req.user._id, following: userId });
+    const isAlreadyFollowingUser = await userRepository.findUserFollowers({
+      followerId_followingId: { followerId: req.user.id, followingId: userId },
+    });
     if (isAlreadyFollowingUser)
       return ResponseHandler.sendBadResponse("You are already following this user.", res);
 
     Logger.info("Following the user.");
-    await userRepository.updateUser(req.user._id, { $addToSet: { following: userId } }); // add user to following list of the current user
-    await userRepository.updateUser(userId, { $addToSet: { followers: req.user._id } }); // add current user to follower list of the user that is followed
-
-    await session.commitTransaction();
-    session.endSession();
+    await userRepository.addFollowRelationship(req.user.id, userId);
 
     return ResponseHandler.sendOkResponse(null, "Successfully followed the user.", res);
   } catch (error) {
-    await session.abortTransaction();
-    session.endSession();
     return ResponseHandler.sendInternalServerErrorResponse(error.message, res);
   }
 };
 
 const userSuggestions = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const type = req.query.type;
     const linkedUsers = req.query.linkedUsers === "true";
 
@@ -221,20 +216,20 @@ const userSuggestions = async (req, res) => {
 
 const network = async (req, res) => {
   try {
-    const userId = req.user._id;
+    const userId = req.user.id;
     const showFollowers = req.query.showFollowers === "true";
     const { pageNo, pageSize, skip } = req.pagination;
 
-    const currentUser = await userRepository.findUserById(userId);
+    const currentUser = await userRepository.findUserDetailsById(userId);
     if (!currentUser) throw new Error(Constants.USER_NOT_FOUND);
 
     const filters = {};
 
     if (!showFollowers) {
-      const excludeUserIds = currentUser.following.concat(userId);
-      filters._id = { $nin: excludeUserIds };
+      const excludeUserIds = currentUser.following.map((following) => following.followingId).concat(userId);
+      filters.id = { notIn: excludeUserIds };
     } else {
-      filters._id = { $in: currentUser.following };
+      filters.id = { in: currentUser.following.map((following) => following.followingId) };
     }
 
     Logger.info(Constants.FETCHING_DATA);
@@ -257,7 +252,7 @@ const updatePreferences = async (req, res) => {
     // normal users can only update their own preferences and not any other user preferences
     if (
       (req.user.type === Constants.STUDENT || req.user.type === Constants.UNI_EXPERT) &&
-      req.user._id !== req.body.id
+      req.user.id !== req.body.id
     )
       return ResponseHandler.sendForbiddenResponse(Constants.FORBIDDEN, res);
 
@@ -274,7 +269,7 @@ const updatePreferences = async (req, res) => {
     // dont send user password to the consumer
     updatedUser.password = null;
 
-    const token = updatedUser.generateAuthToken();
+    const token = generateUserAuthToken(updatedUser);
     return res
       .header("x-auth-token", token)
       .header("access-control-expose-headers", "x-auth-token")
@@ -282,7 +277,7 @@ const updatePreferences = async (req, res) => {
       .send(
         new Response(
           _.pick(updatedUser, [
-            "_id",
+            "id",
             "userName",
             "firstName",
             "lastName",

@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, required: true, minlength: 3, maxlength: 128, unique: true },
     password: { type: String, required: true, minlength: 4, maxlength: 1024 },
     date: { type: String, required: true, minlength: 9, maxlength: 11 }, // store in unix timestamp
-    gender: { type: String, enum: ["male", "female", "other"], required: true },
+    gender: { type: String, enum: ["MALE", "FEMALE", "OTHER"], required: true },
     type: { type: String, enum: Constants.USER_TYPES, required: true },
     isVerified: { type: Boolean, default: false },
     emailVerificationCode: { type: String, minlength: 6, maxlength: 6 },
@@ -39,7 +39,7 @@ const userSchema = new mongoose.Schema(
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     {
-      _id: this._id,
+      id: this.id,
       username: this.userName,
       name: this.firstName + " " + this.lastName,
       email: this.email,

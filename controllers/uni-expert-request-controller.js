@@ -13,7 +13,7 @@ const uniExpertRequestsFind = async (req, res) => {
     const filters = {};
     if (req.query.uniExpertId) filters.uniExpertId = req.query.uniExpertId;
     if (req.query.studentId) filters.studentId = req.query.studentId;
-    if (req.query.paymentStatus) filters.paymentStatus = req.query.paymentStatus;
+    if (req.query.paymentStatus) filters.paymentStatus = req.query.paymentStatus === "true";
 
     Logger.info(Constants.FETCHING_DATA);
 
@@ -50,7 +50,7 @@ const uniExpertRequestCreate = async (req, res) => {
     const universityDetails = await universityRepository.findUniversityById(requestedPayload.universityId);
     if (!universityDetails) return ResponseHandler.sendNotFoundResponse(Constants.UNIVERSITY_NOT_FOUND, res);
 
-    if (universityDetails.uniExpertId.toString() !== uniExpertDetails._id.toString()) {
+    if (universityDetails.uniExpertId.toString() !== uniExpertDetails.id.toString()) {
       return ResponseHandler.sendForbiddenResponse(
         "This uni expert cannot provide services for this university.",
         res
@@ -98,9 +98,14 @@ const uniExpertRequestUpdate = async (req, res) => {
     const updatedRequest = await uniExpertRequestRepository.updateUniExpertRequest(req.params.id, payload);
     if (!updatedRequest) return ResponseHandler.sendBadResponse(Constants.ERROR_UPDATING, res);
 
-    if (acceptStatus && acceptStatus === "accepted") {
-      Logger.info("Creating admission record for student.");
-      await admissionRepository.createAdmission({ uniExpertRequestId: req.params.id });
+    if (acceptStatus && acceptStatus === Constants.ACCEPT_STATUS) {
+      const admissionExists = await admissionRepository.findAdmissions({ uniExpertRequestId: req.params.id });
+      if (admissionExists.length === 0) {
+        Logger.info("Creating admission record for student.");
+        await admissionRepository.createAdmission({ uniExpertRequestId: req.params.id });
+      } else {
+        Logger.info("Admission record already exists for this uni expert request.");
+      }
     }
 
     return ResponseHandler.sendOkResponse(updatedRequest, Constants.SUCCESSFULLY_UPDATED_, res);
