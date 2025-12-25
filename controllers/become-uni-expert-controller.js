@@ -32,7 +32,11 @@ const becomeUniExpertCreate = async (req, res) => {
       requestedPayload.studentId
     );
     if (isAcceptRequestAlreadyExists) {
-      return ResponseHandler.sendBadResponse("You have already requested to become uni expert.", res);
+      Logger.info("You have already requested to become uni expert. Updating request status to open.");
+      await becomeUniExpertsRepository.updateBecomeUniExperts(requestedPayload.studentId, {
+        acceptStatus: Constants.OPEN_STATUS,
+      });
+      return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_UPDATED_, res);
     }
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);
