@@ -1,5 +1,4 @@
 const winston = require("winston");
-require("winston-mongodb");
 
 class Logger {
   static info(message = "") {
@@ -19,7 +18,6 @@ function initLogs() {
 
   winston.add(new winston.transports.Console());
   winston.add(new winston.transports.File({ filename: "logfile.log" }));
-  // winston.add(new winston.transports.MongoDB({ db: "mongodb://localhost/migonest", level: "info" }));
 
   // globally handling exception and rejection that are not handled in the app
   process.on("uncaughtException", (err) => {
