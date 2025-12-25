@@ -1,5 +1,6 @@
 FROM node:24-alpine AS base
 WORKDIR /app
+RUN apk add --no-cache bash libc6-compat openssl curl git
 COPY package*.json ./
 RUN npm i
 COPY . .
@@ -16,4 +17,4 @@ ENV STRIPE_PUBLISHABLE_KEY=""
 ENV STRIPE_WEBHOOK_SECRET=""
 ENV STRIPE_MONTHLY_PRICE_ID=""
 EXPOSE 3000
-CMD ["node", "index.js"]
+CMD ["npm", "run", "start:prod"]
