@@ -37,7 +37,7 @@ CREATE TABLE "Users" (
     "type" "UserTypes" NOT NULL,
     "isVerified" BOOLEAN NOT NULL DEFAULT false,
     "emailVerificationCode" VARCHAR(6),
-    "fotgotPasswordOtp" VARCHAR(6),
+    "fotgotPasswordOtp" VARCHAR(128),
     "fotgotPasswordOtpExpiry" TIMESTAMP(3),
     "preferences" JSONB NOT NULL DEFAULT '{}',
     "about" VARCHAR(1024),
@@ -55,7 +55,7 @@ CREATE TABLE "Documents" (
     "label" VARCHAR(128) NOT NULL,
     "url" VARCHAR(1024) NOT NULL,
     "userId" UUID,
-    "universitiesId" UUID,
+    "universityId" UUID,
     "admissionId" UUID,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -239,7 +239,7 @@ CREATE TABLE "Notifications" (
     "id" UUID NOT NULL,
     "userId" UUID NOT NULL,
     "type" "NotificationTypes" NOT NULL DEFAULT 'REQUEST',
-    "message" VARCHAR(128) NOT NULL,
+    "message" VARCHAR(1024) NOT NULL,
     "isRead" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -278,6 +278,9 @@ CREATE TABLE "Purchases" (
 
     CONSTRAINT "Purchases_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Users_userName_key" ON "Users"("userName");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Users_email_key" ON "Users"("email");
@@ -385,7 +388,7 @@ CREATE INDEX "Purchases_userId_idx" ON "Purchases"("userId");
 ALTER TABLE "Documents" ADD CONSTRAINT "Documents_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Documents" ADD CONSTRAINT "Documents_universitiesId_fkey" FOREIGN KEY ("universitiesId") REFERENCES "Universities"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Documents" ADD CONSTRAINT "Documents_universityId_fkey" FOREIGN KEY ("universityId") REFERENCES "Universities"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Documents" ADD CONSTRAINT "Documents_admissionId_fkey" FOREIGN KEY ("admissionId") REFERENCES "Admissions"("id") ON DELETE SET NULL ON UPDATE CASCADE;
