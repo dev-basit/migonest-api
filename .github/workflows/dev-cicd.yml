@@ -75,7 +75,7 @@ jobs:
               -p 127.0.0.1:4001:4001 \
               --restart unless-stopped \
               -e clientUrl="${{ secrets.DEV_CLIENTURL }}" \
-              -e db="${{ secrets.DEV_DB }}" \
+              -e databaseUrl="${{ secrets.DEV_DB }}" \
               -e port="${{ secrets.DEV_PORT }}" \
               -e jwtPrivateKey="${{ secrets.JWTPRIVATEKEY }}" \
               -e cloudinary_cloud_name="${{ secrets.CLOUDINARY_CLOUD_NAME }}" \
