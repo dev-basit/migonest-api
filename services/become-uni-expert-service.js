@@ -17,7 +17,13 @@ async function isBecomeUniExpertRequestExists(studentId) {
   try {
     const existingRequests = await becomeUniExpertsRepository.findBecomeUniExperts({ studentId: studentId });
 
+    console.log("\n\n");
+    console.log("existingRequests ", existingRequests);
+
     let isAcceptRequestAlreadyExists = false;
+
+    console.log("\n\n");
+    console.log("isAcceptRequestAlreadyExists ", isAcceptRequestAlreadyExists);
 
     if (existingRequests.length > 0) {
       for (let item of existingRequests) {
@@ -27,6 +33,9 @@ async function isBecomeUniExpertRequestExists(studentId) {
         }
       }
     }
+
+    console.log("\n\n");
+    console.log("isAcceptRequestAlreadyExists ", isAcceptRequestAlreadyExists);
 
     return isAcceptRequestAlreadyExists;
   } catch (error) {
