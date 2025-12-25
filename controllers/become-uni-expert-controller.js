@@ -31,10 +31,6 @@ const becomeUniExpertCreate = async (req, res) => {
     const isAcceptRequestAlreadyExists = await becomeUniExpertService.isBecomeUniExpertRequestExists(
       requestedPayload.studentId
     );
-
-    console.log("\n\n");
-    console.log("isAcceptRequestAlreadyExists in contt ", isAcceptRequestAlreadyExists);
-
     if (isAcceptRequestAlreadyExists) {
       Logger.info("You have already requested to become uni expert. Updating request status to open.");
       await becomeUniExpertsRepository.updateBecomeUniExperts(requestedPayload.studentId, {
