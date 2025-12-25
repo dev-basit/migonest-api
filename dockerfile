@@ -1,5 +1,6 @@
 FROM node:24-alpine AS base
 WORKDIR /app
+RUN apk add --no-cache bash libc6-compat openssl curl git
 COPY package*.json ./
 RUN npm i
 COPY . .
