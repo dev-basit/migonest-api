@@ -28,11 +28,15 @@ const becomeUniExpertCreate = async (req, res) => {
     if (studentDetails.type !== Constants.STUDENT)
       return ResponseHandler.sendForbiddenResponse("Only students can request to become uni expert.", res);
 
-    const isAcceptRequestAlreadyExists = await becomeUniExpertService.isBecomeUniExpertRequestExists(
-      requestedPayload.studentId
-    );
-    if (isAcceptRequestAlreadyExists) {
-      return ResponseHandler.sendBadResponse("You have already requested to become uni expert.", res);
+    const existingRequests = await becomeUniExpertsRepository.findBecomeUniExperts({
+      studentId: requestedPayload.studentId,
+    });
+    if (existingRequests.length > 0) {
+      Logger.info("You have already requested to become uni expert. Updating request status to open.");
+      await becomeUniExpertsRepository.updateBecomeUniExperts(existingRequests[0].id, {
+        acceptStatus: Constants.OPEN_STATUS,
+      });
+      return ResponseHandler.sendOkResponse(null, Constants.SUCCESSFULLY_UPDATED_, res);
     }
 
     Logger.info(Constants.PAYLOAD_IS_CORRECT);

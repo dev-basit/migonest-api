@@ -2,7 +2,6 @@ const { ResponseHandler, Constants } = require("../utils");
 const { Logger } = require("../startup/logs");
 const { admissionRepository, uniExpertRequestRepository } = require("../repositories");
 const { admissionService } = require("../services");
-const { UniExpertRequestModel } = require("../models");
 
 const admissionsFind = async (req, res) => {
   try {

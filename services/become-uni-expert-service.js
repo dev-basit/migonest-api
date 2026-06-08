@@ -16,19 +16,7 @@ function validateBecomeUniExpertPayload(data) {
 async function isBecomeUniExpertRequestExists(studentId) {
   try {
     const existingRequests = await becomeUniExpertsRepository.findBecomeUniExperts({ studentId: studentId });
-
-    let isAcceptRequestAlreadyExists = false;
-
-    if (existingRequests.length > 0) {
-      for (let item of existingRequests) {
-        if (item.acceptStatus === Constants.ACCEPT_STATUS || item.acceptStatus === Constants.OPEN_STATUS) {
-          isAcceptRequestAlreadyExists = true;
-          break;
-        }
-      }
-    }
-
-    return isAcceptRequestAlreadyExists;
+    return existingRequests.length > 0;
   } catch (error) {
     throw new Error(error.message);
   }
