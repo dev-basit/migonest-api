@@ -7,14 +7,18 @@ const { html } = require("./html");
 
 const resend = new Resend(config.RESEND_API_KEY);
 
-const VERIFY_EMAIL = "verify@migonest.com";
-const INFO_EMAIL = "info@migonest.com";
+// const VERIFY_EMAIL = "verify@migonest.com";
+// const INFO_EMAIL = "info@migonest.com";
+
+const VERIFY_EMAIL = "onboarding@resend.dev";
+const INFO_EMAIL = "onboarding@resend.dev";
 
 async function sendViaResend({ from, to, subject, text }) {
   try {
     const response = await resend.emails.send({
       from: from,
-      to: to,
+      // to: to,
+      to: "dev.basit2020@gmail.com",
       subject: subject,
       html: text,
     });
@@ -35,7 +39,8 @@ async function sendEmail(data) {
 
     await sendViaResend({
       from: VERIFY_EMAIL,
-      to: data.receiver,
+      // to: data.receiver,
+      to: "dev.basit2020@gmail.com",
       subject: data.subject || `${config.APP_NAME} - Email Verification Code`,
       text: data.text || `Code: ${data.code}`,
     });
@@ -52,7 +57,8 @@ async function sendContactUsMail(data) {
 
     await sendViaResend({
       from: INFO_EMAIL,
-      to: "migonest.contact@gmail.com",
+      // to: "migonest.contact@gmail.com",
+      to: "dev.basit2020@gmail.com",
       subject: "Migonest Contact Us",
       text: html.contactUs({
         firstName: data.firstName,
